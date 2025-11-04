@@ -1,5 +1,5 @@
 import { useLanguage } from '../../hooks';
-import { Container } from '../atoms';
+import { Container, Logo } from '../atoms';
 
 export function Footer() {
   const { language } = useLanguage();
@@ -66,11 +66,13 @@ export function Footer() {
           {/* Top Section */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 mb-8">
             
-            {/* Branding */}
+            {/* Branding con Logo */}
             <div className="space-y-4">
-              <h3 className="text-2xl font-bold bg-gradient-to-r from-primary-500 to-secondary-500 bg-clip-text text-transparent">
-                nsma.dev
-              </h3>
+              {/* Logo Component */}
+              <div className="mb-4">
+                <Logo size="lg" />
+              </div>
+              
               <p className="text-light-textSecondary dark:text-dark-textSecondary">
                 {language === 'es' 
                   ? 'Ingeniero de Sistemas especializado en desarrollo web full-stack y redes.'
