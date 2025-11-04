@@ -1,21 +1,25 @@
-import { cn } from '../../utils/helpers';
+import { useTheme } from '../../hooks';
 
 interface LogoProps {
   size?: 'sm' | 'md' | 'lg';
 }
 
 export function Logo({ size = 'md' }: LogoProps) {
+  const { theme } = useTheme();
+  
   const sizes = {
-    sm: 'text-xl',
-    md: 'text-2xl',
-    lg: 'text-3xl',
+    sm: 'h-6',
+    md: 'h-8',
+    lg: 'h-10',
   };
 
+  const logoSrc = theme === 'dark' ? '/logo-nsma_light.png' : '/logo-nsma_dark.png';
+
   return (
-    <div className={cn('font-bold', sizes[size])}>
-      <span className="bg-gradient-to-r from-primary-500 to-secondary-500 bg-clip-text text-transparent">
-        nsma.dev
-      </span>
-    </div>
+    <img 
+      src={logoSrc} 
+      alt="nsma.dev" 
+      className={`${sizes[size]} w-auto transition-opacity duration-300`}
+    />
   );
 }

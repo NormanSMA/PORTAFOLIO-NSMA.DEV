@@ -1,19 +1,44 @@
 import { useState, useEffect } from 'react';
 import { useTheme, useLanguage, useScrollPosition } from '../../hooks';
-import { Logo, Container } from '../atoms';
-import { cn, scrollToElement } from '../../utils/helpers';
+import { Logo, Container, StarBorder } from '../atoms';
 import { SunIcon, MoonIcon } from '../atoms/icons';
-
+import { cn, scrollToElement } from '../../utils/helpers';
 
 export function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+  
   const { theme, toggleTheme } = useTheme();
   const { language, toggleLanguage, t } = useLanguage();
   const scrollPosition = useScrollPosition();
 
   const isScrolled = scrollPosition > 50;
 
-  // Cerrar menú al cambiar tamaño de pantalla
+  // Auto-hide navbar al hacer scroll
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      
+      if (currentScrollY < 100) {
+        // Siempre visible en el top
+        setIsVisible(true);
+      } else if (currentScrollY > lastScrollY) {
+        // Scrolling hacia abajo - ocultar
+        setIsVisible(false);
+        setIsMenuOpen(false);
+      } else {
+        // Scrolling hacia arriba - mostrar
+        setIsVisible(true);
+      }
+      
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [lastScrollY]);
+
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth >= 768) {
@@ -45,7 +70,8 @@ export function Navbar() {
         'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
         isScrolled
           ? 'bg-light-bg/80 dark:bg-dark-bg/80 backdrop-blur-lg shadow-lg'
-          : 'bg-transparent'
+          : 'bg-transparent',
+        isVisible ? 'translate-y-0' : '-translate-y-full'
       )}
     >
       <Container>
@@ -69,67 +95,53 @@ export function Navbar() {
             ))}
           </div>
 
-          {/* Theme & Language Toggles */}
+          {/* Theme & Language Toggles with StarBorder */}
           <div className="hidden md:flex items-center gap-4">
-            {/* Theme Toggle */}
-            <button
-              onClick={toggleTheme}
-              className="p-2 rounded-lg bg-light-card dark:bg-dark-card hover:bg-primary-500/10 transition-colors"
-              aria-label="Toggle theme"
-            >
-              {theme === 'dark' ? (
-                <SunIcon size={20} className="text-light-text dark:text-dark-text" />
-              ) : (
-                <MoonIcon size={20} className="text-light-text dark:text-dark-text" />
-              )}
-            </button>
+            <StarBorder color="#3B82F6" speed="8s" thickness={1}>
+              <button
+                onClick={toggleTheme}
+                className="p-2 rounded-lg bg-light-card dark:bg-dark-card hover:bg-primary-500/10 transition-colors"
+                aria-label="Toggle theme"
+              >
+                {theme === 'dark' ? (
+                  <SunIcon size={20} className="text-light-text dark:text-dark-text" />
+                ) : (
+                  <MoonIcon size={20} className="text-light-text dark:text-dark-text" />
+                )}
+              </button>
+            </StarBorder>
 
-            {/* Language Toggle */}
-            <button
-              onClick={toggleLanguage}
-              className="p-2 px-3 rounded-lg bg-light-card dark:bg-dark-card hover:bg-primary-500/10 transition-colors font-medium"
-              aria-label="Toggle language"
-            >
-              {language.toUpperCase()}
-            </button>
+            <StarBorder color="#6366F1" speed="8s" thickness={1}>
+              <button
+                onClick={toggleLanguage}
+                className="p-2 px-3 rounded-lg bg-light-card dark:bg-dark-card hover:bg-primary-500/10 transition-colors font-medium"
+                aria-label="Toggle language"
+              >
+                {language.toUpperCase()}
+              </button>
+            </StarBorder>
           </div>
 
           {/* Mobile Menu Button */}
-          <button
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden p-2 rounded-lg bg-light-card dark:bg-dark-card"
-            aria-label="Toggle menu"
-          >
-            <div className="w-6 h-5 flex flex-col justify-between">
-              <span
-                className={cn(
-                  'w-full h-0.5 bg-light-text dark:bg-dark-text transition-all',
-                  isMenuOpen && 'rotate-45 translate-y-2'
-                )}
-              />
-              <span
-                className={cn(
-                  'w-full h-0.5 bg-light-text dark:bg-dark-text transition-all',
-                  isMenuOpen && 'opacity-0'
-                )}
-              />
-              <span
-                className={cn(
-                  'w-full h-0.5 bg-light-text dark:bg-dark-text transition-all',
-                  isMenuOpen && '-rotate-45 -translate-y-2'
-                )}
-              />
-            </div>
-          </button>
+          <div className="md:hidden">
+            <StarBorder color="#3B82F6" speed="6s" thickness={1}>
+              <button
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                className="p-2 rounded-lg bg-light-card dark:bg-dark-card"
+                aria-label="Toggle menu"
+              >
+                <div className="w-6 h-5 flex flex-col justify-between">
+                  <span className={cn('w-full h-0.5 bg-light-text dark:bg-dark-text transition-all', isMenuOpen && 'rotate-45 translate-y-2')} />
+                  <span className={cn('w-full h-0.5 bg-light-text dark:bg-dark-text transition-all', isMenuOpen && 'opacity-0')} />
+                  <span className={cn('w-full h-0.5 bg-light-text dark:bg-dark-text transition-all', isMenuOpen && '-rotate-45 -translate-y-2')} />
+                </div>
+              </button>
+            </StarBorder>
+          </div>
         </div>
 
         {/* Mobile Menu */}
-        <div
-          className={cn(
-            'md:hidden overflow-hidden transition-all duration-300',
-            isMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
-          )}
-        >
+        <div className={cn('md:hidden overflow-hidden transition-all duration-300', isMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0')}>
           <div className="py-4 space-y-2">
             {navLinks.map((link) => (
               <button
@@ -141,30 +153,24 @@ export function Navbar() {
               </button>
             ))}
 
-            {/* Mobile Theme & Language */}
             <div className="flex gap-2 px-4 pt-2">
-              <button
-                onClick={toggleTheme}
-                className="flex-1 p-2 rounded-lg bg-light-card dark:bg-dark-card hover:bg-primary-500/10 transition-colors flex items-center justify-center gap-2"
-              >
-                {theme === 'dark' ? (
-                  <>
-                    <SunIcon size={18} />
-                    <span>Light</span>
-                  </>
-                ) : (
-                  <>
-                    <MoonIcon size={18} />
-                    <span>Dark</span>
-                  </>
-                )}
-              </button>
-              <button
-                onClick={toggleLanguage}
-                className="flex-1 p-2 rounded-lg bg-light-card dark:bg-dark-card hover:bg-primary-500/10 transition-colors"
-              >
-                {language === 'es' ? 'EN' : 'ES'}
-              </button>
+              <StarBorder color="#3B82F6" speed="8s" thickness={1} className="flex-1">
+                <button
+                  onClick={toggleTheme}
+                  className="w-full p-2 rounded-lg bg-light-card dark:bg-dark-card hover:bg-primary-500/10 transition-colors flex items-center justify-center gap-2"
+                >
+                  {theme === 'dark' ? <><SunIcon size={18} /><span>Light</span></> : <><MoonIcon size={18} /><span>Dark</span></>}
+                </button>
+              </StarBorder>
+              
+              <StarBorder color="#6366F1" speed="8s" thickness={1} className="flex-1">
+                <button
+                  onClick={toggleLanguage}
+                  className="w-full p-2 rounded-lg bg-light-card dark:bg-dark-card hover:bg-primary-500/10 transition-colors font-medium"
+                >
+                  {language === 'es' ? 'EN' : 'ES'}
+                </button>
+              </StarBorder>
             </div>
           </div>
         </div>

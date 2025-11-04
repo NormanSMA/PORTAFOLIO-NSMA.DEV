@@ -9,12 +9,13 @@ export const translations = {
       contact: 'Contacto',
     },
     hero: {
+      tag: '¡Hola! Soy',
       greeting: 'Hola, soy',
-      name: 'Norman Martínez',
-      title: 'Ingeniero en Sistemas de Información',
-      subtitle: 'Desarrollador Full Stack | React & TypeScript',
-      cta: 'Ver proyectos',
-      ctaSecondary: 'Contactar',
+      description: 'Ingeniero de Sistemas apasionado por crear soluciones tecnológicas innovadoras. Especializado en desarrollo web full-stack y redes.',
+      cta: {
+        projects: 'Ver Proyectos',
+        contact: 'Contáctame',
+      },
     },
     about: {
       title: 'Sobre mí',
@@ -71,12 +72,13 @@ export const translations = {
       contact: 'Contact',
     },
     hero: {
+      tag: 'Hello! I am',
       greeting: 'Hi, I am',
-      name: 'Norman Martínez',
-      title: 'Information Systems Engineer',
-      subtitle: 'Full Stack Developer | React & TypeScript',
-      cta: 'View projects',
-      ctaSecondary: 'Contact me',
+      description: 'Systems Engineer passionate about creating innovative tech solutions. Specialized in full-stack web development and networking.',
+      cta: {
+        projects: 'View Projects',
+        contact: 'Contact Me',
+      },
     },
     about: {
       title: 'About me',
