@@ -10,13 +10,24 @@ interface LanguageProviderProps {
 
 export function LanguageProvider({ children }: LanguageProviderProps) {
   const [language, setLanguage] = useState<Language>(() => {
-    const savedLanguage = localStorage.getItem(LANGUAGE_CONFIG.storageKey) as Language;
-    return savedLanguage || LANGUAGE_CONFIG.default;
+    try {
+      if (typeof window === 'undefined') return LANGUAGE_CONFIG.default;
+      const savedLanguage = localStorage.getItem(LANGUAGE_CONFIG.storageKey) as Language | null;
+      return savedLanguage || LANGUAGE_CONFIG.default;
+    } catch {
+      return LANGUAGE_CONFIG.default;
+    }
   });
 
   useEffect(() => {
-    localStorage.setItem(LANGUAGE_CONFIG.storageKey, language);
-    document.documentElement.lang = language;
+    try {
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(LANGUAGE_CONFIG.storageKey, language);
+        document.documentElement.lang = language;
+      }
+    } catch {
+      // ignore storage/document errors
+    }
   }, [language]);
 
   const toggleLanguage = () => {

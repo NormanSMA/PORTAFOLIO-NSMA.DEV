@@ -4,26 +4,23 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/png" href="/fabicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!--
+      Content-Security-Policy (CSP) example: this meta is intentionally permissive
+      to avoid breaking the Vite dev server. For production, set a strict CSP via
+      your hosting (HTTP headers) and remove the permissive allowances below.
+    -->
+  <!-- Content-Security-Policy: updated to allow Google Fonts while keeping a restrictive default-src -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' data: blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob:; connect-src *; object-src 'none'; base-uri 'self';">
+    <meta name="referrer" content="no-referrer" />
+    <meta name="referrer-policy" content="no-referrer" />
     <title>nsma-portfolio</title>
   </head>
   <body>
-    <script>
-      // Apply theme class early to avoid flash of white / incorrect theme before React mounts.
-      (function(){
-        try {
-          const key = 'nsma-theme';
-          const saved = localStorage.getItem(key);
-          if (saved === 'dark' || (!saved && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
-          } else {
-            document.documentElement.classList.remove('dark');
-          }
-        } catch (e) {
-          // ignore (localStorage may be unavailable)
-        }
-      })();
-    </script>
+    <!-- small early script moved to public/theme-init.js to be allowed by CSP 'self' -->
+    <script src="/theme-init.js"></script>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <!-- helper to make image downloads slightly harder (client-side only) -->
+    <script src="/protect-images.js" defer></script>
   </body>
 </html>

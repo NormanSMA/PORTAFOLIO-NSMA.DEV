@@ -5,19 +5,18 @@ import reactRefresh from 'eslint-plugin-react-refresh'
 import tseslint from 'typescript-eslint'
 import { defineConfig, globalIgnores } from 'eslint/config'
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      js.configs.recommended,
-      tseslint.configs.recommended,
-      reactHooks.configs['recommended-latest'],
-      reactRefresh.configs.vite,
-    ],
-    languageOptions: {
-      ecmaVersion: 2020,
-      globals: globals.browser,
-    },
+export default defineConfig({
+  // Migrated ignored paths from .eslintignore to the new `ignores` field
+  ignores: ['dist', 'public/_headers', 'public/protect-images.js'],
+  files: ['**/*.{ts,tsx}'],
+  extends: [
+    js.configs.recommended,
+    tseslint.configs.recommended,
+    reactHooks.configs['recommended-latest'],
+    reactRefresh.configs.vite,
+  ],
+  languageOptions: {
+    ecmaVersion: 2020,
+    globals: globals.browser,
   },
-])
+})

@@ -9,15 +9,26 @@ interface ThemeProviderProps {
 
 export function ThemeProvider({ children }: ThemeProviderProps) {
   const [theme, setTheme] = useState<Theme>(() => {
-    const savedTheme = localStorage.getItem(THEME_CONFIG.storageKey) as Theme;
-    return savedTheme || THEME_CONFIG.default;
+    try {
+      if (typeof window === 'undefined') return THEME_CONFIG.default;
+      const savedTheme = localStorage.getItem(THEME_CONFIG.storageKey) as Theme | null;
+      return savedTheme || THEME_CONFIG.default;
+    } catch {
+      return THEME_CONFIG.default;
+    }
   });
 
   useEffect(() => {
-    const root = document.documentElement;
-    root.classList.remove('light', 'dark');
-    root.classList.add(theme);
-    localStorage.setItem(THEME_CONFIG.storageKey, theme);
+    try {
+      const root = document.documentElement;
+      root.classList.remove('light', 'dark');
+      root.classList.add(theme);
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(THEME_CONFIG.storageKey, theme);
+      }
+    } catch {
+      // ignore storage/document errors
+    }
   }, [theme]);
 
   const toggleTheme = () => {
