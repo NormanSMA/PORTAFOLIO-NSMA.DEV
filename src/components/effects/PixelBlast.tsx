@@ -16,6 +16,15 @@ export function PixelBlast({
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
+    // Respect users who prefer reduced motion
+    const prefersReduced = typeof window !== 'undefined' &&
+      window.matchMedia &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (prefersReduced) {
+      // Do not run animation loop when reduced motion is set
+      return;
+    }
     const canvas = canvasRef.current;
     if (!canvas) return;
 
@@ -32,8 +41,16 @@ export function PixelBlast({
     }> = [];
 
     const resize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+      // Try to size to the canvas's offsetParent (so the effect
+      // is contained inside the Hero section) falling back to window
+      const parent = canvas.parentElement;
+      if (parent) {
+        canvas.width = parent.clientWidth;
+        canvas.height = parent.clientHeight;
+      } else {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
     };
 
     const createParticle = (x: number, y: number) => {
@@ -105,7 +122,7 @@ export function PixelBlast({
 
     resize();
     window.addEventListener('resize', resize);
-    animate();
+  animate();
 
     return () => {
       window.removeEventListener('resize', resize);
@@ -116,8 +133,8 @@ export function PixelBlast({
   return (
     <canvas
       ref={canvasRef}
-      className={`fixed inset-0 pointer-events-none ${className}`}
-      style={{ zIndex: 0 }}
+      className={`absolute inset-0 pointer-events-none ${className}`}
+      style={{ zIndex: 0, willChange: 'transform' }}
     />
   );
 }

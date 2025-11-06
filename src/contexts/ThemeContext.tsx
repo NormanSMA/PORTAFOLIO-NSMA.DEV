@@ -1,9 +1,7 @@
-import { createContext, useContext, useEffect, useState } from 'react';
-import type { ReactNode } from 'react';
-import type { Theme, ThemeContextType } from '../types';
+import { useEffect, useState, type ReactNode } from 'react';
+import type { Theme } from '../types';
 import { THEME_CONFIG } from '../config/constants';
-
-const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
+import { ThemeContext } from './themeCore';
 
 interface ThemeProviderProps {
   children: ReactNode;
@@ -31,12 +29,4 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
       {children}
     </ThemeContext.Provider>
   );
-}
-
-export function useTheme(): ThemeContextType {
-  const context = useContext(ThemeContext);
-  if (context === undefined) {
-    throw new Error('useTheme must be used within a ThemeProvider');
-  }
-  return context;
 }

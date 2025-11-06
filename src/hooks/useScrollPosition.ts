@@ -1,19 +1,27 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { throttle } from '../utils/helpers';
 
 export function useScrollPosition() {
   const [scrollPosition, setScrollPosition] = useState(0);
+  const savedHandler = useRef<() => void | null>(null);
 
   useEffect(() => {
-    const handleScroll = throttle(() => {
-      setScrollPosition(window.scrollY);
+    if (typeof window === 'undefined') return;
+
+    const handler = throttle(() => {
+      setScrollPosition(window.scrollY || window.pageYOffset);
     }, 100);
 
-    window.addEventListener('scroll', handleScroll);
-    handleScroll(); // Get initial position
+    savedHandler.current = handler;
+
+    window.addEventListener('scroll', handler, { passive: true });
+    // set initial position synchronously
+    handler();
 
     return () => {
-      window.removeEventListener('scroll', handleScroll);
+      if (savedHandler.current) {
+        window.removeEventListener('scroll', savedHandler.current as EventListener);
+      }
     };
   }, []);
 

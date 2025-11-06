@@ -4,3 +4,5 @@ export { Logo } from './Logo';
 export { Section } from './Section';
 export { SectionTitle } from './SectionTitle';
 export { StarBorder } from './StarBorder';
+export { Counter } from './Counter';
+

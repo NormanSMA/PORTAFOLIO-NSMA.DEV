@@ -3,8 +3,8 @@ export const translations = {
     nav: {
       home: 'Inicio',
       about: 'Sobre mí',
+      services: 'Servicios',
       projects: 'Proyectos',
-      skills: 'Habilidades',
       experience: 'Experiencia',
       contact: 'Contacto',
     },
@@ -17,11 +17,34 @@ export const translations = {
         contact: 'Contáctame',
       },
     },
+services: {
+  title: 'Servicios',
+  subtitle: 'Soluciones web profesionales de principio a fin',
+  webDev: {
+    title: 'Desarrollo Web & Apps',
+    description: 'Sitios web modernos y aplicaciones responsivas con React, TypeScript, WordPress, y las últimas tecnologías. Desde landing pages hasta e-commerce y dashboards complejos.',
+  },
+  backend: {
+    title: 'Backend & APIs',
+    description: 'Desarrollo de APIs RESTful robustas con Node.js, Express, y bases de datos SQL/NoSQL. Integración con servicios externos y arquitecturas escalables.',
+  },
+  deployment: {
+    title: 'Hosting & Despliegue',
+    description: 'Gestión completa de hosting en AWS y servidores VPS. Compra y configuración de dominios, certificados SSL, optimización SEO, y vinculación con Google Analytics y Search Console.',
+  },
+},
+
+
     about: {
-      title: 'Sobre mí',
-      description: 'Ingeniero en Sistemas apasionado por el desarrollo web y la tecnología. Especializado en crear experiencias digitales modernas y funcionales.',
-      downloadCV: 'Descargar CV',
-    },
+  title: 'Sobre mí',
+  description: 'Soy Norman Martínez, Ingeniero de Sistemas apasionado por crear soluciones tecnológicas innovadoras. Especializado en desarrollo web full-stack y redes, con experiencia en React, TypeScript, Node.js y AWS. Me encanta resolver problemas complejos y aprender nuevas tecnologías.',
+  stats: {
+    projects: 'Proyectos Completados',
+    experience: 'Años de Experiencia',
+    technologies: 'Tecnologías Dominadas',
+  }
+},
+
     projects: {
       title: 'Proyectos',
       viewProject: 'Ver proyecto',
@@ -66,8 +89,8 @@ export const translations = {
     nav: {
       home: 'Home',
       about: 'About',
+      services: 'Services',
       projects: 'Projects',
-      skills: 'Skills',
       experience: 'Experience',
       contact: 'Contact',
     },
@@ -80,11 +103,34 @@ export const translations = {
         contact: 'Contact Me',
       },
     },
-    about: {
-      title: 'About me',
-      description: 'Systems Engineer passionate about web development and technology. Specialized in creating modern and functional digital experiences.',
-      downloadCV: 'Download CV',
-    },
+services: {
+  title: 'Services',
+  subtitle: 'Professional web solutions from start to finish',
+  webDev: {
+    title: 'Web Development & Apps',
+    description: 'Modern websites and responsive applications with React, TypeScript, WordPress, and the latest technologies. From landing pages to e-commerce and complex dashboards.',
+  },
+  backend: {
+    title: 'Backend & APIs',
+    description: 'Development of robust RESTful APIs with Node.js, Express, and SQL/NoSQL databases. Integration with external services and scalable architectures.',
+  },
+  deployment: {
+    title: 'Hosting & Deployment',
+    description: 'Complete hosting management on AWS and VPS servers. Domain purchase and configuration, SSL certificates, SEO optimization, and integration with Google Analytics and Search Console.',
+  },
+},
+
+
+about: {
+  title: 'About Me',
+  description: "I'm Norman Martínez, a Systems Engineer passionate about creating innovative technological solutions. Specialized in full-stack web development and networking, with experience in React, TypeScript, Node.js, and AWS. I love solving complex problems and learning new technologies.",
+  stats: {
+    projects: 'Completed Projects',
+    experience: 'Years of Experience',
+    technologies: 'Technologies Mastered',
+  }
+},
+
     projects: {
       title: 'Projects',
       viewProject: 'View project',

@@ -2,29 +2,30 @@ import { useState, useEffect } from 'react';
 
 export function useMediaQuery(query: string): boolean {
   const [matches, setMatches] = useState(() => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== 'undefined' && typeof window.matchMedia === 'function') {
       return window.matchMedia(query).matches;
     }
     return false;
   });
 
   useEffect(() => {
+    if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return;
+
     const mediaQuery = window.matchMedia(query);
-    
-    const handleChange = (event: MediaQueryListEvent) => {
-      setMatches(event.matches);
+    // Handler can ignore the event and just read the current mediaQuery.matches
+    const handleChange = () => {
+      setMatches(mediaQuery.matches);
     };
 
-    // Modern browsers
-    if (mediaQuery.addEventListener) {
-      mediaQuery.addEventListener('change', handleChange);
-      return () => mediaQuery.removeEventListener('change', handleChange);
+    // Use modern addEventListener when available
+    if (typeof mediaQuery.addEventListener === 'function') {
+      mediaQuery.addEventListener('change', handleChange as EventListener);
+      return () => mediaQuery.removeEventListener('change', handleChange as EventListener);
     }
-    // Legacy browsers
-    else {
-      mediaQuery.addListener(handleChange);
-      return () => mediaQuery.removeListener(handleChange);
-    }
+
+    // Fallback for older browsers
+    mediaQuery.addListener(handleChange as (ev: MediaQueryListEvent) => void);
+    return () => mediaQuery.removeListener(handleChange as (ev: MediaQueryListEvent) => void);
   }, [query]);
 
   return matches;

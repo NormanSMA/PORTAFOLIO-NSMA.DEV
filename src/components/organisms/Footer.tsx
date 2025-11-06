@@ -54,10 +54,7 @@ export function Footer() {
     ],
   };
 
-  const handleNavClick = (id: string) => {
-    const element = document.getElementById(id);
-    element?.scrollIntoView({ behavior: 'smooth' });
-  };
+
 
   return (
     <footer className="bg-light-card dark:bg-dark-card border-t border-light-border dark:border-dark-border">
@@ -67,10 +64,12 @@ export function Footer() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 mb-8">
             
             {/* Branding con Logo */}
-            <div className="space-y-4">
-              {/* Logo Component */}
+            <div className="space-y-4 px-4">
+              {/* Logo Component - link to top for semantics */}
               <div className="mb-4">
-                <Logo size="lg" />
+                <a href="#home" aria-label="Go to top" onClick={(e) => { e.preventDefault(); const el = document.getElementById('home'); el?.scrollIntoView({ behavior: 'smooth' }); }}>
+                  <Logo size="lg" />
+                </a>
               </div>
               
               <p className="text-light-textSecondary dark:text-dark-textSecondary">
@@ -82,19 +81,24 @@ export function Footer() {
             </div>
 
             {/* Quick Links */}
-            <div className="space-y-4">
+            <div className="space-y-4 px-4">
               <h4 className="text-lg font-semibold text-light-text dark:text-dark-text">
                 {language === 'es' ? 'Enlaces Rápidos' : 'Quick Links'}
               </h4>
               <ul className="space-y-2">
                 {footerLinks[language].map((link) => (
                   <li key={link.id}>
-                    <button
-                      onClick={() => handleNavClick(link.id)}
-                      className="text-light-textSecondary dark:text-dark-textSecondary hover:text-primary-500 dark:hover:text-primary-400 transition-colors"
+                    <a
+                      href={`#${link.id}`}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        const el = document.getElementById(link.id);
+                        el?.scrollIntoView({ behavior: 'smooth' });
+                      }}
+                      className="text-light-textSecondary dark:text-dark-textSecondary hover:text-primary-500 dark:hover:text-primary-400 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 rounded-sm px-1"
                     >
                       {link.label}
-                    </button>
+                    </a>
                   </li>
                 ))}
               </ul>
@@ -112,10 +116,10 @@ export function Footer() {
                     href={social.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="p-3 rounded-lg bg-light-bg dark:bg-dark-bg text-light-text dark:text-dark-text hover:text-primary-500 dark:hover:text-primary-400 hover:bg-primary-500/10 transition-all transform hover:scale-110"
+                    className="p-3 rounded-lg bg-light-bg dark:bg-dark-bg text-light-text dark:text-dark-text hover:text-primary-500 dark:hover:text-primary-400 hover:bg-primary-500/10 transition-all transform motion-safe:hover:scale-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
                     aria-label={social.name}
                   >
-                    {social.icon}
+                    <span aria-hidden>{social.icon}</span>
                   </a>
                 ))}
               </div>

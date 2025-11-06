@@ -14,6 +14,16 @@ export function useScrollAnimation(
   const { threshold = 0.1, rootMargin = '0px' } = options;
 
   useEffect(() => {
+    if (typeof window === 'undefined' || !ref?.current) return;
+
+    // If user prefers reduced motion, avoid using observer/animations and
+    // show content immediately so it doesn't rely on motion cues.
+    const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReduced) {
+      setIsVisible(true);
+      return;
+    }
+
     const element = ref.current;
     if (!element) return;
 
@@ -21,7 +31,7 @@ export function useScrollAnimation(
       ([entry]) => {
         if (entry.isIntersecting) {
           setIsVisible(true);
-          observer.unobserve(element);
+          if (element) observer.unobserve(element);
         }
       },
       { threshold, rootMargin }
@@ -30,7 +40,11 @@ export function useScrollAnimation(
     observer.observe(element);
 
     return () => {
-      observer.disconnect();
+      try {
+        observer.disconnect();
+      } catch {
+        // ignore
+      }
     };
   }, [ref, threshold, rootMargin]);
 
