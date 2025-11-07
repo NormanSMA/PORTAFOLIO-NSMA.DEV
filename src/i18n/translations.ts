@@ -9,9 +9,9 @@ export const translations = {
       contact: 'Contacto',
     },
     hero: {
-      tag: '¡Hola! Soy',
-      greeting: 'Hola, soy',
-      description: 'Ingeniero de Sistemas apasionado por crear soluciones tecnológicas innovadoras. Especializado en desarrollo web full-stack y redes.',
+      tag: 'Diseño y construyo experiencias digitales',
+      greeting: 'Diseño y construyo experiencias digitales',
+      description: 'Ingeniero en sistemas y desarrollador web full‑stack. Transformo ideas en productos digitales: landing pages, plataformas de eventos y soluciones a medida. Trabajo con React, TypeScript y WordPress. Disponible para proyectos freelance y colaboraciones.',
       cta: {
         projects: 'Ver Proyectos',
         contact: 'Contáctame',
@@ -37,7 +37,7 @@ services: {
 
     about: {
   title: 'Sobre mí',
-  description: 'Soy Norman Martínez, Ingeniero de Sistemas apasionado por crear soluciones tecnológicas innovadoras. Especializado en desarrollo web full-stack y redes, con experiencia en React, TypeScript, Node.js y AWS. Me encanta resolver problemas complejos y aprender nuevas tecnologías.',
+  description: 'Soy Norman Martínez. Me enfoco en convertir ideas en productos digitales claros y medibles: desde landing pages que convierten hasta plataformas para eventos y gestión. He liderado desarrollos para congresos y negocios locales, priorizando rendimiento, accesibilidad y SEO. Trabajo con equipos pequeños y en proyectos freelance.',
   stats: {
     projects: 'Proyectos Completados',
     experience: 'Años de Experiencia',
@@ -45,12 +45,23 @@ services: {
   }
 },
 
-    projects: {
-      title: 'Proyectos',
-      viewProject: 'Ver proyecto',
-      viewCode: 'Ver código',
-      featured: 'Destacado',
-    },
+projects: {
+  title: 'Proyectos',
+  subtitle: 'Algunos de los proyectos en los que he trabajado',
+  systech: {
+    shortDescription: 'Desarrollo y gestión de la plataforma web oficial para el congreso anual de ingeniería SYSTECH de la Universidad Americana. Lideré el diseño de arquitectura...',
+    fullDescription: 'Desarrollo y gestión de la plataforma web oficial para el congreso anual de ingeniería SYSTECH de la Universidad Americana. Lideré el diseño de arquitectura, personalización de plantillas y configuración de plugins, implementando un sistema escalable con módulos de registro y agenda interactiva que optimizó la experiencia para ponentes, patrocinadores y más de 220 asistentes.',
+  },
+  pantano: {
+    shortDescription: 'Desarrollo integral del sitio web comercial para Hotel-Restaurante El Pantano. Gestioné el proyecto completo desde consultoría inicial hasta el lanzamiento, incluyendo...',
+    fullDescription: 'Desarrollo integral del sitio web comercial para Hotel-Restaurante El Pantano. Gestioné el proyecto completo desde consultoría inicial hasta el lanzamiento, incluyendo UX/UI, funcionalidades WordPress e implementación de estrategias SEO on-page para indexación en Google. El sitio incluye sistema de reservas, galería de habitaciones e información turística completa.',
+  },
+  bolsa: {
+    title: 'Bolsa de Trabajo UAM',
+    description: 'Aplicación móvil Android para conectar empleadores y candidatos. Incluye búsqueda de empleos, postulaciones, perfil profesional y notificaciones en tiempo real.',
+  },
+},
+
     skills: {
       title: 'Habilidades',
       frontend: 'Frontend',
@@ -95,9 +106,9 @@ services: {
       contact: 'Contact',
     },
     hero: {
-      tag: 'Hello! I am',
-      greeting: 'Hi, I am',
-      description: 'Systems Engineer passionate about creating innovative tech solutions. Specialized in full-stack web development and networking.',
+      tag: 'I design and build digital experiences',
+      greeting: 'I design and build digital experiences',
+      description: 'Systems Engineer and full‑stack web developer. I turn ideas into digital products: landing pages, event platforms and tailored solutions. I work with React, TypeScript and WordPress. Available for freelance projects and collaborations.',
       cta: {
         projects: 'View Projects',
         contact: 'Contact Me',
@@ -123,7 +134,7 @@ services: {
 
 about: {
   title: 'About Me',
-  description: "I'm Norman Martínez, a Systems Engineer passionate about creating innovative technological solutions. Specialized in full-stack web development and networking, with experience in React, TypeScript, Node.js, and AWS. I love solving complex problems and learning new technologies.",
+  description: "I'm Norman Martínez. I focus on turning ideas into clear, measurable digital products — from high-converting landing pages to platforms for events and business tools. I have led development efforts for conferences and local businesses, prioritizing performance, accessibility and SEO. I work with small teams and on freelance projects.",
   stats: {
     projects: 'Completed Projects',
     experience: 'Years of Experience',
@@ -131,12 +142,24 @@ about: {
   }
 },
 
-    projects: {
-      title: 'Projects',
-      viewProject: 'View project',
-      viewCode: 'View code',
-      featured: 'Featured',
-    },
+projects: {
+  title: 'Projects',
+  subtitle: 'Some of the projects I have worked on',
+  systech: {
+    shortDescription: 'Development and management of the official web platform for the annual SYSTECH engineering congress of the Universidad Americana. I led the architecture design...',
+    fullDescription: 'Development and management of the official web platform for the annual SYSTECH engineering congress of the Universidad Americana. I led the architecture design, template customization and plugin configuration, implementing a scalable system with registration modules and interactive agenda that optimized the experience for speakers, sponsors and over 220 attendees.',
+  },
+  pantano: {
+    shortDescription: 'Comprehensive development of the commercial website for Hotel-Restaurante El Pantano. Managed the complete project from initial consultation to launch, including...',
+    fullDescription: 'Comprehensive development of the commercial website for Hotel-Restaurante El Pantano. Managed the complete project from initial consultation to launch, including UX/UI, WordPress functionalities and implementation of on-page SEO strategies for Google indexing. The site includes a reservation system, room gallery and complete tourist information.',
+  },
+  bolsa: {
+    title: 'Bolsa de Trabajo UAM',
+    description: 'Android mobile application to connect employers and candidates. Features job search, applications, professional profile and real-time notifications.',
+  },
+},
+
+
     skills: {
       title: 'Skills',
       frontend: 'Frontend',

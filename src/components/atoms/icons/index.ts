@@ -4,3 +4,6 @@ export { CodeIcon } from './CodeIcon';
 export { DatabaseIcon } from './DatabaseIcon';
 export { ConsultingIcon } from './ConsultingIcon';
 export { MobileIcon } from './MobileIcon';
+export { ExternalLinkIcon } from './ExternalLinkIcon';
+export { AndroidIcon } from './AndroidIcon';
+export { WordPressIcon } from './WordPressIcon';

@@ -23,6 +23,9 @@ export const typography = {
   
   // Texto pequeño
   small: 'text-xs sm:text-sm',
+  // Texto para el 'tag' o línea corta en el Hero (p.ej. "Diseño y construyo...")
+  // Un poco más grande que `small`, visible y legible en móvil y escalando en pantallas mayores.
+  tag: 'text-sm sm:text-base md:text-lg font-medium',
   // Número grande para estadísticas (About) — más prominente
   statsNumber: 'text-4xl sm:text-5xl md:text-6xl lg:text-6xl font-extrabold',
 } as const;

@@ -53,7 +53,7 @@ export function Hero() {
           {/* Contenido - Segundo en móvil, primero en desktop */}
           <div className="space-y-4 md:space-y-6 motion-safe:animate-slide-right order-last md:order-first">
             <div className="space-y-2">
-              <p className={`${typography.small} text-primary-600 dark:text-primary-400 mb-4`}>{t('hero.tag')}</p>
+              <p className={`${typography.tag} text-primary-600 dark:text-primary-400 mb-4`}>{t('hero.tag')}</p>
               <h1 className={`${typography.sectionTitle} text-light-text dark:text-dark-text mb-6`}>Norman Martínez</h1>
               {/* Removed hero.title per design — if you want a subtitle, add a brief tagline here */}
             </div>

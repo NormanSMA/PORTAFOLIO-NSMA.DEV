@@ -1,6 +1,6 @@
 import { ThemeProvider } from './contexts/ThemeContext';
 import { LanguageProvider } from './contexts/LanguageContext';
-import { Navbar, Hero, About, Services, Footer } from './components/organisms';
+import { Navbar, Hero, About, Services, Footer, Projects } from './components/organisms';
 import { ScrollToTop } from './components/molecules';
 
 function App() {
@@ -12,7 +12,8 @@ function App() {
           <Hero />
           <About />
           <Services />
-          {/* Próximas: Projects, Experience, Contact */}
+          <Projects />
+          {/* Próximas: Experience, Contact */}
           <Footer />
           <ScrollToTop />
         </div>
