@@ -1,0 +1,9 @@
+# robots.txt generado para evitar 404 en Vercel
+# Permitir que todos los agentes indexen el sitio y los recursos públicos (imágenes, CSS, JS)
+User-agent: *
+Allow: /
+
+# Si tienes un sitemap, descomenta la siguiente línea y ajusta la URL si es necesario
+# Sitemap: /sitemap.xml
+
+# Nota: este archivo evita el 404 que Vercel muestra cuando solicita /robots.txt
