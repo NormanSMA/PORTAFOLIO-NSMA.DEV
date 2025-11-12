@@ -74,16 +74,47 @@ projects: {
       present: 'Presente',
     },
     contact: {
-      title: 'Contacto',
-      subtitle: '¿Tienes un proyecto en mente? ¡Hablemos!',
-      name: 'Nombre',
-      email: 'Correo electrónico',
-      message: 'Mensaje',
-      send: 'Enviar mensaje',
-      sending: 'Enviando...',
-      success: '¡Mensaje enviado correctamente!',
-      error: 'Hubo un error al enviar el mensaje',
+  label: 'CONTÁCTAME',
+  title: 'Trabajemos Juntos',
+  subtitle: 'Escribe tu mensaje o consulta y te contactaré lo antes posible.',
+  form: {
+    fullName: 'Nombre Completo',
+    fullNamePlaceholder: 'Escribe tu nombre aquí',
+    email: 'Correo Electrónico',
+    emailPlaceholder: 'tu@email.com',
+    reason: 'Motivo de contacto',
+    selectHint: 'Selecciona uno o más motivos y describe los detalles en el mensaje.',
+    reasons: {
+      proposal: {
+        title: 'Propuesta de trabajo',
+        desc: 'Oferta laboral o proyecto freelance',
+      },
+      collaboration: {
+        title: 'Colaboración',
+        desc: 'Trabajar juntos en un proyecto',
+      },
+      recruitment: {
+        title: 'Reclutamiento',
+        desc: 'Búsqueda o selección de talento',
+      },
+      advisory: {
+        title: 'Asesoría',
+        desc: 'Consultoría técnica o mentoría',
+      },
+      others: {
+        title: 'Otro',
+        desc: 'Otro motivo',
+      },
     },
+    message: 'Tu Mensaje',
+    messagePlaceholder: 'Cuéntame los detalles: plazos, presupuesto o enlaces relevantes...',
+    submit: 'Enviar Mensaje',
+    sending: 'Enviando...',
+    successMessage: '¡Mensaje enviado con éxito! Te responderé pronto.',
+    errorMessage: 'Hubo un error. Por favor intenta de nuevo.',
+  },
+},
+
     footer: {
       rights: 'Todos los derechos reservados',
       madeWith: 'Hecho con',
@@ -207,16 +238,47 @@ projects: {
       present: 'Present',
     },
     contact: {
-      title: 'Contact',
-      subtitle: 'Have a project in mind? Let\'s talk!',
-      name: 'Name',
-      email: 'Email',
-      message: 'Message',
-      send: 'Send message',
-      sending: 'Sending...',
-      success: 'Message sent successfully!',
-      error: 'There was an error sending the message',
+      label: 'GET IN TOUCH',
+      title: 'Let\'s Work Together',
+      subtitle: 'Write your message or question and I\'ll get back to you as soon as possible',
+      form: {
+        fullName: 'Full Name',
+        fullNamePlaceholder: 'Type here',
+        email: 'Email',
+        emailPlaceholder: 'your@email.com',
+        reason: 'Why are you contacting us?',
+        selectHint: 'Select one or more reasons and describe the details in the message.',
+        reasons: {
+          proposal: {
+            title: 'Job proposal',
+            desc: 'Job offer or freelance project',
+          },
+          collaboration: {
+            title: 'Collaboration',
+            desc: 'Work together on a project',
+          },
+          recruitment: {
+            title: 'Recruitment',
+            desc: 'Hiring or talent search',
+          },
+          advisory: {
+            title: 'Advisory',
+            desc: 'Technical consulting or mentoring',
+          },
+          others: {
+            title: 'Other',
+            desc: 'Other reason',
+          },
+        },
+        message: 'Your Message',
+        messagePlaceholder: 'Write details: expectations, timelines, budget or relevant links...',
+        submit: 'Submit',
+        sending: 'Sending...',
+        successMessage: 'Message sent successfully! I\'ll get back to you soon.',
+        errorMessage: 'There was an error. Please try again.',
+      },
     },
+
     footer: {
       rights: 'All rights reserved',
       madeWith: 'Made with',
