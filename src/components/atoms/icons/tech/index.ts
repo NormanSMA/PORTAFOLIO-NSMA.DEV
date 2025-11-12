@@ -1,0 +1,10 @@
+export { ReactIcon } from './ReactIcon';
+export { JavaIcon } from './JavaIcon';
+export { HtmlIcon } from './HtmlIcon';
+export { CssIcon } from './CssIcon';
+export { PhpIcon } from './PhpIcon';
+export { SqlIcon } from './SqlIcon';
+export { WordPressIcon } from './WordPressIcon.tsx';
+export { PostgresIcon } from './PostgresIcon';
+export { ExcelIcon } from './ExcelIcon';
+export { AwsIcon } from './AWSIcon';

@@ -95,6 +95,41 @@ projects: {
       retry: 'Reintentar',
       close: 'Cerrar',
     },
+    educationSkills: {
+      title: 'Educación y Habilidades',
+      subtitle: 'Mi formación académica y conjunto de habilidades técnicas',
+      tabs: {
+        education: 'Educación',
+        skills: 'Habilidades Técnicas',
+      },
+      education: {
+        university: {
+          title: 'Universidad Americana (UAM)',
+          degree: 'Ingeniería en Sistemas de Información',
+          period: '2020 - 2024',
+        },
+        certifications: {
+          title: 'Certificaciones',
+          scrum: 'Scrum Foundation Professional Certificate (SFPC) - CertiProf',
+          rpa: 'RPA Developer Foundation - UiPath Spanish',
+        },
+        languages: {
+          title: 'Idiomas',
+          spanish: 'Español',
+          native: 'Nativo',
+          english: 'Inglés',
+          intermediate: 'Intermedio',
+        },
+      },
+      skills: {
+        title: 'Tecnologías y Herramientas',
+        concepts: {
+          title: 'Conceptos Clave',
+          agile: 'Metodologías Ágiles (Scrum)',
+          security: 'Redes y Seguridad',
+        },
+      },
+    },
   },
   en: {
     nav: {
@@ -186,6 +221,41 @@ projects: {
       rights: 'All rights reserved',
       madeWith: 'Made with',
       by: 'by',
+    },
+    educationSkills: {
+      title: 'Education & Skills',
+      subtitle: 'My academic background and technical skill set',
+      tabs: {
+        education: 'Education',
+        skills: 'Technical Skills',
+      },
+      education: {
+        university: {
+          title: 'Universidad Americana (UAM)',
+          degree: 'Systems Information Engineering',
+          period: '2020 - 2024',
+        },
+        certifications: {
+          title: 'Certifications',
+          scrum: 'Scrum Foundation Professional Certificate (SFPC) - CertiProf',
+          rpa: 'RPA Developer Foundation - UiPath Spanish',
+        },
+        languages: {
+          title: 'Languages',
+          spanish: 'Spanish',
+          native: 'Native',
+          english: 'English',
+          intermediate: 'Intermediate',
+        },
+      },
+      skills: {
+        title: 'Technologies & Tools',
+        concepts: {
+          title: 'Key Concepts',
+          agile: 'Agile Methodologies (Scrum)',
+          security: 'Networking & Security',
+        },
+      },
     },
     common: {
       loading: 'Loading...',

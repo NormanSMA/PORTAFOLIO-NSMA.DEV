@@ -1,6 +1,6 @@
 import { ThemeProvider } from './contexts/ThemeContext';
 import { LanguageProvider } from './contexts/LanguageContext';
-import { Navbar, Hero, About, Services, Footer, Projects } from './components/organisms';
+import { Navbar, Hero, About, Services, Footer, Projects, EducationSkills } from './components/organisms';
 import { ScrollToTop } from './components/molecules';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/react';
@@ -15,6 +15,7 @@ function App() {
           <About />
           <Services />
           <Projects />
+          <EducationSkills />
           {/* Próximas: Experience, Contact */}
           <Footer />
           <ScrollToTop />

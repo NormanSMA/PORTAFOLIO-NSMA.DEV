@@ -55,6 +55,7 @@ export default {
       },
       animation: {
         'fade-in': 'fadeIn 0.6s ease-in-out',
+        'fadeIn': 'fadeIn 0.4s ease-in-out',
         'slide-up': 'slideUp 0.5s ease-out',
         'slide-down': 'slideDown 0.5s ease-out',
         'slide-left': 'slideLeft 0.5s ease-out',
