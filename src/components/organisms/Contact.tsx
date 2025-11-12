@@ -82,8 +82,16 @@ export function Contact() {
         // If env vars are missing, fallback to simulated success so UX isn't blocked.
         setSubmitStatus('success');
       } else {
-        // Send via EmailJS
-        await emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams, PUBLIC_KEY);
+        // Initialize EmailJS (if provided) and send. Keep it minimal and deterministic.
+        if (PUBLIC_KEY) {
+          try {
+            emailjs.init(PUBLIC_KEY);
+          } catch {
+            // ignore init errors; send will surface useful errors
+          }
+        }
+
+        await emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams);
         setSubmitStatus('success');
       }
 
