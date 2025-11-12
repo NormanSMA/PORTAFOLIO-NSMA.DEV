@@ -21,7 +21,8 @@ export function Navbar() {
     { id: 'about', label: t('nav.about') },
     { id: 'services', label: t('nav.services') },
     { id: 'projects', label: t('nav.projects') },
-    { id: 'experience', label: t('nav.experience') },
+  // Point 'experience' nav item to the current Education & Skills section
+  { id: 'education-skills', label: t('nav.experience') },
     { id: 'contact', label: t('nav.contact') },
   ], [t]);
 
