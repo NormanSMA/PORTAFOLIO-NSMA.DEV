@@ -1,29 +1,13 @@
 import { useLanguage } from '../../hooks';
 import { Container } from '../atoms';
 import { useRef, useEffect, useMemo, useState } from 'react';
-import { CodeIcon, DatabaseIcon, MobileIcon } from '../atoms/icons';
 import { typography } from '../../config/typography';
+import { getServices } from '../../data/services';
 
 export function Services() {
   const { t } = useLanguage();
 
-  const services = useMemo(() => [
-    {
-      icon: <CodeIcon />,
-      title: t('services.webDev.title'),
-      description: t('services.webDev.description'),
-    },
-    {
-      icon: <DatabaseIcon />,
-      title: t('services.backend.title'),
-      description: t('services.backend.description'),
-    },
-    {
-      icon: <MobileIcon />,
-      title: t('services.deployment.title'),
-      description: t('services.deployment.description'),
-    },
-  ], [t]);
+  const services = useMemo(() => getServices(t), [t]);
 
   // refs & visibility for entry animations (staggered)
   const itemRefs = useRef<Array<HTMLElement | null>>([]);
@@ -85,6 +69,8 @@ export function Services() {
               const titleId = `service-title-${index}`;
               const isVisible = visible[index];
               const delayStyle = { transitionDelay: `${index * 120}ms` } as React.CSSProperties;
+              const Icon = service.icon;
+              
               return (
                 <article
                   key={index}
@@ -99,7 +85,7 @@ export function Services() {
                   <div className="inline-flex items-center justify-center w-14 h-14 md:w-16 md:h-16 rounded-full bg-blue-500/10 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400">
                     {/* Icons are decorative here */}
                     <span aria-hidden>
-                      {service.icon}
+                      <Icon />
                     </span>
                   </div>
 

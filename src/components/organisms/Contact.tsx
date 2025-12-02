@@ -3,6 +3,7 @@ import emailjs from '@emailjs/browser';
 import { useLanguage } from '../../hooks';
 import { Container } from '../atoms';
 import { typography } from '../../config/typography';
+import { generateEmailTemplate } from '../../utils/email';
 
 interface FormData {
   fullName: string;
@@ -16,6 +17,9 @@ interface FormData {
   };
   message: string;
 }
+
+// Fallback owner email if not in env
+const OWNER_EMAIL = import.meta.env.VITE_OWNER_EMAIL || 'norman.martinez003@gmail.com';
 
 export function Contact() {
   const { t } = useLanguage();
@@ -39,7 +43,7 @@ export function Contact() {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // EmailJS configuration - set these in your .env (Vite) as VITE_EMAILJS_*
+    // EmailJS configuration
     const SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID as string | undefined;
     const TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID as string | undefined;
     const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY as string | undefined;
@@ -50,7 +54,15 @@ export function Contact() {
       .map(([k]) => t(`contact.form.reasons.${k}.title` as const))
       .join(', ');
 
-    // Build template params that match the EmailJS template variables
+    // Generate HTML content
+    const htmlContent = generateEmailTemplate({
+      fullName: formData.fullName,
+      email: formData.email,
+      message: formData.message,
+      reasons: selectedReasons || 'No especificado',
+    });
+
+    // Build template params
     const templateParams = {
       from_name: formData.fullName,
       from_email: formData.email,
@@ -58,36 +70,20 @@ export function Contact() {
       message: formData.message,
       reasons: selectedReasons || 'No especificado',
       received_at: new Date().toLocaleString(),
-      owner_email: 'norman.martinez003@gmail.com', // target owner email (for your template)
-      // html_content: you can include an HTML version if your EmailJS template uses it
-      html_content: `
-        <div style="font-family: Arial, sans-serif; color: #111827;">
-          <h2 style="color:#0ea5a4;">Nuevo mensaje desde el portafolio</h2>
-          <p><strong>Nombre:</strong> ${formData.fullName}</p>
-          <p><strong>Email:</strong> ${formData.email}</p>
-          <p><strong>Motivos:</strong> ${selectedReasons || 'No especificado'}</p>
-          <hr />
-          <h3 style="margin-bottom:6px;">Mensaje:</h3>
-          <div style="background:#f8fafc;padding:12px;border-radius:6px;border:1px solid #e6eef0;">
-            <p style="margin:0;white-space:pre-wrap;">${formData.message}</p>
-          </div>
-          <p style="font-size:12px;color:#6b7280;margin-top:12px;">Recibido: ${new Date().toLocaleString()}</p>
-        </div>
-      `,
+      owner_email: OWNER_EMAIL,
+      html_content: htmlContent,
     };
 
     try {
       if (!SERVICE_ID || !TEMPLATE_ID || !PUBLIC_KEY) {
         console.warn('EmailJS env vars not set. Skipping email send.');
-        // If env vars are missing, fallback to simulated success so UX isn't blocked.
         setSubmitStatus('success');
       } else {
-        // Initialize EmailJS (if provided) and send. Keep it minimal and deterministic.
         if (PUBLIC_KEY) {
           try {
             emailjs.init(PUBLIC_KEY);
           } catch {
-            // ignore init errors; send will surface useful errors
+            // ignore init errors
           }
         }
 

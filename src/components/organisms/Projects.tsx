@@ -2,7 +2,8 @@ import { useState, useRef, useEffect } from 'react';
 import { useLanguage } from '../../hooks';
 import { Container } from '../atoms';
 import { typography } from '../../config/typography';
-import { ExternalLinkIcon, WordPressIcon, AndroidIcon } from '../atoms/icons';
+import { ExternalLinkIcon } from '../atoms/icons';
+import { getProjects } from '../../data/projects';
 
 export function Projects() {
   const { t } = useLanguage();
@@ -10,41 +11,7 @@ export function Projects() {
   const [maxLines, setMaxLines] = useState(3);
   const referenceTextRef = useRef<HTMLParagraphElement>(null);
 
-  const projects = [
-    {
-      id: 'systech',
-      title: 'SYSTECH UAM',
-      category: 'WordPress',
-      shortDescription: t('projects.systech.shortDescription'),
-      fullDescription: t('projects.systech.fullDescription'),
-      image: '/Systech-UAM.png',
-      url: 'https://systech.uam.edu.ni/',
-      technologies: ['WordPress', 'PHP', 'MySQL', 'CSS'],
-      icon: WordPressIcon,
-    },
-    {
-      id: 'pantano',
-      title: 'Hotel El Pantano',
-      category: 'WordPress',
-      shortDescription: t('projects.pantano.shortDescription'),
-      fullDescription: t('projects.pantano.fullDescription'),
-      image: '/hotel-ElPantano.png',
-      url: 'https://www.hotel-el-pantano.org/',
-      technologies: ['WordPress', 'WooCommerce', 'PHP', 'SEO'],
-      icon: WordPressIcon,
-    },
-    {
-      id: 'bolsa',
-      title: t('projects.bolsa.title'),
-      category: 'Android',
-      shortDescription: t('projects.bolsa.description'),
-      fullDescription: null,
-      image: '/Bolsa-De-TrabajoUAM.png',
-      url: null,
-      technologies: ['Android', 'Java', 'SQL Server', 'Spring Boot'],
-      icon: AndroidIcon,
-    },
-  ];
+  const projects = getProjects(t);
 
   // Calculate max lines based on reference text (Android card)
   useEffect(() => {
@@ -238,23 +205,6 @@ export function Projects() {
           </div>
         </div>
       </Container>
-
-      {/* Custom scrollbar styles */}
-  <style>{`
-        .custom-scrollbar::-webkit-scrollbar {
-          width: 6px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-          background: transparent;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: rgba(156, 163, 175, 0.5);
-          border-radius: 3px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: rgba(156, 163, 175, 0.7);
-        }
-      `}</style>
     </section>
   );
 }

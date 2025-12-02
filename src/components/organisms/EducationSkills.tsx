@@ -2,33 +2,11 @@ import { useState } from 'react';
 import { useLanguage } from '../../hooks';
 import { Container } from '../atoms';
 import { typography } from '../../config/typography';
-import {
-  ReactIcon,
-  JavaIcon,
-  HtmlIcon,
-  CssIcon,
-  PhpIcon,
-  SqlIcon,
-  AwsIcon,
-  WordPressIcon,
-  PostgresIcon,
-} from '../atoms/icons/tech';
+import { technicalSkills } from '../../data/skills';
 
 export function EducationSkills() {
   const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState<'education' | 'skills'>('education');
-
-  const technicalSkills = [
-    { name: 'React', icon: <ReactIcon /> },
-    { name: 'Java', icon: <JavaIcon /> },
-    { name: 'HTML', icon: <HtmlIcon /> },
-    { name: 'CSS', icon: <CssIcon /> },
-    { name: 'PHP', icon: <PhpIcon /> },
-    { name: 'SQL Server', icon: <SqlIcon /> },
-  { name: 'AWS', icon: <AwsIcon /> },
-    { name: 'PostgreSQL', icon: <PostgresIcon /> },
-    { name: 'WordPress', icon: <WordPressIcon /> },
-  ];
 
   return (
     <section id="education-skills" className="py-16 md:py-24 bg-gray-50 dark:bg-gray-900/95 relative overflow-hidden">
@@ -154,19 +132,22 @@ export function EducationSkills() {
 
                     {/* Grid de tecnologías con iconos */}
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 mb-8">
-                      {technicalSkills.map((skill, index) => (
-                        <div
-                          key={index}
-                          className="flex flex-col items-center gap-3 p-4 rounded-xl bg-gray-50 dark:bg-gray-700/50 hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-all duration-300 hover:-translate-y-1 group"
-                        >
-                          <div className="w-12 h-12 group-hover:scale-110 transition-transform duration-300">
-                            {skill.icon}
+                      {technicalSkills.map((skill, index) => {
+                        const Icon = skill.icon;
+                        return (
+                          <div
+                            key={index}
+                            className="flex flex-col items-center gap-3 p-4 rounded-xl bg-gray-50 dark:bg-gray-700/50 hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-all duration-300 hover:-translate-y-1 group"
+                          >
+                            <div className="w-12 h-12 group-hover:scale-110 transition-transform duration-300">
+                              <Icon />
+                            </div>
+                            <span className={`${typography.small} text-gray-900 dark:text-white text-center font-medium`}>
+                              {skill.name}
+                            </span>
                           </div>
-                          <span className={`${typography.small} text-gray-900 dark:text-white text-center font-medium`}>
-                            {skill.name}
-                          </span>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
 
                     {/* Detalles adicionales */}
