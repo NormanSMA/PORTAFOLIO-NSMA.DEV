@@ -1,5 +1,3 @@
-import React from 'react';
-
 // We'll use a simple object structure or a function if we need components
 // Since the icons were inline SVGs, we might need to export them as components or keep them here.
 // For simplicity and cleanliness, let's assume we want to keep the data file clean.
