@@ -56,6 +56,14 @@ export default defineConfig({
   build: {
     sourcemap: false,
     // Use esbuild minifier (no extra dependency required) and drop console/debugger.
-    minify: 'esbuild'
+    minify: 'esbuild',
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom', 'react-router-dom'],
+          ui: ['framer-motion', 'lucide-react'],
+        },
+      },
+    },
   }
 })

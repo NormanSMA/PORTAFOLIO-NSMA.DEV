@@ -32,6 +32,7 @@ export function PixelBlast({
     if (!ctx) return;
 
     let animationFrameId: number;
+    let isVisible = true; // Track visibility
     let particles: Array<{
       x: number;
       y: number;
@@ -41,8 +42,6 @@ export function PixelBlast({
     }> = [];
 
     const resize = () => {
-      // Try to size to the canvas's offsetParent (so the effect
-      // is contained inside the Hero section) falling back to window
       const parent = canvas.parentElement;
       if (parent) {
         canvas.width = parent.clientWidth;
@@ -92,9 +91,10 @@ export function PixelBlast({
     };
 
     const animate = () => {
+      if (!isVisible) return; // Stop loop if not visible
+
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Crear nuevas partículas aleatorias
       if (Math.random() < 0.1) {
         particles.push(
           createParticle(
@@ -104,7 +104,6 @@ export function PixelBlast({
         );
       }
 
-      // Actualizar y dibujar partículas
       particles = particles.filter((particle) => {
         particle.x += particle.vx;
         particle.y += particle.vy;
@@ -122,11 +121,25 @@ export function PixelBlast({
 
     resize();
     window.addEventListener('resize', resize);
-  animate();
+
+    // Intersection Observer to pause animation when off-screen
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        isVisible = entry.isIntersecting;
+        if (isVisible) {
+          animate(); // Restart loop
+        } else {
+          cancelAnimationFrame(animationFrameId); // Pause loop
+        }
+      },
+      { threshold: 0 }
+    );
+    observer.observe(canvas);
 
     return () => {
       window.removeEventListener('resize', resize);
       cancelAnimationFrame(animationFrameId);
+      observer.disconnect();
     };
   }, [variant, pixelSize, color]);
 
