@@ -1,73 +1,62 @@
-# React + TypeScript + Vite
+# Portafolio Profesional - NSMA
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Bienvenido al repositorio de mi portafolio profesional. Este proyecto es una aplicación web moderna diseñada para mostrar mis proyectos, habilidades y experiencia, construida con un stack tecnológico robusto y eficiente.
 
-Currently, two official plugins are available:
+## 🛠️ Tecnologías
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Este proyecto está construido con:
 
-## React Compiler
+- **React**: Biblioteca para interfaces de usuario.
+- **TypeScript**: Estipado estático para un código más seguro y mantenible.
+- **Vite**: Entorno de desarrollo ultrarrápido.
+- **Tailwind CSS**: Framework de utilidad para estilos modernos y responsivos.
+- **Framer Motion**: Para animaciones fluidas y atractivas.
+- **i18next**: Soporte para internacionalización (Multi-idioma).
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 🚀 Guía de Ejecución
 
-## Expanding the ESLint configuration
+Sigue estos pasos para ejecutar el proyecto en tu entorno local.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Requisitos
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+- **Node.js** (v18 o superior)
+- **npm**
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### 1. Instalación
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+Clona el repositorio y ubícate en la carpeta del proyecto, luego instala las dependencias:
+
+```bash
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### 2. Configuración (Opcional)
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Si deseas probar el formulario de contacto (EmailJS), crea un archivo `.env` en la raíz copiando el ejemplo:
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+cp .env.example .env
 ```
+
+Y configura tus variables `VITE_EMAILJS_*`.
+
+### 3. Desarrollo
+
+Para iniciar el servidor de desarrollo:
+
+```bash
+npm run dev
+```
+
+Visita **http://localhost:5173/** en tu navegador.
+
+## 📜 Scripts Disponibles
+
+- `npm run dev`: Inicia el servidor de desarrollo.
+- `npm run build`: Compila la aplicación para producción.
+- `npm run preview`: Vista previa local de la build de producción.
+- `npm run lint`: Ejecuta ESLint para verificar la calidad del código.
+
+---
+
+© 2024 NSMA.
