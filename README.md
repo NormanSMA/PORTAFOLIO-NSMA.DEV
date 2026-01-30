@@ -1,62 +1,34 @@
-# Portafolio Profesional - NSMA
+# Portafolio Personal - Norman Martínez
 
-Bienvenido al repositorio de mi portafolio profesional. Este proyecto es una aplicación web moderna diseñada para mostrar mis proyectos, habilidades y experiencia, construida con un stack tecnológico robusto y eficiente.
+Este repositorio contiene el código fuente de mi portafolio personal, diseñado y construido para mostrar mi experiencia, habilidades y proyectos como Ingeniero en Sistemas de Información y Desarrollador Full Stack.
 
-## 🛠️ Tecnologías
+## � Sobre el Proyecto
 
-Este proyecto está construido con:
+Una plataforma web moderna, rápida y totalmente responsiva, desarrollada con el objetivo de ofrecer una experiencia de usuario premium y fluida. El diseño se centra en la claridad, la estética minimalista y la accesibilidad.
 
-- **React**: Biblioteca para interfaces de usuario.
-- **TypeScript**: Estipado estático para un código más seguro y mantenible.
-- **Vite**: Entorno de desarrollo ultrarrápido.
-- **Tailwind CSS**: Framework de utilidad para estilos modernos y responsivos.
-- **Framer Motion**: Para animaciones fluidas y atractivas.
-- **i18next**: Soporte para internacionalización (Multi-idioma).
+📌 **Demo en vivo:** [portafolio-nsma-dev.vercel.app](https://portafolio-nsma-dev.vercel.app/)
 
-## 🚀 Guía de Ejecución
+## �️ Tecnologías
 
-Sigue estos pasos para ejecutar el proyecto en tu entorno local.
+Este proyecto ha sido construido utilizando un stack moderno:
 
-### Requisitos
+![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-B73BFE?style=for-the-badge&logo=vite&logoColor=FFD62E)
+![Framer Motion](https://img.shields.io/badge/Framer_Motion-0055FF?style=for-the-badge&logo=framer&logoColor=white)
 
-- **Node.js** (v18 o superior)
-- **npm**
+## 👨‍💻 Sobre Mí
 
-### 1. Instalación
+**Norman Smith Martínez Acevedo**
+_Ingeniero en Sistemas de Información (5to Año)_
 
-Clona el repositorio y ubícate en la carpeta del proyecto, luego instala las dependencias:
+Desarrollador web full-stack apasionado por transformar ideas en productos digitales escalables y medibles. Con experiencia en el desarrollo de soluciones a medida, desde landing pages hasta plataformas complejas de gestión.
 
-```bash
-npm install
-```
-
-### 2. Configuración (Opcional)
-
-Si deseas probar el formulario de contacto (EmailJS), crea un archivo `.env` en la raíz copiando el ejemplo:
-
-```bash
-cp .env.example .env
-```
-
-Y configura tus variables `VITE_EMAILJS_*`.
-
-### 3. Desarrollo
-
-Para iniciar el servidor de desarrollo:
-
-```bash
-npm run dev
-```
-
-Visita **http://localhost:5173/** en tu navegador.
-
-## 📜 Scripts Disponibles
-
-- `npm run dev`: Inicia el servidor de desarrollo.
-- `npm run build`: Compila la aplicación para producción.
-- `npm run preview`: Vista previa local de la build de producción.
-- `npm run lint`: Ejecuta ESLint para verificar la calidad del código.
+- **Ubicación:** Nicaragua
+- **Contacto:** norman.martinez003@gmail.com
+- **LinkedIn:** [linkedin.com/in/norman-martinez](https://www.linkedin.com/in/norman-martinez)
 
 ---
 
-© 2024 NSMA.
+© 2026 Norman Martínez. Todos los derechos reservados.

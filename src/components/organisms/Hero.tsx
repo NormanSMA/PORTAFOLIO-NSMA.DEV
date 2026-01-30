@@ -1,6 +1,5 @@
 import { useLanguage } from '../../hooks';
 import { Container, Button } from '../atoms';
-import { PixelBlast } from '../effects';
 import { typography } from '../../config/typography';
 
 export function Hero() {
@@ -13,9 +12,6 @@ export function Hero() {
 
   return (
     <section id="home" className="relative min-h-screen flex items-center overflow-hidden bg-light-bg dark:bg-dark-bg">
-      {/* Fondo animado - Solo en Hero */}
-      <PixelBlast variant="circle" pixelSize={3} color="#3B82F6" />
-      
       {/* Letra grande de fondo - Oculta en móvil, visible en tablet+ */}
       <div className="hidden md:flex absolute inset-0 items-center justify-center pointer-events-none opacity-5 dark:opacity-10" aria-hidden>
         <span className="text-[25rem] lg:text-[35rem] xl:text-[40rem] font-bold text-light-text dark:text-dark-text select-none">
@@ -55,13 +51,12 @@ export function Hero() {
             <div className="space-y-2">
               <p className={`${typography.tag} text-primary-600 dark:text-primary-400 mb-4`}>{t('hero.tag')}</p>
               <h1 className={`${typography.sectionTitle} text-light-text dark:text-dark-text mb-6`}>Norman Martínez</h1>
-              {/* Removed hero.title per design — if you want a subtitle, add a brief tagline here */}
             </div>
 
             {/* Descripción */}
             <p className={`${typography.body} text-light-textSecondary dark:text-dark-textSecondary max-w-2xl leading-relaxed`}>{t('hero.description')}</p>
 
-            {/* Botones CTA - Responsive (mantener igual) */}
+            {/* Botones CTA */}
             <div className="flex flex-col sm:flex-row gap-3 md:gap-4 pt-2 md:pt-4">
               <Button
                 variant="primary"

@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
-import { useTheme, useLanguage, useScrollPosition } from '../../hooks';
-import { Logo, Container, StarBorder } from '../atoms';
-import { SunIcon, MoonIcon } from '../atoms/icons';
+import { useLanguage, useScrollPosition } from '../../hooks';
+import { Logo, Container, StarBorder, AnimatedThemeToggler } from '../atoms';
 import { cn, scrollToElement } from '../../utils/helpers';
 
 export function Navbar() {
@@ -9,7 +8,6 @@ export function Navbar() {
   const [isVisible, setIsVisible] = useState(true);
   const lastScrollY = useRef(0);
   
-  const { theme, toggleTheme } = useTheme();
   const { language, toggleLanguage, t } = useLanguage();
   const scrollPosition = useScrollPosition();
 
@@ -124,17 +122,10 @@ export function Navbar() {
           {/* Theme & Language Toggles with StarBorder */}
           <div className="hidden md:flex items-center gap-4">
             <StarBorder color="#3B82F6" speed="8s" thickness={1}>
-              <button
-                onClick={toggleTheme}
+              <AnimatedThemeToggler
                 className="p-2 rounded-lg bg-light-card dark:bg-dark-card hover:bg-primary-500/10 transition-colors"
-                aria-label="Toggle theme"
-              >
-                {theme === 'dark' ? (
-                  <SunIcon size={20} className="text-light-text dark:text-white" />
-                ) : (
-                  <MoonIcon size={20} className="text-light-text dark:text-white" />
-                )}
-              </button>
+                iconSize={20}
+              />
             </StarBorder>
 
             <StarBorder color="#6366F1" speed="8s" thickness={1}>
@@ -189,12 +180,10 @@ export function Navbar() {
 
             <div className="flex gap-2 px-4 pt-2">
               <StarBorder color="#3B82F6" speed="8s" thickness={1} className="flex-1">
-                <button
-                  onClick={toggleTheme}
+                <AnimatedThemeToggler
                   className="w-full p-2 rounded-lg bg-light-card dark:bg-dark-card hover:bg-primary-500/10 transition-colors flex items-center justify-center gap-2"
-                >
-                  {theme === 'dark' ? <><SunIcon size={18} className="text-light-text dark:text-white" /><span>Light</span></> : <><MoonIcon size={18} className="text-light-text dark:text-white" /><span>Dark</span></>}
-                </button>
+                  iconSize={18}
+                />
               </StarBorder>
               
               <StarBorder color="#6366F1" speed="8s" thickness={1} className="flex-1">

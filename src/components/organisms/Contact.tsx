@@ -2,7 +2,6 @@ import { useState } from 'react';
 import emailjs from '@emailjs/browser';
 import { useLanguage } from '../../hooks';
 import { Container } from '../atoms';
-import { typography } from '../../config/typography';
 import { generateEmailTemplate } from '../../utils/email';
 
 interface FormData {
@@ -11,36 +10,66 @@ interface FormData {
   contactReasons: {
     proposal: boolean;
     collaboration: boolean;
-    recruitment: boolean;
     advisory: boolean;
     others: boolean;
   };
   message: string;
 }
 
+interface FormErrors {
+  fullName?: string;
+  email?: string;
+  message?: string;
+}
+
 // Fallback owner email if not in env
 const OWNER_EMAIL = import.meta.env.VITE_OWNER_EMAIL || 'norman.martinez003@gmail.com';
 
 export function Contact() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [formData, setFormData] = useState<FormData>({
     fullName: '',
     email: '',
     contactReasons: {
       proposal: false,
       collaboration: false,
-      recruitment: false,
       advisory: false,
       others: false,
     },
     message: '',
   });
 
+  const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
 
+  // Custom validation
+  const validateForm = (): boolean => {
+    const newErrors: FormErrors = {};
+    
+    if (!formData.fullName.trim()) {
+      newErrors.fullName = language === 'es' ? 'El nombre es requerido' : 'Name is required';
+    }
+    
+    if (!formData.email.trim()) {
+      newErrors.email = language === 'es' ? 'El correo es requerido' : 'Email is required';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = language === 'es' ? 'Correo inválido' : 'Invalid email';
+    }
+    
+    if (!formData.message.trim()) {
+      newErrors.message = language === 'es' ? 'El mensaje es requerido' : 'Message is required';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!validateForm()) return;
+    
     setIsSubmitting(true);
 
     // EmailJS configuration
@@ -49,9 +78,16 @@ export function Contact() {
     const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY as string | undefined;
 
     // Build readable list of selected reasons
+    const reasonLabels: Record<string, string> = {
+      proposal: t('contact.form.reasons.proposal.title'),
+      collaboration: t('contact.form.reasons.collaboration.title'),
+      advisory: t('contact.form.reasons.advisory.title'),
+      others: t('contact.form.reasons.others.title'),
+    };
+
     const selectedReasons = Object.entries(formData.contactReasons)
       .filter(([, v]) => v)
-      .map(([k]) => t(`contact.form.reasons.${k}.title` as const))
+      .map(([k]) => reasonLabels[k] || k)
       .join(', ');
 
     // Generate HTML content
@@ -98,12 +134,12 @@ export function Contact() {
         contactReasons: {
           proposal: false,
           collaboration: false,
-          recruitment: false,
           advisory: false,
           others: false,
         },
         message: '',
       });
+      setErrors({});
 
       // Reset success message after 5 seconds
       setTimeout(() => setSubmitStatus('idle'), 5000);
@@ -115,7 +151,7 @@ export function Contact() {
     }
   };
 
-  const handleCheckboxChange = (reason: keyof FormData['contactReasons']) => {
+  const toggleReason = (reason: keyof FormData['contactReasons']) => {
     setFormData(prev => ({
       ...prev,
       contactReasons: {
@@ -125,155 +161,177 @@ export function Contact() {
     }));
   };
 
+  const reasons: Array<{ key: keyof FormData['contactReasons']; label: string }> = [
+    { key: 'proposal', label: t('contact.form.reasons.proposal.title') },
+    { key: 'collaboration', label: t('contact.form.reasons.collaboration.title') },
+    { key: 'advisory', label: t('contact.form.reasons.advisory.title') },
+    { key: 'others', label: t('contact.form.reasons.others.title') },
+  ];
+
+  // Clear error when user starts typing
+  const handleInputChange = (field: keyof FormErrors, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+    if (errors[field]) {
+      setErrors(prev => ({ ...prev, [field]: undefined }));
+    }
+  };
+
   return (
-    <section id="contact" className="py-16 md:py-24 bg-gray-50 dark:bg-gray-900/95">
+    <section id="contact" className="py-16 md:py-24 bg-light-bg dark:bg-dark-bg">
       <Container>
-        <div className="max-w-4xl mx-auto">
-          {/* Header */}
-          <div className="text-center mb-12 md:mb-16">
-            <p className="text-sm uppercase tracking-widest text-gray-500 dark:text-gray-400 mb-4">
-              {t('contact.label')}
-            </p>
-            <h2 className={`${typography.sectionTitle} text-light-text dark:text-dark-text mb-4`}>
-              {t('contact.title')}
-            </h2>
-            <p className={`${typography.sectionSubtitle} text-light-textSecondary dark:text-dark-textSecondary max-w-2xl mx-auto px-4`}>
-              {t('contact.subtitle')}
-            </p>
+        {/* Main Card Container */}
+        <div className="max-w-6xl mx-auto shadow-2xl rounded-2xl overflow-hidden flex flex-col lg:flex-row min-h-[600px]">
+          
+          {/* Left Panel - Dark/Light theme matching submit button */}
+          <div className="bg-light-text dark:bg-dark-text w-full lg:w-2/5 p-8 lg:p-12 flex flex-col justify-center text-light-bg dark:text-dark-bg relative overflow-hidden">
+            {/* Decorative circles */}
+            <div className="absolute top-[-20px] right-[-20px] w-32 h-32 rounded-full bg-light-bg dark:bg-dark-bg opacity-10 pointer-events-none"></div>
+            <div className="absolute bottom-[-40px] left-[-40px] w-64 h-64 rounded-full bg-light-bg dark:bg-dark-bg opacity-10 pointer-events-none"></div>
+            
+            <div className="relative z-10 space-y-6">
+              <h3 className="text-lg font-medium tracking-wide uppercase opacity-90">
+                {t('contact.label')}
+              </h3>
+              <h2 className="text-4xl md:text-5xl font-bold leading-tight">
+                {t('contact.title')}
+              </h2>
+              <p className="text-lg md:text-xl opacity-90 leading-relaxed font-light">
+                {t('contact.subtitle')}
+              </p>
+              
+              {/* Chat Icon */}
+              <div className="mt-8 opacity-80">
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-16 h-16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                </svg>
+              </div>
+            </div>
           </div>
 
-          {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Name & Email - 2 columns */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Full Name */}
-              <div>
-                <label htmlFor="fullName" className={`${typography.body} text-light-text dark:text-dark-text mb-2 block font-medium`}>
-                  {t('contact.form.fullName')}
-                </label>
-                <input
-                  type="text"
-                  id="fullName"
-                  required
-                  value={formData.fullName}
-                  onChange={(e) => setFormData(prev => ({ ...prev, fullName: e.target.value }))}
-                  placeholder={t('contact.form.fullNamePlaceholder')}
-                  className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
-                />
-              </div>
-
-              {/* Email */}
-              <div>
-                <label htmlFor="email" className={`${typography.body} text-light-text dark:text-dark-text mb-2 block font-medium`}>
-                  {t('contact.form.email')}
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  required
-                  value={formData.email}
-                  onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-                  placeholder={t('contact.form.emailPlaceholder')}
-                  className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
-                />
-              </div>
-            </div>
-
-            {/* Contact Reasons - card style selectable options */}
-            <div>
-              <label className={`${typography.body} text-light-text dark:text-dark-text mb-4 block font-medium`}>
-                {t('contact.form.reason')}
-              </label>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {(
-                  (['proposal', 'collaboration', 'recruitment', 'advisory', 'others'] as Array<keyof FormData['contactReasons']>)
-                ).map((key) => {
-                  const title = t(`contact.form.reasons.${key}.title` as const);
-                  const desc = t(`contact.form.reasons.${key}.desc` as const);
-                  return (
-                    <label
-                      key={key}
-                      className={`flex flex-col gap-2 p-4 rounded-lg border transition-all cursor-pointer select-none shadow-sm
-                        ${formData.contactReasons[key] ? 'bg-primary-600/10 border-primary-600 dark:bg-primary-500/10' : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700'}
-                        hover:shadow-md`}
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <input
-                            type="checkbox"
-                            checked={formData.contactReasons[key]}
-                            onChange={() => handleCheckboxChange(key)}
-                            className="sr-only"
-                            aria-hidden
-                          />
-                          <div className={`w-6 h-6 rounded flex items-center justify-center border transition-colors ${formData.contactReasons[key] ? 'bg-primary-600 border-primary-600 text-white' : 'border-gray-300 dark:border-gray-600 text-gray-600'}`}>
-                            {formData.contactReasons[key] ? (
-                              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 13l4 4L19 7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                            ) : (
-                              <svg className="w-4 h-4 opacity-30" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="6" strokeWidth="1" /></svg>
-                            )}
-                          </div>
-                          <div>
-                            <div className={`font-medium ${formData.contactReasons[key] ? 'text-primary-600 dark:text-primary-300' : 'text-gray-700 dark:text-gray-300'}`}>
-                              {title}
-                            </div>
-                            <div className="text-xs text-gray-500 dark:text-gray-400">{desc}</div>
-                          </div>
-                        </div>
-                        {formData.contactReasons[key] && (
-                          <div className="text-sm text-primary-600">✓</div>
-                        )}
-                      </div>
-                    </label>
-                  );
-                })}
-              </div>
-
-              <p className="mt-3 text-sm text-gray-500 dark:text-gray-400">{t('contact.form.selectHint')}</p>
-
-              <div className="mt-3 flex flex-wrap gap-2">
-                {Object.entries(formData.contactReasons).filter(([,v])=>v).map(([k])=> (
-                  <button
-                    key={k}
-                    type="button"
-                    onClick={() => handleCheckboxChange(k as keyof FormData['contactReasons'])}
-                    className="px-3 py-1 rounded-full bg-primary-600 text-white text-sm transition-transform hover:scale-105"
+          {/* Right Panel - Form */}
+          <div className="bg-light-card dark:bg-dark-card w-full lg:w-3/5 p-8 lg:p-12">
+            <form onSubmit={handleSubmit} className="space-y-6" noValidate>
+              {/* Name & Email - 2 columns on desktop, 1 on mobile */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Full Name */}
+                <div className="space-y-2">
+                  <label 
+                    htmlFor="fullName" 
+                    className="block text-sm font-medium text-light-text dark:text-dark-text"
                   >
-                    {t(`contact.form.reasons.${k}.title` as const)}
-                  </button>
-                ))}
+                    {t('contact.form.fullName')}
+                  </label>
+                  <input
+                    type="text"
+                    id="fullName"
+                    value={formData.fullName}
+                    onChange={(e) => handleInputChange('fullName', e.target.value)}
+                    placeholder={t('contact.form.fullNamePlaceholder')}
+                    className={`w-full px-4 py-3 rounded-lg bg-light-bg dark:bg-dark-bg border text-light-text dark:text-dark-text placeholder-light-textSecondary dark:placeholder-dark-textSecondary focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-colors
+                      ${errors.fullName ? 'border-red-500' : 'border-light-border dark:border-dark-border'}
+                    `}
+                  />
+                  {errors.fullName && (
+                    <p className="text-sm text-red-500 flex items-center gap-1">
+                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                      </svg>
+                      {errors.fullName}
+                    </p>
+                  )}
+                </div>
+
+                {/* Email */}
+                <div className="space-y-2">
+                  <label 
+                    htmlFor="email" 
+                    className="block text-sm font-medium text-light-text dark:text-dark-text"
+                  >
+                    {t('contact.form.email')}
+                  </label>
+                  <input
+                    type="email"
+                    id="email"
+                    value={formData.email}
+                    onChange={(e) => handleInputChange('email', e.target.value)}
+                    placeholder={t('contact.form.emailPlaceholder')}
+                    className={`w-full px-4 py-3 rounded-lg bg-light-bg dark:bg-dark-bg border text-light-text dark:text-dark-text placeholder-light-textSecondary dark:placeholder-dark-textSecondary focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-colors
+                      ${errors.email ? 'border-red-500' : 'border-light-border dark:border-dark-border'}
+                    `}
+                  />
+                  {errors.email && (
+                    <p className="text-sm text-red-500 flex items-center gap-1">
+                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                      </svg>
+                      {errors.email}
+                    </p>
+                  )}
+                </div>
               </div>
-            </div>
 
-            {/* Message */}
-            <div>
-              <label htmlFor="message" className={`${typography.body} text-light-text dark:text-dark-text mb-2 block font-medium`}>
-                {t('contact.form.message')}
-              </label>
-              <textarea
-                id="message"
-                required
-                rows={6}
-                value={formData.message}
-                onChange={(e) => setFormData(prev => ({ ...prev, message: e.target.value }))}
-                placeholder={t('contact.form.messagePlaceholder')}
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all resize-none"
-              />
-            </div>
+              {/* Contact Reasons - Chips */}
+              <div className="space-y-3">
+                <label className="block text-sm font-medium text-light-text dark:text-dark-text">
+                  {t('contact.form.reason')}
+                </label>
+                <div className="flex flex-wrap gap-3">
+                  {reasons.map(({ key, label }) => (
+                    <button
+                      key={key}
+                      type="button"
+                      onClick={() => toggleReason(key)}
+                      className={`px-5 py-2 rounded-full text-sm font-medium transition-all duration-200
+                        ${formData.contactReasons[key]
+                          ? 'bg-primary-500 text-white border border-primary-500 hover:bg-primary-600'
+                          : 'bg-light-bg dark:bg-dark-bg text-light-textSecondary dark:text-dark-textSecondary border border-light-border dark:border-dark-border hover:bg-light-border dark:hover:bg-dark-border'
+                        }
+                        focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 dark:focus:ring-offset-dark-card
+                      `}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              </div>
 
-            {/* Submit Button */}
-            <div className="flex flex-col items-center gap-4">
+              {/* Message */}
+              <div className="space-y-2">
+                <label 
+                  htmlFor="message" 
+                  className="block text-sm font-medium text-light-text dark:text-dark-text"
+                >
+                  {t('contact.form.message')}
+                </label>
+                <textarea
+                  id="message"
+                  rows={5}
+                  value={formData.message}
+                  onChange={(e) => handleInputChange('message', e.target.value)}
+                  placeholder={t('contact.form.messagePlaceholder')}
+                  className={`w-full px-4 py-3 rounded-lg bg-light-bg dark:bg-dark-bg border text-light-text dark:text-dark-text placeholder-light-textSecondary dark:placeholder-dark-textSecondary focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-colors resize-none
+                    ${errors.message ? 'border-red-500' : 'border-light-border dark:border-dark-border'}
+                  `}
+                />
+                {errors.message && (
+                  <p className="text-sm text-red-500 flex items-center gap-1">
+                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                    </svg>
+                    {errors.message}
+                  </p>
+                )}
+              </div>
+
+              {/* Submit Button */}
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className={`
-                  px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-300
+                className={`w-full font-bold py-4 rounded-lg shadow-lg transition-all duration-200
                   ${isSubmitting
-                    ? 'bg-gray-400 cursor-not-allowed'
-                    : 'bg-primary-600 hover:bg-primary-700 dark:bg-primary-500 dark:hover:bg-primary-600 hover:scale-105 active:scale-95'
+                    ? 'bg-gray-400 cursor-not-allowed text-white'
+                    : 'bg-light-text dark:bg-dark-text text-light-bg dark:text-dark-bg hover:shadow-xl hover:scale-[1.01] active:scale-[0.99]'
                   }
-                  text-white shadow-lg hover:shadow-xl
                 `}
               >
                 {isSubmitting ? t('contact.form.sending') : t('contact.form.submit')}
@@ -281,17 +339,27 @@ export function Contact() {
 
               {/* Success/Error Messages */}
               {submitStatus === 'success' && (
-                <p className="text-green-600 dark:text-green-400 font-medium">
-                  {t('contact.form.successMessage')}
-                </p>
+                <div className="p-4 rounded-lg bg-green-100 dark:bg-green-900/30 border border-green-300 dark:border-green-700">
+                  <p className="text-center text-green-700 dark:text-green-400 font-medium flex items-center justify-center gap-2">
+                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                    </svg>
+                    {t('contact.form.successMessage')}
+                  </p>
+                </div>
               )}
               {submitStatus === 'error' && (
-                <p className="text-red-600 dark:text-red-400 font-medium">
-                  {t('contact.form.errorMessage')}
-                </p>
+                <div className="p-4 rounded-lg bg-red-100 dark:bg-red-900/30 border border-red-300 dark:border-red-700">
+                  <p className="text-center text-red-700 dark:text-red-400 font-medium flex items-center justify-center gap-2">
+                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                    </svg>
+                    {t('contact.form.errorMessage')}
+                  </p>
+                </div>
               )}
-            </div>
-          </form>
+            </form>
+          </div>
         </div>
       </Container>
     </section>

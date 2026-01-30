@@ -50,7 +50,7 @@ export default {
         },
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
+        sans: ['Yaldevi', 'system-ui', 'sans-serif'],
         mono: ['Fira Code', 'Monaco', 'Courier New', 'monospace'],
       },
       animation: {

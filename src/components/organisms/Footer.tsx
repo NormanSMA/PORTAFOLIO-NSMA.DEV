@@ -96,9 +96,6 @@ export function Footer() {
               <p>
                 © {currentYear} Norman Martínez. {language === 'es' ? 'Todos los derechos reservados.' : 'All rights reserved.'}
               </p>
-              <p>
-                {language === 'es' ? 'Hecho con' : 'Made with'} ❤️ {language === 'es' ? 'usando' : 'using'} React + TypeScript
-              </p>
             </div>
           </div>
         </div>

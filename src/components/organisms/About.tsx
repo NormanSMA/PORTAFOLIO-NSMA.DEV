@@ -2,14 +2,13 @@ import { useRef, useEffect, useState, useMemo } from 'react';
 import { useLanguage } from '../../hooks';
 import { Container, Counter } from '../atoms';
 import { typography } from '../../config/typography';
-import { PixelBlast } from '../effects/PixelBlast';
 
 export function About() {
   const { t } = useLanguage();
 
   const stats = useMemo(() => [
     { value: 8, suffix: '+', label: t('about.stats.projects') },
-    { value: 2, suffix: '+', label: t('about.stats.experience') },
+    { value: 3, suffix: '+', label: t('about.stats.experience') },
     { value: 12, suffix: '+', label: t('about.stats.technologies') },
   ], [t]);
 
@@ -50,9 +49,6 @@ export function About() {
 
   return (
     <section id="about" className="py-16 md:py-24 bg-light-bg dark:bg-dark-bg relative overflow-hidden">
-      {/* Partículas de fondo (igual que en Hero) */}
-      <PixelBlast className="opacity-40" />
-
       <Container>
         <div className="max-w-6xl mx-auto relative z-10">
           {/* Título H2 */}
@@ -65,32 +61,37 @@ export function About() {
             {t('about.description')}
           </p>
 
-          {/* Stats: prefer horizontal layout; allow horizontal scrolling on very narrow screens */}
-          <div className="max-w-3xl mx-auto px-4">
-            {/* Responsive grid: 1 / 2 / 3 columns depending on available width. */}
-            <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 items-center py-2">
-              {stats.map((stat, index) => {
-                const extraClasses = index === 2 ? 'sm:col-span-2 sm:justify-self-center md:col-auto' : '';
-                return (
-                  <div
-                    key={index}
-                    ref={(el) => { statRefs.current[index] = el; }}
-                    role="group"
-                    aria-label={`${stat.value}${stat.suffix} ${stat.label}`}
-                    tabIndex={0}
-                    style={{ transitionDelay: `${index * 120}ms` }}
-                    className={`text-center focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 rounded-md p-3 transform transition-all duration-700 ${visible[index] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'} ${extraClasses}`}
-                  >
-                    <div className={`${typography.statsNumber} text-primary-600 dark:text-primary-400 mb-2 text-3xl sm:text-4xl md:text-5xl`}> 
+          {/* Stats con círculos decorativos */}
+          <div className="grid gap-8 grid-cols-1 sm:grid-cols-3 max-w-4xl mx-auto px-4">
+            {stats.map((stat, index) => (
+              <div
+                key={index}
+                ref={(el) => { statRefs.current[index] = el; }}
+                role="group"
+                aria-label={`${stat.value}${stat.suffix} ${stat.label}`}
+                tabIndex={0}
+                style={{ transitionDelay: `${index * 120}ms` }}
+                className={`text-center focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 rounded-md transform transition-all duration-700 ${visible[index] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}
+              >
+                {/* Círculo decorativo con número */}
+                <div className="flex items-center justify-center mx-auto mb-4">
+                  <div className="relative flex items-center justify-center w-28 h-28 sm:w-32 sm:h-32 md:w-36 md:h-36">
+                    {/* Círculo de fondo */}
+                    <div className="absolute inset-0 rounded-full bg-primary-500/10 dark:bg-primary-400/10" />
+                    {/* Borde del círculo */}
+                    <div className="absolute inset-0 rounded-full border-2 border-primary-500/20 dark:border-primary-400/20" />
+                    {/* Número */}
+                    <div className={`${typography.statsNumber} text-primary-600 dark:text-primary-400 relative z-10`}>
                       <Counter end={stat.value} suffix={stat.suffix} className="inline-block" />
                     </div>
-                    <div className={`${typography.secondary} text-light-textSecondary dark:text-dark-textSecondary`}>
-                      {stat.label}
-                    </div>
                   </div>
-                );
-              })}
-            </div>
+                </div>
+                {/* Label debajo */}
+                <div className={`${typography.secondary} text-light-textSecondary dark:text-dark-textSecondary font-medium`}>
+                  {stat.label}
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </Container>
