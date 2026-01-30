@@ -51,8 +51,8 @@ export function EducationSkills() {
             <div className="space-y-6 sm:px-8 lg:pr-12">
               
               {/* Universidad */}
-              <div className="flex flex-col sm:flex-row max-w-md">
-                <div className="mb-4 mr-4">
+              <div className="flex flex-col lg:flex-row items-center lg:items-start max-w-md mx-auto lg:mx-0">
+                <div className="mb-4 lg:mb-0 lg:mr-4">
                   <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary-50 dark:bg-primary-900/30">
                     <svg className="w-6 h-6 text-primary-600 dark:text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5z" />
@@ -60,7 +60,7 @@ export function EducationSkills() {
                     </svg>
                   </div>
                 </div>
-                <div>
+                <div className="text-center lg:text-left">
                   <h4 className={`${typography.cardSubtitle} text-gray-900 dark:text-white mb-2`}>
                     {t('educationSkills.education.university.title')}
                   </h4>
@@ -77,15 +77,15 @@ export function EducationSkills() {
               </div>
 
               {/* Certificaciones */}
-              <div className="flex flex-col sm:flex-row max-w-md">
-                <div className="mb-4 mr-4">
+              <div className="flex flex-col lg:flex-row items-center lg:items-start max-w-md mx-auto lg:mx-0">
+                <div className="mb-4 lg:mb-0 lg:mr-4">
                   <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary-50 dark:bg-primary-900/30">
                     <svg className="w-6 h-6 text-primary-600 dark:text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
                     </svg>
                   </div>
                 </div>
-                <div>
+                <div className="text-center lg:text-left">
                   <h4 className={`${typography.cardSubtitle} text-gray-900 dark:text-white mb-2`}>
                     {t('educationSkills.education.certifications.title')}
                   </h4>
@@ -99,15 +99,15 @@ export function EducationSkills() {
               </div>
 
               {/* Idiomas */}
-              <div className="flex flex-col sm:flex-row max-w-md">
-                <div className="mb-4 mr-4">
+              <div className="flex flex-col lg:flex-row items-center lg:items-start max-w-md mx-auto lg:mx-0">
+                <div className="mb-4 lg:mb-0 lg:mr-4">
                   <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary-50 dark:bg-primary-900/30">
                     <svg className="w-6 h-6 text-primary-600 dark:text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                   </div>
                 </div>
-                <div>
+                <div className="text-center lg:text-left">
                   <h4 className={`${typography.cardSubtitle} text-gray-900 dark:text-white mb-2`}>
                     {t('educationSkills.education.languages.title')}
                   </h4>
