@@ -1,5 +1,5 @@
-import { useState, useRef, useEffect } from 'react';
-import { useLanguage } from '../../hooks';
+import { useState, useRef, useEffect, useCallback } from 'react';
+import { useLanguage, useTheme } from '../../hooks';
 import { Container } from '../atoms';
 import { typography } from '../../config/typography';
 import { ExternalLinkIcon } from '../atoms/icons';
@@ -7,9 +7,12 @@ import { getProjects } from '../../data/projects';
 
 export function Projects() {
   const { t } = useLanguage();
+  const { theme } = useTheme();
   const [expandedProject, setExpandedProject] = useState<string | null>(null);
   const [maxLines, setMaxLines] = useState(3);
   const referenceTextRef = useRef<HTMLParagraphElement>(null);
+  const closeButtonRefs = useRef<Record<string, HTMLButtonElement | null>>({});
+  const toggleButtonRefs = useRef<Record<string, HTMLButtonElement | null>>({});
 
   const projects = getProjects(t);
 
@@ -23,9 +26,18 @@ export function Projects() {
     }
   }, [t]);
 
-  const toggleExpanded = (projectId: string) => {
-    setExpandedProject(expandedProject === projectId ? null : projectId);
-  };
+  const toggleExpanded = useCallback((projectId: string) => {
+    setExpandedProject(prev => {
+      if (prev === projectId) {
+        // Closing — return focus to toggle button
+        setTimeout(() => toggleButtonRefs.current[projectId]?.focus(), 50);
+        return null;
+      }
+      // Opening — focus close button after animation
+      setTimeout(() => closeButtonRefs.current[projectId]?.focus(), 350);
+      return projectId;
+    });
+  }, []);
 
   return (
     <section id="projects" className="py-16 md:py-24 bg-light-bg dark:bg-dark-bg relative overflow-hidden">
@@ -51,16 +63,16 @@ export function Projects() {
               return (
                 <article
                   key={project.id}
-                  className="group relative bg-light-card dark:bg-dark-card rounded-2xl overflow-visible border border-light-border dark:border-dark-border hover:-translate-y-2 transition-all duration-300"
+                  className="group relative bg-light-card dark:bg-dark-card rounded-2xl overflow-visible border border-light-border dark:border-dark-border motion-safe:hover:-translate-y-2 transition-all duration-300"
                 >
                   {/* Main Card */}
                   <div className="relative">
                     {/* Image Container */}
                     <div className="relative h-44 sm:h-48 md:h-44 lg:h-48 overflow-hidden bg-light-card dark:bg-dark-card rounded-t-2xl">
                       <img
-                        src={project.image}
+                        src={project.imageDark && theme === 'dark' ? project.imageDark : project.image}
                         alt={project.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        className="w-full h-full object-cover motion-safe:group-hover:scale-105 transition-transform duration-500"
                       />
                       {/* Category Badge con icono */}
                       <div className="absolute top-3 left-3 sm:top-4 sm:left-4 bg-primary-600 dark:bg-primary-500 text-white px-3 py-1.5 sm:px-4 rounded-full text-xs sm:text-sm font-semibold flex items-center gap-1.5 sm:gap-2">
@@ -131,6 +143,7 @@ export function Projects() {
                         {/* Ver más button con "..." */}
                         {project.fullDescription && (
                           <button
+                            ref={(el) => { toggleButtonRefs.current[project.id] = el; }}
                             onClick={() => toggleExpanded(project.id)}
                             className="flex items-center justify-center gap-1 px-3 py-1.5 rounded-full backdrop-blur-lg bg-light-border/50 dark:bg-dark-card/50 hover:bg-primary-600/20 dark:hover:bg-primary-500/20 transition-all duration-300 cursor-pointer group/btn"
                             aria-label="Ver más información"
@@ -167,6 +180,7 @@ export function Projects() {
                         <div className="flex flex-col h-full">
                           {/* Close button */}
                           <button
+                            ref={(el) => { closeButtonRefs.current[project.id] = el; }}
                             onClick={() => setExpandedProject(null)}
                             className="self-end mb-3 sm:mb-4 w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-full bg-light-border dark:bg-dark-card hover:bg-primary-600/20 dark:hover:bg-primary-500/20 transition-colors flex-shrink-0"
                             aria-label="Cerrar"

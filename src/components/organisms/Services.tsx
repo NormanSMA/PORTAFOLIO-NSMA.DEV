@@ -98,7 +98,12 @@ export function Services() {
     });
   }, []);
 
+
   useEffect(() => {
+    // Respect prefers-reduced-motion: skip scroll-driven animations
+    const motionOk = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!motionOk) return;
+
     if (isMobile) {
       window.addEventListener('scroll', handleMobileScroll, { passive: true });
       handleMobileScroll();
@@ -113,17 +118,17 @@ export function Services() {
   return (
     <section 
       id="services" 
-      className="py-16 md:py-24 bg-gray-50 dark:bg-gray-900/95 relative"
+      className="py-16 md:py-24 bg-light-card dark:bg-dark-bg relative"
     >
       <Container>
         {/* ===== MOBILE/TABLET LAYOUT with Stacking ===== */}
         <div className="lg:hidden max-w-6xl mx-auto">
           {/* Fixed Header */}
           <div className="text-center mb-8 px-4">
-            <h2 className={`${typography.sectionTitle} text-gray-900 dark:text-white mb-4`}>
+            <h2 className={`${typography.sectionTitle} text-light-text dark:text-dark-text mb-4`}>
               {t('services.title')}
             </h2>
-            <p className={`${typography.sectionSubtitle} text-gray-600 dark:text-gray-400 max-w-3xl mx-auto`}>
+            <p className={`${typography.sectionSubtitle} text-light-textSecondary dark:text-dark-textSecondary max-w-3xl mx-auto`}>
               {t('services.subtitle')}
             </p>
           </div>
@@ -151,10 +156,10 @@ export function Services() {
                   <article
                     className={`
                       bg-gradient-to-br ${cardColors[index]} 
-                      bg-white dark:bg-gray-800 
+                      bg-light-bg dark:bg-dark-card 
                       shadow-lg dark:shadow-xl 
                       p-6 space-y-4 rounded-2xl 
-                      border border-gray-200/50 dark:border-gray-700/50
+                      border border-light-border/50 dark:border-dark-border/50
                     `}
                     style={{
                       transform: `scale(calc(1 - (var(--progress) * 0.04))) translateY(calc(var(--progress) * -8px))`,
@@ -166,10 +171,10 @@ export function Services() {
                     <div className={`inline-flex items-center justify-center w-14 h-14 rounded-xl ${iconColors[index]}`}>
                       <span aria-hidden><Icon /></span>
                     </div>
-                    <h3 className={`${typography.cardSubtitle} text-gray-900 dark:text-white`}>
+                    <h3 className={`${typography.cardSubtitle} text-light-text dark:text-dark-text`}>
                       {service.title}
                     </h3>
-                    <p className={`${typography.secondary} text-gray-600 dark:text-gray-300 leading-relaxed`}>
+                    <p className={`${typography.secondary} text-light-textSecondary dark:text-dark-textSecondary leading-relaxed`}>
                       {service.description}
                     </p>
                   </article>
@@ -195,10 +200,10 @@ export function Services() {
               }}
             >
               <div className="space-y-6">
-                <h2 className={`${typography.sectionTitle} text-gray-900 dark:text-white`}>
+                <h2 className={`${typography.sectionTitle} text-light-text dark:text-dark-text`}>
                   {t('services.title')}
                 </h2>
-                <p className={`${typography.sectionSubtitle} text-gray-600 dark:text-gray-400 leading-relaxed`}>
+                <p className={`${typography.sectionSubtitle} text-light-textSecondary dark:text-dark-textSecondary leading-relaxed`}>
                   {t('services.subtitle')}
                 </p>
               </div>
@@ -230,9 +235,9 @@ export function Services() {
                         className={`
                           relative overflow-hidden
                           bg-gradient-to-br ${cardColors[index]}
-                          bg-white dark:bg-gray-800 
+                          bg-light-bg dark:bg-dark-card 
                           p-8 rounded-2xl 
-                          border border-gray-200/80 dark:border-gray-700/80
+                          border border-light-border/80 dark:border-dark-border/80
                           shadow-xl
                         `}
                         style={{
@@ -249,10 +254,10 @@ export function Services() {
                           </div>
                           
                           <div className="flex-1 space-y-3">
-                            <h3 className={`${typography.cardSubtitle} text-gray-900 dark:text-white`}>
+                            <h3 className={`${typography.cardSubtitle} text-light-text dark:text-dark-text`}>
                               {service.title}
                             </h3>
-                            <p className={`${typography.secondary} text-gray-600 dark:text-gray-300 leading-relaxed`}>
+                            <p className={`${typography.secondary} text-light-textSecondary dark:text-dark-textSecondary leading-relaxed`}>
                               {service.description}
                             </p>
                           </div>

@@ -59,6 +59,11 @@ export const translations = {
         title: 'Bolsa de Trabajo UAM',
         description: 'Aplicación móvil Android para conectar empleadores y candidatos. Incluye búsqueda de empleos, postulaciones, perfil profesional y notificaciones en tiempo real. Obtuve 2° lugar en la Feria de Proyectos.',
       },
+      portfolio: {
+        title: 'Portafolio Personal',
+        shortDescription: 'Mi sitio web personal construido con React 19, TypeScript y Tailwind CSS. Diseño responsive, modo oscuro, i18n, animaciones con Framer Motion y rendimiento optimizado...',
+        fullDescription: 'Mi sitio web personal construido con React 19, TypeScript y Tailwind CSS. Incluye diseño responsive, modo oscuro/claro con transiciones suaves, internacionalización (ES/EN), animaciones con Framer Motion, formulario de contacto con EmailJS, imágenes optimizadas en WebP, SEO completo con Open Graph, lazy loading y Atomic Design. Desplegado en Vercel con Analytics y Speed Insights.',
+      },
     },
 
     skills: {
@@ -221,6 +226,11 @@ export const translations = {
       bolsa: {
         title: 'Bolsa de Trabajo UAM',
         description: 'Android mobile application to connect employers and candidates. Features job search, applications, professional profile and real-time notifications. Awarded 2nd place in the Project Fair.',
+      },
+      portfolio: {
+        title: 'Personal Portfolio',
+        shortDescription: 'My personal website built with React 19, TypeScript and Tailwind CSS. Responsive design, dark mode, i18n, Framer Motion animations and optimized performance...',
+        fullDescription: 'My personal website built with React 19, TypeScript and Tailwind CSS. Features responsive design, dark/light mode with smooth transitions, internationalization (ES/EN), Framer Motion animations, EmailJS contact form, WebP-optimized images, full SEO with Open Graph, lazy loading and Atomic Design. Deployed on Vercel with Analytics and Speed Insights.',
       },
     },
 

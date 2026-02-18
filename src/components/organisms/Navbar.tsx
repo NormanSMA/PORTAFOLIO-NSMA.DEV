@@ -96,7 +96,7 @@ export function Navbar() {
         <div className="flex items-center justify-between h-16 md:h-20">
           
           {/* Logo */}
-          <div className="cursor-pointer" onClick={() => handleNavClick('home')}>
+          <div className="cursor-pointer" onClick={() => handleNavClick('home')} role="button" aria-label="Go to homepage" tabIndex={0} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') handleNavClick('home'); }}>
             <Logo size="md" />
           </div>
 
@@ -107,7 +107,7 @@ export function Navbar() {
                 key={link.id}
                 onClick={() => handleNavClick(link.id)}
                 className={cn(
-                  'transition-colors font-medium',
+                  'transition-colors font-medium cursor-pointer rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-dark-bg',
                   activeSection === link.id
                     ? 'text-primary-500 dark:text-primary-400'
                     : 'text-light-text dark:text-dark-text hover:text-primary-500 dark:hover:text-primary-400'

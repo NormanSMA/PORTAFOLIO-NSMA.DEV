@@ -34,6 +34,19 @@ export default {
           800: '#1E40AF',
           900: '#1E3A8A',
         },
+        accent: {
+          DEFAULT: '#F59E0B',
+          50: '#FFFBEB',
+          100: '#FEF3C7',
+          200: '#FDE68A',
+          300: '#FCD34D',
+          400: '#FBBF24',
+          500: '#F59E0B',
+          600: '#D97706',
+          700: '#B45309',
+          800: '#92400E',
+          900: '#78350F',
+        },
         dark: {
           bg: '#0A0A0F',
           card: '#1A1A24',
@@ -50,7 +63,8 @@ export default {
         },
       },
       fontFamily: {
-        sans: ['Yaldevi', 'system-ui', 'sans-serif'],
+        sans: ['DM Sans', 'system-ui', 'sans-serif'],
+        display: ['Sora', 'system-ui', 'sans-serif'],
         mono: ['Fira Code', 'Monaco', 'Courier New', 'monospace'],
       },
       animation: {

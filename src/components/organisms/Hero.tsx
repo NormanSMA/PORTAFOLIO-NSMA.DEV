@@ -36,9 +36,9 @@ export function Hero() {
                 {/* Imagen */}
                 <div className="relative bg-light-card dark:bg-dark-card rounded-2xl md:rounded-3xl p-1.5 md:p-2 shadow-2xl">
                   <img
-                    src="/norman_sf.png"
-                    alt="Norman Martínez"
-                    loading="lazy"
+                    src="/norman_sf.webp"
+                    alt="Norman Martínez - Full Stack Developer"
+                    loading="eager"
                     className="w-full h-auto rounded-xl md:rounded-2xl"
                   />
                 </div>

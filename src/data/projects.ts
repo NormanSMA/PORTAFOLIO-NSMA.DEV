@@ -1,4 +1,4 @@
-import { WordPressIcon, AndroidIcon } from "../components/atoms/icons";
+import { WordPressIcon, AndroidIcon, ReactIcon } from "../components/atoms/icons";
 
 export const getProjects = (t: (key: string) => string) => [
   {
@@ -7,7 +7,7 @@ export const getProjects = (t: (key: string) => string) => [
     category: "WordPress",
     shortDescription: t("projects.systech.shortDescription"),
     fullDescription: t("projects.systech.fullDescription"),
-    image: "/Systech-UAM.png",
+    image: "/Systech-UAM.webp",
     url: "https://systech.uam.edu.ni/",
     technologies: ["WordPress", "PHP", "MySQL", "CSS"],
     icon: WordPressIcon,
@@ -18,7 +18,7 @@ export const getProjects = (t: (key: string) => string) => [
     category: "WordPress",
     shortDescription: t("projects.pantano.shortDescription"),
     fullDescription: t("projects.pantano.fullDescription"),
-    image: "/hotel-ElPantano.png",
+    image: "/hotel-ElPantano.webp",
     url: "https://www.hotel-el-pantano.org/",
     technologies: ["WordPress", "WooCommerce", "PHP", "SEO"],
     icon: WordPressIcon,
@@ -29,9 +29,21 @@ export const getProjects = (t: (key: string) => string) => [
     category: "Android",
     shortDescription: t("projects.bolsa.description"),
     fullDescription: null,
-    image: "/Bolsa-De-TrabajoUAM.png",
+    image: "/Bolsa-De-TrabajoUAM.webp",
     url: null,
     technologies: ["Android", "Java", "SQL Server", "Spring Boot"],
     icon: AndroidIcon,
+  },
+  {
+    id: "portfolio",
+    title: t("projects.portfolio.title"),
+    category: "React",
+    shortDescription: t("projects.portfolio.shortDescription"),
+    fullDescription: t("projects.portfolio.fullDescription"),
+    image: "/portfolio-light.webp",
+    imageDark: "/portfolio-dark.webp",
+    url: "https://portafolio-nsma-dev.vercel.app/",
+    technologies: ["React 19", "TypeScript", "Tailwind CSS", "Framer Motion"],
+    icon: ReactIcon,
   },
 ];

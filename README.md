@@ -31,4 +31,4 @@ Desarrollador web full-stack apasionado por transformar ideas en productos digit
 
 ---
 
-© 2026 Norman Martínez. Todos los derechos reservados.
+© 2026 Norman Martínez.

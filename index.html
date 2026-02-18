@@ -2,29 +2,35 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="/fabicon.png" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!--
-      Content-Security-Policy (CSP) example: this meta is intentionally permissive
-      to avoid breaking the Vite dev server. For production, set a strict CSP via
-      your hosting (HTTP headers) and remove the permissive allowances below.
-    -->
+
+    <!-- SEO Meta Tags -->
+    <title>Norman Martínez | Desarrollador Full Stack</title>
+    <meta name="description" content="Portafolio profesional de Norman Martínez — Ingeniero en Sistemas y Desarrollador Full Stack especializado en React, TypeScript, Laravel y soluciones digitales escalables." />
+
+    <!-- Open Graph / Social Media -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://portafolio-nsma-dev.vercel.app/" />
+    <meta property="og:title" content="Norman Martínez | Desarrollador Full Stack" />
+    <meta property="og:description" content="Portafolio profesional — Ingeniero en Sistemas y Desarrollador Full Stack especializado en React, TypeScript, Laravel y soluciones digitales escalables." />
+    <meta property="og:image" content="https://portafolio-nsma-dev.vercel.app/favicon.png" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Norman Martínez | Desarrollador Full Stack" />
+    <meta name="twitter:description" content="Portafolio profesional — Ingeniero en Sistemas y Desarrollador Full Stack." />
+    <meta name="twitter:image" content="https://portafolio-nsma-dev.vercel.app/favicon.png" />
+
     <!-- Font Optimization: Preconnect and load via link to avoid @import blocking -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Yaldevi:wght@400;500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=Sora:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
 
-    <!-- Content-Security-Policy: updated to allow Google Fonts while keeping a restrictive default-src -->
-    <meta
-      http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self' 'unsafe-inline' data: blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob:; connect-src *; object-src 'none'; base-uri 'self';"
-    />
     <meta name="referrer" content="no-referrer" />
-    <meta name="referrer-policy" content="no-referrer" />
-    <title>nsma-portfolio</title>
   </head>
   <body>
     <!-- small early script moved to public/theme-init.js to be allowed by CSP 'self' -->
@@ -33,11 +39,5 @@
     <script type="module" src="/src/main.tsx"></script>
     <!-- helper to make image downloads slightly harder (client-side only) -->
     <script src="/protect-images.js" defer></script>
-    <!-- Vercel Analytics -->
-    <script
-      defer
-      data-domain="tu-dominio.vercel.app"
-      src="https://static.vercel-insights.com/v1/script.debug.js"
-    ></script>
   </body>
 </html>

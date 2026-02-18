@@ -7,7 +7,7 @@ export function EducationSkills() {
   const { t } = useLanguage();
 
   return (
-    <section id="education-skills" className="py-16 md:py-24 bg-white dark:bg-gray-900 relative overflow-hidden">
+    <section id="education-skills" className="py-16 md:py-24 bg-light-bg dark:bg-dark-bg relative overflow-hidden">
       <Container>
         <div className="max-w-6xl mx-auto">
           {/* Header con decoración de puntos */}
@@ -36,16 +36,16 @@ export function EducationSkills() {
               />
             </svg>
             
-            <h2 className={`${typography.sectionTitle} text-gray-900 dark:text-white mb-4 relative z-10`}>
+            <h2 className={`${typography.sectionTitle} text-light-text dark:text-dark-text mb-4 relative z-10`}>
               {t('educationSkills.title')}
             </h2>
-            <p className={`${typography.sectionSubtitle} text-gray-600 dark:text-gray-400 max-w-3xl mx-auto px-4`}>
+            <p className={`${typography.sectionSubtitle} text-light-textSecondary dark:text-dark-textSecondary max-w-3xl mx-auto px-4`}>
               {t('educationSkills.subtitle')}
             </p>
           </div>
 
           {/* Layout de dos columnas con divisor */}
-          <div className="grid max-w-screen-lg mx-auto space-y-8 lg:grid-cols-2 lg:space-y-0 lg:divide-x lg:divide-gray-200 dark:lg:divide-gray-700">
+          <div className="grid max-w-screen-lg mx-auto space-y-8 lg:grid-cols-2 lg:space-y-0 lg:divide-x lg:divide-light-border dark:lg:divide-dark-border">
             
             {/* Columna Izquierda: Educación */}
             <div className="space-y-6 sm:px-8 lg:pr-12">
@@ -61,16 +61,16 @@ export function EducationSkills() {
                   </div>
                 </div>
                 <div className="text-center lg:text-left">
-                  <h4 className={`${typography.cardSubtitle} text-gray-900 dark:text-white mb-2`}>
+                  <h4 className={`${typography.cardSubtitle} text-light-text dark:text-dark-text mb-2`}>
                     {t('educationSkills.education.university.title')}
                   </h4>
-                  <p className={`${typography.secondary} text-gray-600 dark:text-gray-400 mb-1`}>
+                  <p className={`${typography.secondary} text-light-textSecondary dark:text-dark-textSecondary mb-1`}>
                     {t('educationSkills.education.university.degree')}
                   </p>
                   <p className={`${typography.small} text-primary-600 dark:text-primary-400 font-medium`}>
                     {t('educationSkills.education.university.year')}
                   </p>
-                  <p className={`${typography.small} text-gray-500 dark:text-gray-500`}>
+                  <p className={`${typography.small} text-light-textSecondary dark:text-dark-textSecondary`}>
                     {t('educationSkills.education.university.period')}
                   </p>
                 </div>
@@ -86,10 +86,10 @@ export function EducationSkills() {
                   </div>
                 </div>
                 <div className="text-center lg:text-left">
-                  <h4 className={`${typography.cardSubtitle} text-gray-900 dark:text-white mb-2`}>
+                  <h4 className={`${typography.cardSubtitle} text-light-text dark:text-dark-text mb-2`}>
                     {t('educationSkills.education.certifications.title')}
                   </h4>
-                  <p className={`${typography.secondary} text-gray-600 dark:text-gray-400`}>
+                  <p className={`${typography.secondary} text-light-textSecondary dark:text-dark-textSecondary`}>
                     {t('educationSkills.education.certifications.scrum')}
                   </p>
                   <p className={`${typography.secondary} text-gray-600 dark:text-gray-400`}>
@@ -108,10 +108,10 @@ export function EducationSkills() {
                   </div>
                 </div>
                 <div className="text-center lg:text-left">
-                  <h4 className={`${typography.cardSubtitle} text-gray-900 dark:text-white mb-2`}>
+                  <h4 className={`${typography.cardSubtitle} text-light-text dark:text-dark-text mb-2`}>
                     {t('educationSkills.education.languages.title')}
                   </h4>
-                  <p className={`${typography.secondary} text-gray-600 dark:text-gray-400`}>
+                  <p className={`${typography.secondary} text-light-textSecondary dark:text-dark-textSecondary`}>
                     <span className="font-medium">{t('educationSkills.education.languages.spanish')}:</span>{' '}
                     {t('educationSkills.education.languages.native')}
                   </p>
@@ -142,12 +142,12 @@ export function EducationSkills() {
                   return (
                     <div
                       key={index}
-                      className="flex flex-col items-center gap-2 p-3 rounded-xl bg-gray-50 dark:bg-gray-800 hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-all duration-300 hover:-translate-y-1 group"
+                      className="flex flex-col items-center gap-2 p-3 rounded-xl bg-light-card dark:bg-dark-card hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-all duration-300 hover:-translate-y-1 group"
                     >
                       <div className="w-10 h-10 group-hover:scale-110 transition-transform duration-300">
                         <Icon />
                       </div>
-                      <span className={`${typography.small} text-gray-700 dark:text-gray-300 text-center font-medium`}>
+                      <span className={`${typography.small} text-light-textSecondary dark:text-dark-textSecondary text-center font-medium`}>
                         {skill.name}
                       </span>
                     </div>
@@ -156,8 +156,8 @@ export function EducationSkills() {
               </div>
 
               {/* Conceptos adicionales */}
-              <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
-                <h4 className={`${typography.secondary} text-gray-900 dark:text-white font-semibold mb-3`}>
+              <div className="pt-4 border-t border-light-border dark:border-dark-border">
+                <h4 className={`${typography.secondary} text-light-text dark:text-dark-text font-semibold mb-3`}>
                   {t('educationSkills.skills.concepts.title')}
                 </h4>
                 <div className="flex flex-wrap gap-2">
