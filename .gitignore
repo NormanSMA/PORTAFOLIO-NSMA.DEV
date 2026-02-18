@@ -25,6 +25,7 @@ tools
 !.vscode/extensions.json
 .idea
 .DS_Store
+.agents/
 *.suo
 *.ntvs*
 *.njsproj
