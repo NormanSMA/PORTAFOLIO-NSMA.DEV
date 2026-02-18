@@ -3,6 +3,8 @@ import emailjs from '@emailjs/browser';
 import { useLanguage } from '../../hooks';
 import { Container } from '../atoms';
 import { generateEmailTemplate } from '../../utils/email';
+import { typography } from '../../config/typography';
+import { socialLinks } from '../../data/social';
 
 interface FormData {
   fullName: string;
@@ -177,41 +179,87 @@ export function Contact() {
   };
 
   return (
-    <section id="contact" className="py-16 md:py-24 bg-light-bg dark:bg-dark-bg">
+    <section id="contact" className="py-16 md:py-24 bg-light-bg dark:bg-dark-bg relative overflow-hidden">
       <Container>
-        {/* Main Card Container */}
-        <div className="max-w-6xl mx-auto shadow-2xl rounded-2xl overflow-hidden flex flex-col lg:flex-row min-h-[600px]">
+        {/* Section Header */}
+        <div className="text-center mb-12 lg:mb-16">
+          <h2 className={`${typography.sectionTitle} text-light-text dark:text-dark-text mb-4`}>
+            {t('contact.title')}
+          </h2>
+          <p className={`${typography.sectionSubtitle} text-light-textSecondary dark:text-dark-textSecondary max-w-2xl mx-auto`}>
+            {t('contact.subtitle')}
+          </p>
+        </div>
+
+        <div className="grid lg:grid-cols-2 gap-12 items-start max-w-6xl mx-auto">
           
-          {/* Left Panel - Dark/Light theme matching submit button */}
-          <div className="bg-light-text dark:bg-dark-text w-full lg:w-2/5 p-8 lg:p-12 flex flex-col justify-center text-light-bg dark:text-dark-bg relative overflow-hidden">
-            {/* Decorative circles */}
-            <div className="absolute top-[-20px] right-[-20px] w-32 h-32 rounded-full bg-light-bg dark:bg-dark-bg opacity-10 pointer-events-none"></div>
-            <div className="absolute bottom-[-40px] left-[-40px] w-64 h-64 rounded-full bg-light-bg dark:bg-dark-bg opacity-10 pointer-events-none"></div>
-            
-            <div className="relative z-10 space-y-6">
-              <h3 className="text-lg font-medium tracking-wide uppercase opacity-90">
-                {t('contact.label')}
-              </h3>
-              <h2 className="text-4xl md:text-5xl font-bold leading-tight">
-                {t('contact.title')}
-              </h2>
-              <p className="text-lg md:text-xl opacity-90 leading-relaxed font-light">
-                {t('contact.subtitle')}
-              </p>
+          {/* Left Panel: Info & Social */}
+          <div className="space-y-8 lg:sticky lg:top-32">
+            <div className="bg-light-card dark:bg-dark-card rounded-2xl p-8 border border-light-border dark:border-dark-border shadow-lg relative overflow-hidden">
+              {/* Decorative gradient overlay */}
+              <div className="absolute top-0 right-0 w-64 h-64 bg-primary-500/5 rounded-full blur-3xl -mr-32 -mt-32 pointer-events-none"></div>
               
-              {/* Chat Icon */}
-              <div className="mt-8 opacity-80">
-                <svg xmlns="http://www.w3.org/2000/svg" className="w-16 h-16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                </svg>
+              <h3 className="text-2xl font-bold text-light-text dark:text-dark-text mb-6">
+                {language === 'es' ? 'Contacto' : 'Contact'}
+              </h3>
+              
+              <div className="space-y-6 relative z-10">
+                <p className={`${typography.body} text-light-textSecondary dark:text-dark-textSecondary`}>
+                  {language === 'es' 
+                    ? 'Aquí encontrarás mi información de contacto para colaborar en nuevos proyectos o discutir oportunidades laborales.'
+                    : 'Here you will find my contact information to collaborate on new projects or discuss job opportunities.'
+                  }
+                </p>
+
+                {/* Email Direct Link */}
+                <a 
+                  href="mailto:norman.martinez003@gmail.com"
+                  className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 rounded-xl bg-light-bg dark:bg-dark-bg border border-light-border dark:border-dark-border hover:border-primary-500 dark:hover:border-primary-500 transition-colors group"
+                >
+                  <div className="p-3 rounded-lg bg-primary-500/10 text-primary-600 dark:text-primary-400 group-hover:scale-110 transition-transform">
+                    <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                  </div>
+                  <div className="break-all">
+                    <p className="text-sm text-light-textSecondary dark:text-dark-textSecondary font-medium">Email</p>
+                    <p className="text-light-text dark:text-dark-text font-semibold">norman.martinez003@gmail.com</p>
+                  </div>
+                </a>
+
+                {/* Social Links Row */}
+                <div>
+                  <h4 className="text-sm font-semibold text-light-text dark:text-dark-text mb-4 uppercase tracking-wider">
+                    {language === 'es' ? 'Encuéntrame en' : 'Find me on'}
+                  </h4>
+                  <div className="flex flex-wrap gap-3">
+                    {socialLinks.map((social) => (
+                      <a
+                        key={social.name}
+                        href={social.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-3 rounded-lg bg-light-bg dark:bg-dark-bg text-light-text dark:text-dark-text hover:text-primary-500 dark:hover:text-primary-400 border border-light-border dark:border-dark-border hover:border-primary-500 dark:hover:border-primary-500 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+                        aria-label={social.name}
+                      >
+                        <svg className="w-6 h-6" fill={social.stroke ? "none" : "currentColor"} stroke={social.stroke ? "currentColor" : "none"} viewBox="0 0 24 24">
+                          {social.stroke ? (
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={social.iconPath} />
+                          ) : (
+                            <path d={social.iconPath} />
+                          )}
+                        </svg>
+                      </a>
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Right Panel - Form */}
-          <div className="bg-light-card dark:bg-dark-card w-full lg:w-3/5 p-8 lg:p-12">
+          {/* Right Panel: Form */}
+          <div className="bg-light-card dark:bg-dark-card rounded-2xl p-8 border border-light-border dark:border-dark-border shadow-lg">
             <form onSubmit={handleSubmit} className="space-y-6" noValidate>
-              {/* Name & Email - 2 columns on desktop, 1 on mobile */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Full Name */}
                 <div className="space-y-2">
@@ -227,8 +275,8 @@ export function Contact() {
                     value={formData.fullName}
                     onChange={(e) => handleInputChange('fullName', e.target.value)}
                     placeholder={t('contact.form.fullNamePlaceholder')}
-                    className={`w-full px-4 py-3 rounded-lg bg-light-bg dark:bg-dark-bg border text-light-text dark:text-dark-text placeholder-light-textSecondary dark:placeholder-dark-textSecondary focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-colors
-                      ${errors.fullName ? 'border-red-500' : 'border-light-border dark:border-dark-border'}
+                    className={`w-full px-4 py-3 rounded-lg bg-light-bg dark:bg-dark-bg border text-light-text dark:text-dark-text placeholder-light-textSecondary dark:placeholder-dark-textSecondary focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all
+                      ${errors.fullName ? 'border-red-500 focus:ring-red-500' : 'border-light-border dark:border-dark-border'}
                     `}
                   />
                   {errors.fullName && (
@@ -255,8 +303,8 @@ export function Contact() {
                     value={formData.email}
                     onChange={(e) => handleInputChange('email', e.target.value)}
                     placeholder={t('contact.form.emailPlaceholder')}
-                    className={`w-full px-4 py-3 rounded-lg bg-light-bg dark:bg-dark-bg border text-light-text dark:text-dark-text placeholder-light-textSecondary dark:placeholder-dark-textSecondary focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-colors
-                      ${errors.email ? 'border-red-500' : 'border-light-border dark:border-dark-border'}
+                    className={`w-full px-4 py-3 rounded-lg bg-light-bg dark:bg-dark-bg border text-light-text dark:text-dark-text placeholder-light-textSecondary dark:placeholder-dark-textSecondary focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all
+                      ${errors.email ? 'border-red-500 focus:ring-red-500' : 'border-light-border dark:border-dark-border'}
                     `}
                   />
                   {errors.email && (
@@ -270,7 +318,7 @@ export function Contact() {
                 </div>
               </div>
 
-              {/* Contact Reasons - Chips */}
+              {/* Contact Reasons */}
               <div className="space-y-3">
                 <label className="block text-sm font-medium text-light-text dark:text-dark-text">
                   {t('contact.form.reason')}
@@ -281,12 +329,12 @@ export function Contact() {
                       key={key}
                       type="button"
                       onClick={() => toggleReason(key)}
-                      className={`px-5 py-2.5 min-h-[44px] rounded-full text-sm font-medium transition-all duration-200 cursor-pointer
+                      className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 cursor-pointer border
                         ${formData.contactReasons[key]
-                          ? 'bg-primary-500 text-white border border-primary-500 hover:bg-primary-600'
-                          : 'bg-light-bg dark:bg-dark-bg text-light-textSecondary dark:text-dark-textSecondary border border-light-border dark:border-dark-border hover:bg-light-border dark:hover:bg-dark-border'
+                          ? 'bg-primary-500/10 text-primary-600 dark:text-primary-400 border-primary-500'
+                          : 'bg-light-bg dark:bg-dark-bg text-light-textSecondary dark:text-dark-textSecondary border-light-border dark:border-dark-border hover:border-primary-500/50'
                         }
-                        focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 dark:focus:ring-offset-dark-card
+                        focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-primary-500 dark:focus:ring-offset-dark-card
                       `}
                     >
                       {label}
@@ -309,8 +357,8 @@ export function Contact() {
                   value={formData.message}
                   onChange={(e) => handleInputChange('message', e.target.value)}
                   placeholder={t('contact.form.messagePlaceholder')}
-                  className={`w-full px-4 py-3 rounded-lg bg-light-bg dark:bg-dark-bg border text-light-text dark:text-dark-text placeholder-light-textSecondary dark:placeholder-dark-textSecondary focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-colors resize-none
-                    ${errors.message ? 'border-red-500' : 'border-light-border dark:border-dark-border'}
+                  className={`w-full px-4 py-3 rounded-lg bg-light-bg dark:bg-dark-bg border text-light-text dark:text-dark-text placeholder-light-textSecondary dark:placeholder-dark-textSecondary focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all resize-none
+                    ${errors.message ? 'border-red-500 focus:ring-red-500' : 'border-light-border dark:border-dark-border'}
                   `}
                 />
                 {errors.message && (
@@ -327,10 +375,10 @@ export function Contact() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className={`w-full font-bold py-4 rounded-lg shadow-lg transition-all duration-200
+                className={`w-full font-bold py-3.5 rounded-lg shadow-lg shadow-primary-500/20 transition-all duration-200
                   ${isSubmitting
                     ? 'bg-gray-400 cursor-not-allowed text-white'
-                    : 'bg-light-text dark:bg-dark-text text-light-bg dark:text-dark-bg hover:shadow-xl hover:scale-[1.01] active:scale-[0.99]'
+                    : 'bg-primary-600 text-white hover:bg-primary-700 hover:shadow-primary-500/30 hover:scale-[1.01] active:scale-[0.99]'
                   }
                 `}
               >
@@ -345,11 +393,11 @@ export function Contact() {
                 ) : t('contact.form.submit')}
               </button>
 
-              {/* Success/Error Messages */}
+              {/* Status Messages */}
               {submitStatus === 'success' && (
-                <div className="p-4 rounded-lg bg-green-100 dark:bg-green-900/30 border border-green-300 dark:border-green-700">
-                  <p className="text-center text-green-700 dark:text-green-400 font-medium flex items-center justify-center gap-2">
-                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <div className="p-4 rounded-lg bg-green-500/10 border border-green-500/20">
+                  <p className="text-center text-green-600 dark:text-green-400 font-medium flex items-center justify-center gap-2">
+                    <svg className="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                     </svg>
                     {t('contact.form.successMessage')}
@@ -357,9 +405,9 @@ export function Contact() {
                 </div>
               )}
               {submitStatus === 'error' && (
-                <div className="p-4 rounded-lg bg-red-100 dark:bg-red-900/30 border border-red-300 dark:border-red-700">
-                  <p className="text-center text-red-700 dark:text-red-400 font-medium flex items-center justify-center gap-2">
-                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <div className="p-4 rounded-lg bg-red-500/10 border border-red-500/20">
+                  <p className="text-center text-red-600 dark:text-red-400 font-medium flex items-center justify-center gap-2">
+                    <svg className="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                     </svg>
                     {t('contact.form.errorMessage')}
