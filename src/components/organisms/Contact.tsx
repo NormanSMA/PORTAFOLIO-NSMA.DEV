@@ -2,7 +2,7 @@ import { useState } from 'react';
 import emailjs from '@emailjs/browser';
 import { useLanguage } from '../../hooks';
 import { Container } from '../atoms';
-import { generateEmailTemplate } from '../../utils/email';
+// import { generateEmailTemplate } from '../../utils/email';
 import { typography } from '../../config/typography';
 import { socialLinks } from '../../data/social';
 
@@ -92,24 +92,17 @@ export function Contact() {
       .map(([k]) => reasonLabels[k] || k)
       .join(', ');
 
-    // Generate HTML content
-    const htmlContent = generateEmailTemplate({
-      fullName: formData.fullName,
-      email: formData.email,
-      message: formData.message,
-      reasons: selectedReasons || 'No especificado',
-    });
+    // Generate HTML content - REMOVED because template uses its own HTML
+    // const htmlContent = generateEmailTemplate({...});
 
-    // Build template params
+    // Build template params matching the User's EmailJS Template
     const templateParams = {
       from_name: formData.fullName,
       from_email: formData.email,
-      subject: `Nuevo contacto — ${formData.fullName}`,
       message: formData.message,
       reasons: selectedReasons || 'No especificado',
       received_at: new Date().toLocaleString(),
       owner_email: OWNER_EMAIL,
-      html_content: htmlContent,
     };
 
     try {
@@ -120,14 +113,17 @@ export function Contact() {
         if (PUBLIC_KEY) {
           try {
             emailjs.init(PUBLIC_KEY);
-          } catch {
-            // ignore init errors
+          } catch (e) {
+            console.error('EmailJS init error:', e);
           }
         }
 
+        console.log('Sending email with:', { SERVICE_ID, TEMPLATE_ID, params: templateParams });
+        
         await emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams);
         setSubmitStatus('success');
       }
+
 
       // Reset form
       setFormData({
