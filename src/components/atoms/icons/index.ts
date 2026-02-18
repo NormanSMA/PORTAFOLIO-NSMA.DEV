@@ -7,3 +7,4 @@ export { MobileIcon } from './MobileIcon';
 export { ExternalLinkIcon } from './ExternalLinkIcon';
 export { AndroidIcon } from './AndroidIcon';
 export { WordPressIcon } from './WordPressIcon';
+export { ReactIcon } from './ReactIcon';
