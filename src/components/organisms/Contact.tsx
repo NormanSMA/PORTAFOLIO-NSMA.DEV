@@ -48,17 +48,17 @@ export function Contact() {
   // Custom validation
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
-    
+
     if (!formData.fullName.trim()) {
       newErrors.fullName = language === 'es' ? 'El nombre es requerido' : 'Name is required';
     }
-    
+
     if (!formData.email.trim()) {
       newErrors.email = language === 'es' ? 'El correo es requerido' : 'Email is required';
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       newErrors.email = language === 'es' ? 'Correo inválido' : 'Invalid email';
     }
-    
+
     if (!formData.message.trim()) {
       newErrors.message = language === 'es' ? 'El mensaje es requerido' : 'Message is required';
     }
@@ -69,9 +69,9 @@ export function Contact() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) return;
-    
+
     setIsSubmitting(true);
 
     // EmailJS configuration
@@ -107,20 +107,20 @@ export function Contact() {
         const data = await response.json();
         return {
           ip: data.ip || 'Unknown IP',
-          location: `${data.city}, ${data.region}, ${data.country_name}` || 'Unknown Location',
+          location: `${data.city}, ${data.region}, ${data.country_name}`,
           device: navigator.userAgent || 'Unknown Device'
         };
-      } catch (error) {
+      } catch {
         try {
           // Fallback service (db-ip.com free tier)
           const response = await fetch('https://api.db-ip.com/v2/free/self');
           const data = await response.json();
           return {
             ip: data.ipAddress || 'Unknown IP',
-            location: `${data.city}, ${data.countryName}` || 'Unknown Location',
+            location: `${data.city}, ${data.countryName}`,
             device: navigator.userAgent || 'Unknown Device'
           };
-        } catch (fallbackError) {
+        } catch {
           return {
             ip: 'Not available',
             location: 'Not available',
@@ -161,7 +161,7 @@ export function Contact() {
         }
 
         console.log('Sending email with:', { SERVICE_ID, TEMPLATE_ID, params: templateParams });
-        
+
         await emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams);
         setSubmitStatus('success');
       }
@@ -230,27 +230,27 @@ export function Contact() {
         </div>
 
         <div className="grid lg:grid-cols-2 gap-12 items-start max-w-6xl mx-auto">
-          
+
           {/* Left Panel: Info & Social */}
           <div className="space-y-8 lg:sticky lg:top-32">
             <div className="bg-light-card dark:bg-dark-card rounded-2xl p-8 border border-light-border dark:border-dark-border shadow-lg relative overflow-hidden">
               {/* Decorative gradient overlay */}
               <div className="absolute top-0 right-0 w-64 h-64 bg-primary-500/5 rounded-full blur-3xl -mr-32 -mt-32 pointer-events-none"></div>
-              
+
               <h3 className="text-2xl font-bold text-light-text dark:text-dark-text mb-6">
                 {language === 'es' ? 'Contacto' : 'Contact'}
               </h3>
-              
+
               <div className="space-y-6 relative z-10">
                 <p className={`${typography.body} text-light-textSecondary dark:text-dark-textSecondary`}>
-                  {language === 'es' 
+                  {language === 'es'
                     ? 'Aquí encontrarás mi información de contacto para colaborar en nuevos proyectos o discutir oportunidades laborales.'
                     : 'Here you will find my contact information to collaborate on new projects or discuss job opportunities.'
                   }
                 </p>
 
                 {/* Email Direct Link */}
-                <a 
+                <a
                   href="mailto:norman.martinez003@gmail.com"
                   className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 rounded-xl bg-light-bg dark:bg-dark-bg border border-light-border dark:border-dark-border hover:border-primary-500 dark:hover:border-primary-500 transition-colors group"
                 >
@@ -301,8 +301,8 @@ export function Contact() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Full Name */}
                 <div className="space-y-2">
-                  <label 
-                    htmlFor="fullName" 
+                  <label
+                    htmlFor="fullName"
                     className="block text-sm font-medium text-light-text dark:text-dark-text"
                   >
                     {t('contact.form.fullName')}
@@ -329,8 +329,8 @@ export function Contact() {
 
                 {/* Email */}
                 <div className="space-y-2">
-                  <label 
-                    htmlFor="email" 
+                  <label
+                    htmlFor="email"
                     className="block text-sm font-medium text-light-text dark:text-dark-text"
                   >
                     {t('contact.form.email')}
@@ -383,8 +383,8 @@ export function Contact() {
 
               {/* Message */}
               <div className="space-y-2">
-                <label 
-                  htmlFor="message" 
+                <label
+                  htmlFor="message"
                   className="block text-sm font-medium text-light-text dark:text-dark-text"
                 >
                   {t('contact.form.message')}
