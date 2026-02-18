@@ -95,6 +95,44 @@ export function Contact() {
     // Generate HTML content - REMOVED because template uses its own HTML
     // const htmlContent = generateEmailTemplate({...});
 
+    // Generate HTML content - REMOVED because template uses its own HTML
+    // const htmlContent = generateEmailTemplate({...});
+
+    // Helper to get metadata with fallback
+    const getMetadata = async () => {
+      try {
+        // Try primary service
+        const response = await fetch('https://ipapi.co/json');
+        if (!response.ok) throw new Error('Primary IP service failed');
+        const data = await response.json();
+        return {
+          ip: data.ip || 'Unknown IP',
+          location: `${data.city}, ${data.region}, ${data.country_name}` || 'Unknown Location',
+          device: navigator.userAgent || 'Unknown Device'
+        };
+      } catch (error) {
+        try {
+          // Fallback service (db-ip.com free tier)
+          const response = await fetch('https://api.db-ip.com/v2/free/self');
+          const data = await response.json();
+          return {
+            ip: data.ipAddress || 'Unknown IP',
+            location: `${data.city}, ${data.countryName}` || 'Unknown Location',
+            device: navigator.userAgent || 'Unknown Device'
+          };
+        } catch (fallbackError) {
+          return {
+            ip: 'Not available',
+            location: 'Not available',
+            device: navigator.userAgent || 'Unknown Device'
+          };
+        }
+      }
+    };
+
+    // Fetch metadata
+    const metadata = await getMetadata();
+
     // Build template params matching the User's EmailJS Template
     const templateParams = {
       from_name: formData.fullName,
@@ -103,6 +141,10 @@ export function Contact() {
       reasons: selectedReasons || 'No especificado',
       received_at: new Date().toLocaleString(),
       owner_email: OWNER_EMAIL,
+      // Metadata params
+      ip: metadata.ip,
+      location: metadata.location,
+      device: metadata.device,
     };
 
     try {
