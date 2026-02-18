@@ -13,7 +13,7 @@ export function Logo({ size = 'md' }: LogoProps) {
     lg: 'h-10',
   };
 
-  const logoSrc = theme === 'dark' ? '/logo-nsma_light.png' : '/logo-nsma_dark.png';
+  const logoSrc = theme === 'dark' ? '/logo-nsma_light.webp' : '/logo-nsma_dark.webp';
 
   return (
     <img 

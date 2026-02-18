@@ -53,9 +53,11 @@ export default defineConfig({
     ]
   }
   ,
+  esbuild: {
+    drop: ['console', 'debugger'],
+  },
   build: {
     sourcemap: false,
-    // Use esbuild minifier (no extra dependency required) and drop console/debugger.
     minify: 'esbuild',
     rollupOptions: {
       output: {

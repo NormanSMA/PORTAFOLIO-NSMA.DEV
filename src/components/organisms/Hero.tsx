@@ -39,6 +39,7 @@ export function Hero() {
                     src="/norman_sf.webp"
                     alt="Norman Martínez - Full Stack Developer"
                     loading="eager"
+                    fetchPriority="high"
                     className="w-full h-auto rounded-xl md:rounded-2xl"
                   />
                 </div>

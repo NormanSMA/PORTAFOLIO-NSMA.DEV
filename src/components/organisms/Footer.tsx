@@ -39,7 +39,7 @@ export function Footer() {
             </div>
 
             {/* Quick Links */}
-            <div className="space-y-4 px-4">
+            <nav aria-label={language === 'es' ? 'Navegación del pie de página' : 'Footer navigation'} className="space-y-4 px-4">
               <h4 className="text-lg font-semibold text-light-text dark:text-dark-text">
                 {language === 'es' ? 'Enlaces Rápidos' : 'Quick Links'}
               </h4>
@@ -60,7 +60,7 @@ export function Footer() {
                   </li>
                 ))}
               </ul>
-            </div>
+            </nav>
 
             {/* Social Links */}
             <div className="space-y-4">
