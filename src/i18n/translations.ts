@@ -52,8 +52,8 @@ export const translations = {
         fullDescription: 'Desarrollo y gestión de la plataforma web oficial para el congreso anual de ingeniería SYSTECH de la Universidad Americana. Lideré el diseño de arquitectura, personalización de plantillas y configuración de plugins, implementando un sistema escalable con módulos de registro y agenda interactiva que optimizó la experiencia para ponentes, patrocinadores y más de 220 asistentes.',
       },
       pantano: {
-        shortDescription: 'Desarrollo integral del sitio web comercial para Hotel-Restaurante El Pantano. Gestioné el proyecto completo desde consultoría inicial hasta el lanzamiento, incluyendo...',
-        fullDescription: 'Desarrollo integral del sitio web comercial para Hotel-Restaurante El Pantano. Gestioné el proyecto completo desde consultoría inicial hasta el lanzamiento, incluyendo UX/UI, funcionalidades WordPress e implementación de estrategias SEO on-page para indexación en Google. El sitio incluye sistema de reservas, galería de habitaciones e información turística completa.',
+        shortDescription: 'Desarrollo integral de 0 a 100 del sitio web para Hotel-Restaurante El Pantano. Gestioné el proyecto completo desde consultoría inicial hasta el despliegue con Astro...',
+        fullDescription: 'Desarrollo integral de 0 a 100 del sitio web para Hotel-Restaurante El Pantano. Gestioné el proyecto completo desde consultoría inicial hasta el lanzamiento, incluyendo UX/UI, desarrollo con Astro y Tailwind CSS, y gestión de infraestructura (Vercel, Dominio y SSL). El sitio cuenta con alto rendimiento, SEO optimizado y galería dinámica.',
       },
       bolsa: {
         title: 'Bolsa de Trabajo UAM',
@@ -220,8 +220,8 @@ export const translations = {
         fullDescription: 'Development and management of the official web platform for the annual SYSTECH engineering congress of the Universidad Americana. I led the architecture design, template customization and plugin configuration, implementing a scalable system with registration modules and interactive agenda that optimized the experience for speakers, sponsors and over 220 attendees.',
       },
       pantano: {
-        shortDescription: 'Comprehensive development of the commercial website for Hotel-Restaurante El Pantano. Managed the complete project from initial consultation to launch, including...',
-        fullDescription: 'Comprehensive development of the commercial website for Hotel-Restaurante El Pantano. Managed the complete project from initial consultation to launch, including UX/UI, WordPress functionalities and implementation of on-page SEO strategies for Google indexing. The site includes a reservation system, room gallery and complete tourist information.',
+        shortDescription: 'End-to-End development (0 to 100) of the website for Hotel-Restaurante El Pantano. Managed the complete project from initial consultation to Astro deployment...',
+        fullDescription: 'End-to-End development (0 to 100) of the website for Hotel-Restaurante El Pantano. Managed the complete project from initial consultation to launch, including UX/UI, development with Astro and Tailwind CSS, and infrastructure management (Vercel, Domain, and SSL). Features high performance, optimized SEO, and dynamic gallery.',
       },
       bolsa: {
         title: 'Bolsa de Trabajo UAM',

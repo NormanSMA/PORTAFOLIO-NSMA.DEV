@@ -1,4 +1,4 @@
-import { WordPressIcon, AndroidIcon, ReactIcon } from "../components/atoms/icons";
+import { WordPressIcon, AndroidIcon, ReactIcon, AstroIcon } from "../components/atoms/icons";
 
 export const getProjects = (t: (key: string) => string) => [
   {
@@ -15,13 +15,13 @@ export const getProjects = (t: (key: string) => string) => [
   {
     id: "pantano",
     title: "Hotel El Pantano",
-    category: "WordPress",
+    category: "Astro",
     shortDescription: t("projects.pantano.shortDescription"),
     fullDescription: t("projects.pantano.fullDescription"),
     image: "/hotel-ElPantano.webp",
     url: "https://hotel-el-pantano.vercel.app/",
-    technologies: ["WordPress", "WooCommerce", "PHP", "SEO"],
-    icon: WordPressIcon,
+    technologies: ["Astro", "Tailwind CSS", "TypeScript", "Vercel", "SEO"],
+    icon: AstroIcon,
   },
   {
     id: "bolsa",
