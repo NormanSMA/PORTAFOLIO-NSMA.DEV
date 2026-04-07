@@ -1,9 +1,11 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
 import { useLanguage, useScrollPosition } from '../../hooks';
 import { Logo, Container, StarBorder, AnimatedThemeToggler } from '../atoms';
 import { cn, scrollToElement } from '../../utils/helpers';
 
 export function Navbar() {
+  const reduceMotion = useReducedMotion();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const lastScrollY = useRef(0);
@@ -19,7 +21,7 @@ export function Navbar() {
     { id: 'about', label: t('nav.about') },
     { id: 'services', label: t('nav.services') },
     { id: 'projects', label: t('nav.projects') },
-  { id: 'education-skills', label: t('nav.experience') },
+    { id: 'education-skills', label: t('nav.experience') },
     { id: 'contact', label: t('nav.contact') },
   ], [t]);
 
@@ -81,16 +83,18 @@ export function Navbar() {
   };
 
   return (
-    <nav
-  className={cn(
-    'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
-    // Navbar sólido cuando: 1) se hace scroll O 2) el menú móvil está abierto
-    isScrolled || isMenuOpen
-      ? 'bg-light-bg/80 dark:bg-dark-bg/80 backdrop-blur-lg shadow-lg'
-      : 'bg-transparent',
-    isVisible ? 'translate-y-0' : '-translate-y-full'
-  )}
->
+    <motion.nav
+      className={cn(
+        'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
+        isScrolled || isMenuOpen
+          ? 'bg-light-bg/80 dark:bg-dark-bg/80 backdrop-blur-lg shadow-lg'
+          : 'bg-transparent',
+        isVisible ? 'translate-y-0' : '-translate-y-full'
+      )}
+      initial={reduceMotion ? { opacity: 1 } : { opacity: 0, y: -26 }}
+      animate={reduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+      transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1], delay: 0.12 }}
+    >
 
       <Container>
         <div className="flex items-center justify-between h-16 md:h-20">
@@ -103,7 +107,7 @@ export function Navbar() {
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center gap-8">
             {navLinks.map((link) => (
-              <button
+              <motion.button
                 key={link.id}
                 onClick={() => handleNavClick(link.id)}
                 className={cn(
@@ -113,9 +117,11 @@ export function Navbar() {
                     : 'text-light-text dark:text-dark-text hover:text-primary-500 dark:hover:text-primary-400'
                 )}
                 aria-current={activeSection === link.id ? 'page' : undefined}
+                whileHover={reduceMotion ? undefined : { y: -2, scale: 1.03 }}
+                transition={{ duration: 0.2, ease: 'easeOut' }}
               >
                 {link.label}
-              </button>
+              </motion.button>
             ))}
           </div>
 
@@ -198,6 +204,6 @@ export function Navbar() {
           </div>
         </div>
       </Container>
-    </nav>
+    </motion.nav>
   );
 }

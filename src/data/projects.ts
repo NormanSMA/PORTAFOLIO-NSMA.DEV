@@ -1,9 +1,5 @@
-import {
-  WordPressIcon,
-  AndroidIcon,
-  ReactIcon,
-  AstroIcon,
-} from '../components/atoms/icons';
+import { FaAndroid, FaReact, FaWordpressSimple } from 'react-icons/fa6';
+import { SiAstro } from 'react-icons/si';
 
 export const getProjects = (t: (key: string) => string) => [
   {
@@ -15,7 +11,7 @@ export const getProjects = (t: (key: string) => string) => [
     image: '/Systech-UAM.webp',
     url: 'https://systech.uam.edu.ni/',
     technologies: ['WordPress', 'PHP', 'MySQL', 'CSS'],
-    icon: WordPressIcon,
+    icon: FaWordpressSimple,
   },
   {
     id: 'pantano',
@@ -26,7 +22,7 @@ export const getProjects = (t: (key: string) => string) => [
     image: '/hotel-ElPantano.webp',
     url: 'https://www.hotel-el-pantano.org/',
     technologies: ['Astro', 'Tailwind CSS', 'TypeScript', 'Vercel', 'SEO'],
-    icon: AstroIcon,
+    icon: SiAstro,
   },
   {
     id: 'bolsa',
@@ -37,7 +33,7 @@ export const getProjects = (t: (key: string) => string) => [
     image: '/Bolsa-De-TrabajoUAM.webp',
     url: null,
     technologies: ['Android', 'Java', 'SQL Server', 'Spring Boot'],
-    icon: AndroidIcon,
+    icon: FaAndroid,
   },
   {
     id: 'portfolio',
@@ -49,6 +45,6 @@ export const getProjects = (t: (key: string) => string) => [
     imageDark: '/portfolio-dark.webp',
     url: 'https://portafolio-nsma-dev.vercel.app/',
     technologies: ['React 19', 'TypeScript', 'Tailwind CSS', 'Framer Motion'],
-    icon: ReactIcon,
+    icon: FaReact,
   },
 ];

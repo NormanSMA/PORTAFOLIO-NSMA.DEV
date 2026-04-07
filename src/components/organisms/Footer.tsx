@@ -1,9 +1,11 @@
 import { useLanguage } from '../../hooks';
+import { motion, useReducedMotion } from 'framer-motion';
 import { Container, Logo } from '../atoms';
 import { socialLinks } from '../../data/social';
 
 export function Footer() {
   const { language, t } = useLanguage();
+  const reduceMotion = useReducedMotion();
   const currentYear = new Date().getFullYear();
 
   const footerLinks = [
@@ -22,7 +24,13 @@ export function Footer() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 mb-8">
             
             {/* Branding con Logo */}
-            <div className="space-y-4 px-4">
+            <motion.div
+              className="space-y-4 px-4"
+              initial={reduceMotion ? { opacity: 1 } : { opacity: 0, y: 24 }}
+              whileInView={reduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.4 }}
+              transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+            >
               {/* Logo Component - link to top for semantics */}
               <div className="mb-4">
                 <a href="#home" aria-label="Go to top" onClick={(e) => { e.preventDefault(); const el = document.getElementById('home'); el?.scrollIntoView({ behavior: 'smooth' }); }}>
@@ -36,17 +44,24 @@ export function Footer() {
                   : 'Systems Engineer specialized in full-stack web development and networking.'
                 }
               </p>
-            </div>
+            </motion.div>
 
             {/* Quick Links */}
-            <nav aria-label={language === 'es' ? 'Navegación del pie de página' : 'Footer navigation'} className="space-y-4 px-4">
+            <motion.nav
+              aria-label={language === 'es' ? 'Navegación del pie de página' : 'Footer navigation'}
+              className="space-y-4 px-4"
+              initial={reduceMotion ? { opacity: 1 } : { opacity: 0, y: 24 }}
+              whileInView={reduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.4 }}
+              transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1], delay: 0.08 }}
+            >
               <h4 className="text-lg font-semibold text-light-text dark:text-dark-text">
                 {language === 'es' ? 'Enlaces Rápidos' : 'Quick Links'}
               </h4>
               <ul className="space-y-2">
                 {footerLinks.map((link) => (
                   <li key={link.id}>
-                    <a
+                    <motion.a
                       href={`#${link.id}`}
                       onClick={(e) => {
                         e.preventDefault();
@@ -54,50 +69,77 @@ export function Footer() {
                         el?.scrollIntoView({ behavior: 'smooth' });
                       }}
                       className="text-light-textSecondary dark:text-dark-textSecondary hover:text-primary-500 dark:hover:text-primary-400 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 rounded-sm px-1"
+                      whileHover={reduceMotion ? undefined : { x: 6 }}
+                      transition={{ duration: 0.2, ease: 'easeOut' }}
                     >
                       {link.label}
-                    </a>
+                    </motion.a>
                   </li>
                 ))}
               </ul>
-            </nav>
+            </motion.nav>
 
             {/* Social Links */}
-            <div className="space-y-4">
+            <motion.div
+              className="space-y-4"
+              initial={reduceMotion ? { opacity: 1 } : { opacity: 0, y: 24 }}
+              whileInView={reduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.4 }}
+              transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1], delay: 0.16 }}
+            >
               <h4 className="text-lg font-semibold text-light-text dark:text-dark-text">
                 {language === 'es' ? 'Conecta Conmigo' : 'Connect With Me'}
               </h4>
               <div className="flex gap-4">
                 {socialLinks.map((social) => (
-                  <a
+                  <motion.a
                     key={social.name}
                     href={social.url}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="p-3 rounded-lg bg-light-bg dark:bg-dark-bg text-light-text dark:text-dark-text hover:text-primary-500 dark:hover:text-primary-400 hover:bg-primary-500/10 transition-all transform motion-safe:hover:scale-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
                     aria-label={social.name}
+                    whileHover={reduceMotion ? undefined : { y: -4, scale: 1.08 }}
+                    transition={{ duration: 0.22, ease: 'easeOut' }}
                   >
-                    <svg className="w-6 h-6" fill={social.stroke ? "none" : "currentColor"} stroke={social.stroke ? "currentColor" : "none"} viewBox="0 0 24 24">
-                      {social.stroke ? (
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={social.iconPath} />
-                      ) : (
-                        <path d={social.iconPath} />
-                      )}
-                    </svg>
-                  </a>
+                    <motion.div
+                      animate={reduceMotion ? undefined : { 
+                        y: [0, -3, 0],
+                      }}
+                      whileHover={reduceMotion ? undefined : { 
+                        rotate: [0, -15, 15, -15, 15, 0],
+                        scale: 1.25
+                      }}
+                      transition={reduceMotion ? undefined : {
+                        duration: 3,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                        delay: 0.1
+                      }}
+                      className="flex items-center justify-center p-0.5"
+                    >
+                      <social.icon className="w-6 h-6" />
+                    </motion.div>
+                  </motion.a>
                 ))}
               </div>
-            </div>
+            </motion.div>
           </div>
 
           {/* Bottom Section */}
-          <div className="pt-8 border-t border-light-border dark:border-dark-border">
+          <motion.div
+            className="pt-8 border-t border-light-border dark:border-dark-border"
+            initial={reduceMotion ? { opacity: 1 } : { opacity: 0, y: 16 }}
+            whileInView={reduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.5 }}
+            transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
+          >
             <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-light-textSecondary dark:text-dark-textSecondary">
               <p>
                 © {currentYear} Norman Martínez. {language === 'es' ? 'Todos los derechos reservados.' : 'All rights reserved.'}
               </p>
             </div>
-          </div>
+          </motion.div>
         </div>
       </Container>
     </footer>

@@ -4,3 +4,4 @@ export { Logo } from './Logo';
 export { StarBorder } from './StarBorder';
 export { Counter } from './Counter';
 export { AnimatedThemeToggler } from './AnimatedThemeToggler';
+export { IntroScreen } from './IntroScreen';

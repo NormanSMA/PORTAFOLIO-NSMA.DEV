@@ -1,25 +1,20 @@
-import { useTheme } from '../../hooks';
+export type LogoVariant = 'A';
 
 interface LogoProps {
   size?: 'sm' | 'md' | 'lg';
+  variant?: LogoVariant;
 }
 
 export function Logo({ size = 'md' }: LogoProps) {
-  const { theme } = useTheme();
-  
-  const sizes = {
-    sm: 'h-6',
-    md: 'h-8',
-    lg: 'h-10',
-  };
-
-  const logoSrc = theme === 'dark' ? '/logo-nsma_light.webp' : '/logo-nsma_dark.webp';
+  const textSize =
+    size === 'sm' ? 'text-xl' : size === 'lg' ? 'text-3xl' : 'text-2xl';
 
   return (
-    <img 
-      src={logoSrc} 
-      alt="nsma.dev" 
-      className={`${sizes[size]} w-auto transition-opacity duration-300`}
-    />
+    <span
+      className={`select-none pointer-events-none inline-flex items-baseline leading-none font-display font-bold italic ${textSize} text-light-text dark:text-dark-text`}
+      aria-label="nsma.dev"
+    >
+      nsma.dev
+    </span>
   );
 }

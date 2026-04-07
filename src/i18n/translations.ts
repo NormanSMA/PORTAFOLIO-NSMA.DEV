@@ -4,6 +4,8 @@ export const translations = {
       home: 'Inicio',
       about: 'Sobre mí',
       services: 'Servicios',
+      metrics: 'Impacto',
+      process: 'Proceso',
       projects: 'Proyectos',
       experience: 'Experiencia',
       contact: 'Contacto',
@@ -31,6 +33,48 @@ export const translations = {
       deployment: {
         title: 'Hosting & Despliegue',
         description: 'Gestión completa de hosting en AWS y servidores VPS. Compra y configuración de dominios, certificados SSL, optimización SEO, y vinculación con Google Analytics y Search Console.',
+      },
+    },
+
+    metrics: {
+      title: 'Resultados que se pueden medir',
+      subtitle: 'Cada proyecto está pensado para combinar diseño, rendimiento y objetivos reales de negocio.',
+      cards: {
+        projects: {
+          title: 'Entregas Publicadas',
+          detail: 'Sitios y productos digitales desplegados con enfoque en conversiones, claridad visual y mantenimiento simple.',
+        },
+        performance: {
+          title: 'Rendimiento Promedio',
+          detail: 'Optimización continua de carga, estructura y experiencia para mantener resultados altos en métricas web.',
+        },
+        response: {
+          title: 'Tiempo de Respuesta',
+          detail: 'Comunicación rápida en etapas clave para avanzar sin bloqueos y con decisiones técnicas claras.',
+        },
+      },
+    },
+
+    process: {
+      title: 'Proceso de trabajo',
+      subtitle: 'Una ruta clara para pasar de la idea al producto final sin improvisaciones ni ruido innecesario.',
+      steps: {
+        discovery: {
+          title: 'Descubrimiento',
+          description: 'Entiendo objetivos, audiencia y alcance para definir una base sólida antes de diseñar o programar.',
+        },
+        strategy: {
+          title: 'Estrategia visual y técnica',
+          description: 'Defino estructura, lenguaje visual, componentes y prioridades técnicas para una ejecución ordenada.',
+        },
+        build: {
+          title: 'Construcción y validación',
+          description: 'Desarrollo interfaces y lógica con revisiones continuas para asegurar calidad, rendimiento y consistencia.',
+        },
+        optimize: {
+          title: 'Optimización y lanzamiento',
+          description: 'Ajusto detalles finales, mejoro accesibilidad/SEO y preparo el despliegue con seguimiento post-lanzamiento.',
+        },
       },
     },
 
@@ -172,6 +216,8 @@ export const translations = {
       home: 'Home',
       about: 'About',
       services: 'Services',
+      metrics: 'Impact',
+      process: 'Process',
       projects: 'Projects',
       experience: 'Experience',
       contact: 'Contact',
@@ -199,6 +245,48 @@ export const translations = {
       deployment: {
         title: 'Hosting & Deployment',
         description: 'Complete hosting management on AWS and VPS servers. Domain purchase and configuration, SSL certificates, SEO optimization, and integration with Google Analytics and Search Console.',
+      },
+    },
+
+    metrics: {
+      title: 'Results you can measure',
+      subtitle: 'Every project blends design, performance, and real business goals from the start.',
+      cards: {
+        projects: {
+          title: 'Published Deliveries',
+          detail: 'Websites and digital products shipped with a focus on conversion, visual clarity, and easy maintenance.',
+        },
+        performance: {
+          title: 'Average Performance',
+          detail: 'Continuous optimization of loading, structure, and UX to keep web vitals and user perception strong.',
+        },
+        response: {
+          title: 'Response Time',
+          detail: 'Fast communication during key project stages to keep momentum and make technical decisions quickly.',
+        },
+      },
+    },
+
+    process: {
+      title: 'Work process',
+      subtitle: 'A clear route from idea to final product without improvisation or unnecessary complexity.',
+      steps: {
+        discovery: {
+          title: 'Discovery',
+          description: 'I map goals, audience, and scope to establish a strong foundation before design or development starts.',
+        },
+        strategy: {
+          title: 'Visual and technical strategy',
+          description: 'I define structure, visual language, component system, and technical priorities for a focused execution.',
+        },
+        build: {
+          title: 'Build and validation',
+          description: 'I implement interfaces and logic with continuous review cycles to ensure quality and consistency.',
+        },
+        optimize: {
+          title: 'Optimization and launch',
+          description: 'I finalize details, improve accessibility/SEO, and deploy with post-launch monitoring in place.',
+        },
       },
     },
 

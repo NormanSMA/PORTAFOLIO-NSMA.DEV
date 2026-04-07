@@ -1,4 +1,5 @@
 import { useLanguage } from '../../hooks';
+import { motion, useReducedMotion } from 'framer-motion';
 import { Container } from '../atoms';
 import { useMemo, useRef, useEffect, useCallback, useState } from 'react';
 import { typography } from '../../config/typography';
@@ -6,6 +7,7 @@ import { getServices } from '../../data/services';
 
 export function Services() {
   const { t } = useLanguage();
+  const reduceMotion = useReducedMotion();
   const services = useMemo(() => getServices(t), [t]);
   
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -124,14 +126,20 @@ export function Services() {
         {/* ===== MOBILE/TABLET LAYOUT with Stacking ===== */}
         <div className="lg:hidden max-w-6xl mx-auto">
           {/* Fixed Header */}
-          <div className="text-center mb-8 px-4">
+          <motion.div
+            className="text-center mb-8 px-4"
+            initial={reduceMotion ? { opacity: 1 } : { opacity: 0, y: 28 }}
+            whileInView={reduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.45 }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          >
             <h2 className={`${typography.sectionTitle} text-light-text dark:text-dark-text mb-4`}>
               {t('services.title')}
             </h2>
             <p className={`${typography.sectionSubtitle} text-light-textSecondary dark:text-dark-textSecondary max-w-3xl mx-auto`}>
               {t('services.subtitle')}
             </p>
-          </div>
+          </motion.div>
 
           {/* Stacking Cards Container */}
           <div 
@@ -153,7 +161,7 @@ export function Services() {
                     ['--progress' as string]: '0',
                   }}
                 >
-                  <article
+                  <motion.article
                     className={`
                       bg-gradient-to-br ${cardColors[index]} 
                       bg-light-bg dark:bg-dark-card 
@@ -167,9 +175,14 @@ export function Services() {
                       transformOrigin: 'top center',
                       transition: 'box-shadow 0.3s ease',
                     }}
+                    initial={reduceMotion ? { opacity: 1 } : { opacity: 0, y: 32 }}
+                    whileInView={reduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+                    whileHover={reduceMotion ? undefined : { scale: 1.02, y: -6 }}
+                    viewport={{ once: true, amount: 0.35 }}
+                    transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1], delay: index * 0.1 }}
                   >
                     <div className={`inline-flex items-center justify-center w-14 h-14 rounded-xl ${iconColors[index]}`}>
-                      <span aria-hidden><Icon /></span>
+                      <Icon className="h-7 w-7" />
                     </div>
                     <h3 className={`${typography.cardSubtitle} text-light-text dark:text-dark-text`}>
                       {service.title}
@@ -177,7 +190,7 @@ export function Services() {
                     <p className={`${typography.secondary} text-light-textSecondary dark:text-dark-textSecondary leading-relaxed`}>
                       {service.description}
                     </p>
-                  </article>
+                  </motion.article>
                 </div>
               );
             })}
@@ -189,7 +202,7 @@ export function Services() {
           <div className="flex gap-16 items-start">
             
             {/* Columna izquierda: Texto con Parallax */}
-            <div 
+            <motion.div 
               ref={leftColumnRef}
               className="w-[35%] sticky top-32"
               style={{ 
@@ -198,6 +211,10 @@ export function Services() {
                 transition: 'opacity 0.1s ease-out',
                 ['--section-progress' as string]: '0',
               }}
+              initial={reduceMotion ? { opacity: 1 } : { opacity: 0, x: -36 }}
+              whileInView={reduceMotion ? { opacity: 1 } : { opacity: 1, x: 0 }}
+              viewport={{ once: true, amount: 0.4 }}
+              transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
             >
               <div className="space-y-6">
                 <h2 className={`${typography.sectionTitle} text-light-text dark:text-dark-text`}>
@@ -207,7 +224,7 @@ export function Services() {
                   {t('services.subtitle')}
                 </p>
               </div>
-            </div>
+            </motion.div>
 
             {/* Columna derecha: Stacking Cards */}
             <div className="w-[65%]">
@@ -218,7 +235,6 @@ export function Services() {
               >
                 {services.map((service, index) => {
                   const Icon = service.icon;
-                  
                   return (
                     <div
                       key={index}
@@ -231,7 +247,7 @@ export function Services() {
                         ['--progress' as string]: '0',
                       }}
                     >
-                      <article
+                      <motion.article
                         className={`
                           relative overflow-hidden
                           bg-gradient-to-br ${cardColors[index]}
@@ -246,11 +262,16 @@ export function Services() {
                           transformOrigin: 'top center',
                           transition: 'box-shadow 0.3s ease',
                         }}
+                        initial={reduceMotion ? { opacity: 1 } : { opacity: 0, y: 38 }}
+                        whileInView={reduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+                        whileHover={reduceMotion ? undefined : { y: -8, scale: 1.02 }}
+                        viewport={{ once: true, amount: 0.3 }}
+                        transition={{ duration: 0.58, ease: [0.22, 1, 0.36, 1], delay: index * 0.12 }}
                       >
                         {/* Layout horizontal */}
                         <div className="flex items-start gap-6">
                           <div className={`flex-shrink-0 inline-flex items-center justify-center w-16 h-16 rounded-2xl ${iconColors[index]}`}>
-                            <span aria-hidden className="text-2xl"><Icon /></span>
+                            <Icon className="h-8 w-8" />
                           </div>
                           
                           <div className="flex-1 space-y-3">
@@ -262,7 +283,7 @@ export function Services() {
                             </p>
                           </div>
                         </div>
-                      </article>
+                      </motion.article>
                     </div>
                   );
                 })}

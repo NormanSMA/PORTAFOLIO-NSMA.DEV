@@ -1,13 +1,15 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
+import { ExternalLink } from 'lucide-react';
+import { motion, useReducedMotion } from 'framer-motion';
 import { useLanguage, useTheme } from '../../hooks';
 import { Container } from '../atoms';
 import { typography } from '../../config/typography';
-import { ExternalLinkIcon } from '../atoms/icons';
 import { getProjects } from '../../data/projects';
 
 export function Projects() {
   const { t } = useLanguage();
   const { theme } = useTheme();
+  const reduceMotion = useReducedMotion();
   const [expandedProject, setExpandedProject] = useState<string | null>(null);
   const [maxLines, setMaxLines] = useState(3);
   const referenceTextRef = useRef<HTMLParagraphElement>(null);
@@ -40,30 +42,42 @@ export function Projects() {
   }, []);
 
   return (
-    <section id="projects" className="py-16 md:py-24 bg-light-bg dark:bg-dark-bg relative overflow-hidden">
+    <section id="projects" className="relative overflow-hidden bg-light-bg py-14 md:py-20 dark:bg-dark-bg">
       <Container>
         <div className="max-w-7xl mx-auto">
           {/* Header */}
-          <div className="text-center mb-12 md:mb-16">
+          <motion.div
+            className="mb-10 text-center md:mb-12"
+            initial={reduceMotion ? { opacity: 1 } : { opacity: 0, y: 16 }}
+            whileInView={reduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.5 }}
+            transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+          >
             <h2 className={`${typography.sectionTitle} text-light-text dark:text-dark-text mb-4`}>
               {t('projects.title')}
             </h2>
             <p className={`${typography.sectionSubtitle} text-light-textSecondary dark:text-dark-textSecondary max-w-3xl mx-auto px-4`}>
               {t('projects.subtitle')}
             </p>
-          </div>
+          </motion.div>
 
           {/* Projects Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-2 md:gap-6 lg:grid-cols-3">
             {projects.map((project) => {
               const IconComponent = project.icon;
               const isExpanded = expandedProject === project.id;
               const isReference = project.id === 'bolsa'; // Android card es la referencia
+              const delay = project.id === 'pantano' ? 0.08 : project.id === 'bolsa' ? 0.16 : project.id === 'portfolio' ? 0.24 : 0;
               
               return (
-                <article
+                <motion.article
                   key={project.id}
-                  className="group relative bg-light-card dark:bg-dark-card rounded-2xl overflow-visible border border-light-border dark:border-dark-border motion-safe:hover:-translate-y-2 transition-all duration-300"
+                  className="group relative overflow-visible rounded-2xl border border-light-border bg-light-card transition-all duration-300 dark:border-dark-border dark:bg-dark-card"
+                  initial={reduceMotion ? { opacity: 1 } : { opacity: 0, y: 16 }}
+                  whileInView={reduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+                  whileHover={reduceMotion ? undefined : { y: -8 }}
+                  viewport={{ once: true, amount: 0.3 }}
+                  transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1], delay }}
                 >
                   {/* Main Card */}
                   <div className="relative">
@@ -75,9 +89,23 @@ export function Projects() {
                         className="w-full h-full object-cover motion-safe:group-hover:scale-105 transition-transform duration-500"
                       />
                       {/* Category Badge con icono */}
-                      <div className="absolute top-3 left-3 sm:top-4 sm:left-4 bg-primary-600 dark:bg-primary-500 text-white px-3 py-1.5 sm:px-4 rounded-full text-xs sm:text-sm font-semibold flex items-center gap-1.5 sm:gap-2">
-                        <IconComponent className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
-                        <span>{project.category}</span>
+                      <div className="absolute top-3 left-3 sm:top-4 sm:left-4 bg-primary-600 dark:bg-primary-500 text-white px-3 py-1.5 sm:px-4 rounded-full text-xs sm:text-sm font-semibold flex items-center gap-1.5 sm:gap-2 overflow-hidden group/badge">
+                        <motion.div
+                          animate={reduceMotion ? undefined : { 
+                            rotate: [0, 15, -15, 0],
+                            scale: [1, 1.1, 1]
+                          }}
+                          transition={reduceMotion ? undefined : {
+                            duration: 3,
+                            repeat: Infinity,
+                            ease: "easeInOut",
+                            delay: delay + 0.5
+                          }}
+                          className="flex items-center justify-center relative z-10"
+                        >
+                          <IconComponent className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
+                        </motion.div>
+                        <span className="relative z-10">{project.category}</span>
                       </div>
                     </div>
 
@@ -132,7 +160,7 @@ export function Projects() {
                             className="inline-flex items-center gap-1.5 sm:gap-2 text-sm sm:text-base text-primary-600 dark:text-primary-400 hover:text-primary-500 dark:hover:text-primary-300 font-semibold transition-colors group/link"
                           >
                             <span>Ver proyecto</span>
-                            <ExternalLinkIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4 group-hover/link:translate-x-1 group-hover/link:-translate-y-1 transition-transform" />
+                            <ExternalLink className="w-3.5 h-3.5 sm:w-4 sm:h-4 group-hover/link:translate-x-1 group-hover/link:-translate-y-1 transition-transform" />
                           </a>
                         ) : (
                           <span className="inline-flex items-center gap-2 text-light-textSecondary dark:text-dark-textSecondary font-semibold text-xs sm:text-sm">
@@ -213,7 +241,7 @@ export function Projects() {
                       </div>
                     </div>
                   )}
-                </article>
+                </motion.article>
               );
             })}
           </div>

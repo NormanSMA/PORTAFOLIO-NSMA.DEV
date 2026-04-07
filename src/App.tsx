@@ -1,22 +1,45 @@
-import { Suspense, lazy } from 'react';
+import { Suspense, lazy, useState } from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { LanguageProvider } from './contexts/LanguageContext';
 import { Navbar, Hero, About, Services } from './components/organisms';
 import { ScrollToTop } from './components/molecules';
+import { IntroScreen } from './components/atoms';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/react';
 
 // Lazy load below-the-fold components
 const Projects = lazy(() => import('./components/organisms/Projects').then(module => ({ default: module.Projects })));
+const ImpactMetrics = lazy(() => import('./components/organisms/ImpactMetrics').then(module => ({ default: module.ImpactMetrics })));
+const Process = lazy(() => import('./components/organisms/Process').then(module => ({ default: module.Process })));
 const EducationSkills = lazy(() => import('./components/organisms/EducationSkills').then(module => ({ default: module.EducationSkills })));
 const Contact = lazy(() => import('./components/organisms/Contact').then(module => ({ default: module.Contact })));
 const Footer = lazy(() => import('./components/organisms/Footer').then(module => ({ default: module.Footer })));
 
+const SHOW_IMPACT_METRICS = false;
+
 function App() {
+  const reduceMotion = useReducedMotion();
+  const [introVisible, setIntroVisible] = useState<boolean>(
+    () => !sessionStorage.getItem('intro-seen')
+  );
+
+  const handleIntroDone = () => {
+    sessionStorage.setItem('intro-seen', '1');
+    setIntroVisible(false);
+  };
+
   return (
     <ThemeProvider>
       <LanguageProvider>
-        <div className="min-h-screen bg-light-bg dark:bg-dark-bg transition-colors">
+        {introVisible && <IntroScreen onDone={handleIntroDone} />}
+        <motion.div
+          className="min-h-screen bg-light-bg dark:bg-dark-bg transition-colors"
+          style={introVisible ? { visibility: 'hidden' } : undefined}
+          initial={reduceMotion ? { opacity: 1 } : { opacity: 0, y: 24 }}
+          animate={reduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: introVisible ? 0 : 0.05 }}
+        >
           <Navbar />
           <Hero />
           <About />
@@ -38,6 +61,8 @@ function App() {
             ))}
           </div>
         }>
+          {SHOW_IMPACT_METRICS ? <ImpactMetrics /> : null}
+            <Process />
             <Projects />
             <EducationSkills />
             <Contact /> 
@@ -47,7 +72,7 @@ function App() {
           <ScrollToTop />
           <Analytics />
           <SpeedInsights />
-        </div>
+        </motion.div>
       </LanguageProvider>
     </ThemeProvider>
   );

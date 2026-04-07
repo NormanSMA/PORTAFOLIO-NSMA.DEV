@@ -1,17 +1,26 @@
 import { useLanguage } from '../../hooks';
+import { motion, useReducedMotion } from 'framer-motion';
+import { GraduationCap, BadgeCheck, Languages } from 'lucide-react';
 import { Container } from '../atoms';
 import { typography } from '../../config/typography';
 import { technicalSkills } from '../../data/skills';
 
 export function EducationSkills() {
   const { t } = useLanguage();
+  const reduceMotion = useReducedMotion();
 
   return (
     <section id="education-skills" className="py-16 md:py-24 bg-light-bg dark:bg-dark-bg relative overflow-hidden">
       <Container>
         <div className="max-w-6xl mx-auto">
           {/* Header con decoración de puntos */}
-          <div className="text-center mb-12 md:mb-16 relative">
+          <motion.div
+            className="text-center mb-12 md:mb-16 relative"
+            initial={reduceMotion ? { opacity: 1 } : { opacity: 0, y: 30 }}
+            whileInView={reduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.45 }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          >
             {/* Patrón de puntos decorativo */}
             <svg
               viewBox="0 0 52 24"
@@ -42,22 +51,29 @@ export function EducationSkills() {
             <p className={`${typography.sectionSubtitle} text-light-textSecondary dark:text-dark-textSecondary max-w-3xl mx-auto px-4`}>
               {t('educationSkills.subtitle')}
             </p>
-          </div>
+          </motion.div>
 
           {/* Layout de dos columnas con divisor */}
           <div className="grid max-w-screen-lg mx-auto space-y-8 lg:grid-cols-2 lg:space-y-0 lg:divide-x lg:divide-light-border dark:lg:divide-dark-border">
             
             {/* Columna Izquierda: Educación */}
-            <div className="space-y-6 sm:px-8 lg:pr-12">
+            <motion.div
+              className="space-y-6 sm:px-8 lg:pr-12"
+              initial={reduceMotion ? { opacity: 1 } : { opacity: 0, x: -32 }}
+              whileInView={reduceMotion ? { opacity: 1 } : { opacity: 1, x: 0 }}
+              viewport={{ once: true, amount: 0.35 }}
+              transition={{ duration: 0.58, ease: [0.22, 1, 0.36, 1] }}
+            >
               
               {/* Universidad */}
-              <div className="flex flex-col lg:flex-row items-center lg:items-start max-w-md mx-auto lg:mx-0">
+              <motion.div
+                className="flex flex-col lg:flex-row items-center lg:items-start max-w-md mx-auto lg:mx-0 rounded-2xl p-3 transition-all duration-300 hover:bg-light-card/60 dark:hover:bg-dark-card/50"
+                whileHover={reduceMotion ? undefined : { y: -5, scale: 1.02 }}
+                transition={{ duration: 0.25, ease: 'easeOut' }}
+              >
                 <div className="mb-4 lg:mb-0 lg:mr-4">
                   <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary-50 dark:bg-primary-900/30">
-                    <svg className="w-6 h-6 text-primary-600 dark:text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
-                    </svg>
+                    <GraduationCap className="h-7 w-7 text-primary-600 dark:text-primary-400" strokeWidth={2.1} />
                   </div>
                 </div>
                 <div className="text-center lg:text-left">
@@ -74,15 +90,17 @@ export function EducationSkills() {
                     {t('educationSkills.education.university.period')}
                   </p>
                 </div>
-              </div>
+              </motion.div>
 
               {/* Certificaciones */}
-              <div className="flex flex-col lg:flex-row items-center lg:items-start max-w-md mx-auto lg:mx-0">
+              <motion.div
+                className="flex flex-col lg:flex-row items-center lg:items-start max-w-md mx-auto lg:mx-0 rounded-2xl p-3 transition-all duration-300 hover:bg-light-card/60 dark:hover:bg-dark-card/50"
+                whileHover={reduceMotion ? undefined : { y: -5, scale: 1.02 }}
+                transition={{ duration: 0.25, ease: 'easeOut' }}
+              >
                 <div className="mb-4 lg:mb-0 lg:mr-4">
                   <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary-50 dark:bg-primary-900/30">
-                    <svg className="w-6 h-6 text-primary-600 dark:text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
-                    </svg>
+                    <BadgeCheck className="h-7 w-7 text-primary-600 dark:text-primary-400" strokeWidth={2.1} />
                   </div>
                 </div>
                 <div className="text-center lg:text-left">
@@ -96,15 +114,17 @@ export function EducationSkills() {
                     {t('educationSkills.education.certifications.rpa')}
                   </p>
                 </div>
-              </div>
+              </motion.div>
 
               {/* Idiomas */}
-              <div className="flex flex-col lg:flex-row items-center lg:items-start max-w-md mx-auto lg:mx-0">
+              <motion.div
+                className="flex flex-col lg:flex-row items-center lg:items-start max-w-md mx-auto lg:mx-0 rounded-2xl p-3 transition-all duration-300 hover:bg-light-card/60 dark:hover:bg-dark-card/50"
+                whileHover={reduceMotion ? undefined : { y: -5, scale: 1.02 }}
+                transition={{ duration: 0.25, ease: 'easeOut' }}
+              >
                 <div className="mb-4 lg:mb-0 lg:mr-4">
                   <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary-50 dark:bg-primary-900/30">
-                    <svg className="w-6 h-6 text-primary-600 dark:text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
+                    <Languages className="h-7 w-7 text-primary-600 dark:text-primary-400" strokeWidth={2.1} />
                   </div>
                 </div>
                 <div className="text-center lg:text-left">
@@ -120,8 +140,8 @@ export function EducationSkills() {
                     {t('educationSkills.education.languages.level')}
                   </p>
                 </div>
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
 
             {/* Separador visual para móvil/tablet */}
             <div className="lg:hidden flex items-center gap-4 my-8">
@@ -133,24 +153,46 @@ export function EducationSkills() {
             </div>
 
             {/* Columna Derecha: Habilidades Técnicas */}
-            <div className="space-y-6 sm:px-8 lg:pl-12">
+            <motion.div
+              className="space-y-6 sm:px-8 lg:pl-12"
+              initial={reduceMotion ? { opacity: 1 } : { opacity: 0, x: 32 }}
+              whileInView={reduceMotion ? { opacity: 1 } : { opacity: 1, x: 0 }}
+              viewport={{ once: true, amount: 0.35 }}
+              transition={{ duration: 0.58, ease: [0.22, 1, 0.36, 1], delay: 0.08 }}
+            >
 
               {/* Grid de tecnologías - 3 columnas para mejor distribución */}
               <div className="grid grid-cols-3 gap-4">
                 {technicalSkills.map((skill, index) => {
                   const Icon = skill.icon;
                   return (
-                    <div
+                    <motion.div
                       key={index}
                       className="flex flex-col items-center gap-2 p-3 rounded-xl bg-light-card dark:bg-dark-card hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-all duration-300 hover:-translate-y-1 group"
+                      initial={reduceMotion ? { opacity: 1 } : { opacity: 0, y: 18 }}
+                      whileInView={reduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+                      whileHover={reduceMotion ? undefined : { y: -6, scale: 1.03 }}
+                      viewport={{ once: true, amount: 0.25 }}
+                      transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1], delay: index * 0.04 }}
                     >
-                      <div className="w-10 h-10 group-hover:scale-110 transition-transform duration-300">
-                        <Icon />
-                      </div>
+                      <motion.div 
+                        className="w-10 h-10 text-primary-600 dark:text-primary-400"
+                        animate={reduceMotion ? undefined : { 
+                          y: [0, -4, 0],
+                        }}
+                        transition={reduceMotion ? undefined : {
+                          duration: 3,
+                          repeat: Infinity,
+                          ease: "easeInOut",
+                          delay: index * 0.2
+                        }}
+                      >
+                        <Icon className="w-full h-full drop-shadow-sm transition-transform duration-300 group-hover:scale-110 group-hover:text-primary-500" />
+                      </motion.div>
                       <span className={`${typography.small} text-light-textSecondary dark:text-dark-textSecondary text-center font-medium`}>
                         {skill.name}
                       </span>
-                    </div>
+                    </motion.div>
                   );
                 })}
               </div>
@@ -172,7 +214,7 @@ export function EducationSkills() {
                   </span>
                 </div>
               </div>
-            </div>
+            </motion.div>
           </div>
         </div>
       </Container>
