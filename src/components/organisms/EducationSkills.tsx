@@ -4,6 +4,7 @@ import { GraduationCap, BadgeCheck, Languages } from 'lucide-react';
 import { Container } from '../atoms';
 import { typography } from '../../config/typography';
 import { technicalSkills } from '../../data/skills';
+import { sectionItem, sectionSlideLeft, sectionSlideRight, sectionStagger } from '../../config/motion';
 
 export function EducationSkills() {
   const { t } = useLanguage();
@@ -16,10 +17,10 @@ export function EducationSkills() {
           {/* Header con decoración de puntos */}
           <motion.div
             className="text-center mb-12 md:mb-16 relative"
-            initial={reduceMotion ? { opacity: 1 } : { opacity: 0, y: 30 }}
-            whileInView={reduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+            variants={reduceMotion ? undefined : sectionItem}
+            initial={reduceMotion ? { opacity: 1 } : 'hidden'}
+            whileInView={reduceMotion ? { opacity: 1 } : 'show'}
             viewport={{ once: true, amount: 0.45 }}
-            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           >
             {/* Patrón de puntos decorativo */}
             <svg
@@ -54,22 +55,25 @@ export function EducationSkills() {
           </motion.div>
 
           {/* Layout de dos columnas con divisor */}
-          <div className="grid max-w-screen-lg mx-auto space-y-8 lg:grid-cols-2 lg:space-y-0 lg:divide-x lg:divide-light-border dark:lg:divide-dark-border">
+          <motion.div
+            className="grid max-w-screen-lg mx-auto space-y-8 lg:grid-cols-2 lg:space-y-0 lg:divide-x lg:divide-light-border dark:lg:divide-dark-border"
+            variants={reduceMotion ? undefined : sectionStagger}
+            initial={reduceMotion ? { opacity: 1 } : 'hidden'}
+            whileInView={reduceMotion ? { opacity: 1 } : 'show'}
+            viewport={{ once: true, amount: 0.2 }}
+          >
             
             {/* Columna Izquierda: Educación */}
             <motion.div
               className="space-y-6 sm:px-8 lg:pr-12"
-              initial={reduceMotion ? { opacity: 1 } : { opacity: 0, x: -32 }}
-              whileInView={reduceMotion ? { opacity: 1 } : { opacity: 1, x: 0 }}
-              viewport={{ once: true, amount: 0.35 }}
-              transition={{ duration: 0.58, ease: [0.22, 1, 0.36, 1] }}
+              variants={reduceMotion ? undefined : sectionSlideLeft}
             >
               
               {/* Universidad */}
               <motion.div
                 className="flex flex-col lg:flex-row items-center lg:items-start max-w-md mx-auto lg:mx-0 rounded-2xl p-3 transition-all duration-300 hover:bg-light-card/60 dark:hover:bg-dark-card/50"
                 whileHover={reduceMotion ? undefined : { y: -5, scale: 1.02 }}
-                transition={{ duration: 0.25, ease: 'easeOut' }}
+                variants={reduceMotion ? undefined : sectionItem}
               >
                 <div className="mb-4 lg:mb-0 lg:mr-4">
                   <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary-50 dark:bg-primary-900/30">
@@ -96,7 +100,7 @@ export function EducationSkills() {
               <motion.div
                 className="flex flex-col lg:flex-row items-center lg:items-start max-w-md mx-auto lg:mx-0 rounded-2xl p-3 transition-all duration-300 hover:bg-light-card/60 dark:hover:bg-dark-card/50"
                 whileHover={reduceMotion ? undefined : { y: -5, scale: 1.02 }}
-                transition={{ duration: 0.25, ease: 'easeOut' }}
+                variants={reduceMotion ? undefined : sectionItem}
               >
                 <div className="mb-4 lg:mb-0 lg:mr-4">
                   <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary-50 dark:bg-primary-900/30">
@@ -120,7 +124,7 @@ export function EducationSkills() {
               <motion.div
                 className="flex flex-col lg:flex-row items-center lg:items-start max-w-md mx-auto lg:mx-0 rounded-2xl p-3 transition-all duration-300 hover:bg-light-card/60 dark:hover:bg-dark-card/50"
                 whileHover={reduceMotion ? undefined : { y: -5, scale: 1.02 }}
-                transition={{ duration: 0.25, ease: 'easeOut' }}
+                variants={reduceMotion ? undefined : sectionItem}
               >
                 <div className="mb-4 lg:mb-0 lg:mr-4">
                   <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary-50 dark:bg-primary-900/30">
@@ -155,10 +159,7 @@ export function EducationSkills() {
             {/* Columna Derecha: Habilidades Técnicas */}
             <motion.div
               className="space-y-6 sm:px-8 lg:pl-12"
-              initial={reduceMotion ? { opacity: 1 } : { opacity: 0, x: 32 }}
-              whileInView={reduceMotion ? { opacity: 1 } : { opacity: 1, x: 0 }}
-              viewport={{ once: true, amount: 0.35 }}
-              transition={{ duration: 0.58, ease: [0.22, 1, 0.36, 1], delay: 0.08 }}
+              variants={reduceMotion ? undefined : sectionSlideRight}
             >
 
               {/* Grid de tecnologías - 3 columnas para mejor distribución */}
@@ -169,11 +170,8 @@ export function EducationSkills() {
                     <motion.div
                       key={index}
                       className="flex flex-col items-center gap-2 p-3 rounded-xl bg-light-card dark:bg-dark-card hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-all duration-300 hover:-translate-y-1 group"
-                      initial={reduceMotion ? { opacity: 1 } : { opacity: 0, y: 18 }}
-                      whileInView={reduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+                      variants={reduceMotion ? undefined : sectionItem}
                       whileHover={reduceMotion ? undefined : { y: -6, scale: 1.03 }}
-                      viewport={{ once: true, amount: 0.25 }}
-                      transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1], delay: index * 0.04 }}
                     >
                       <motion.div 
                         className="w-10 h-10 text-primary-600 dark:text-primary-400"
@@ -215,7 +213,7 @@ export function EducationSkills() {
                 </div>
               </div>
             </motion.div>
-          </div>
+          </motion.div>
         </div>
       </Container>
     </section>

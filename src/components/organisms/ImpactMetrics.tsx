@@ -2,6 +2,7 @@ import { useLanguage } from '../../hooks';
 import { motion, useReducedMotion } from 'framer-motion';
 import { Container } from '../atoms';
 import { typography } from '../../config/typography';
+import { sectionItem, sectionStagger } from '../../config/motion';
 
 export function ImpactMetrics() {
   const { t } = useLanguage();
@@ -32,10 +33,10 @@ export function ImpactMetrics() {
         <div className="relative z-10 mx-auto max-w-6xl">
           <motion.div
             className="mb-8 text-center md:mb-10"
-            initial={reduceMotion ? { opacity: 1 } : { opacity: 0, y: 14 }}
-            whileInView={reduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+            variants={reduceMotion ? undefined : sectionItem}
+            initial={reduceMotion ? { opacity: 1 } : 'hidden'}
+            whileInView={reduceMotion ? { opacity: 1 } : 'show'}
             viewport={{ once: true, amount: 0.5 }}
-            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
           >
             <h2 className={`${typography.sectionTitle} mb-4 text-light-text dark:text-dark-text`}>
               {t('metrics.title')}
@@ -45,16 +46,19 @@ export function ImpactMetrics() {
             </p>
           </motion.div>
 
-          <div className="grid gap-4 md:grid-cols-3 md:gap-5">
-            {metrics.map((metric, index) => (
+          <motion.div
+            className="grid gap-4 md:grid-cols-3 md:gap-5"
+            variants={reduceMotion ? undefined : sectionStagger}
+            initial={reduceMotion ? { opacity: 1 } : 'hidden'}
+            whileInView={reduceMotion ? { opacity: 1 } : 'show'}
+            viewport={{ once: true, amount: 0.35 }}
+          >
+            {metrics.map((metric) => (
               <motion.article
                 key={metric.title}
                 className="rounded-3xl border border-light-border/70 bg-light-bg/90 p-5 shadow-[0_24px_60px_-42px_rgba(2,6,23,0.55)] backdrop-blur-sm dark:border-dark-border dark:bg-dark-card/90"
-                initial={reduceMotion ? { opacity: 1 } : { opacity: 0, y: 16 }}
-                whileInView={reduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+                variants={reduceMotion ? undefined : sectionItem}
                 whileHover={reduceMotion ? undefined : { y: -7 }}
-                viewport={{ once: true, amount: 0.35 }}
-                transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1], delay: index * 0.08 }}
               >
                 <p className="font-display text-4xl font-bold tracking-tight text-primary-600 dark:text-primary-400">
                   {metric.value}
@@ -67,7 +71,7 @@ export function ImpactMetrics() {
                 </p>
               </motion.article>
             ))}
-          </div>
+          </motion.div>
         </div>
       </Container>
     </section>

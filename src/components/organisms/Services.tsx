@@ -1,24 +1,15 @@
 import { useLanguage } from '../../hooks';
 import { motion, useReducedMotion } from 'framer-motion';
 import { Container } from '../atoms';
-import { useMemo, useRef, useEffect, useCallback, useState } from 'react';
+import { useMemo } from 'react';
 import { typography } from '../../config/typography';
 import { getServices } from '../../data/services';
+import { sectionItem, sectionStagger } from '../../config/motion';
 
 export function Services() {
   const { t } = useLanguage();
   const reduceMotion = useReducedMotion();
   const services = useMemo(() => getServices(t), [t]);
-  
-  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const leftColumnRef = useRef<HTMLDivElement>(null);
-  
-  // Mobile stacking refs
-  const mobileCardRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const mobileContainerRef = useRef<HTMLDivElement>(null);
-  
-  const [isMobile, setIsMobile] = useState(false);
 
   // Colores para cada tarjeta - tonos de azul sutiles
   const cardColors = [
@@ -33,105 +24,19 @@ export function Services() {
     'bg-indigo-500/15 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400',
   ];
 
-  // Check for mobile/tablet
-  useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 1024);
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
-  // Desktop scroll handler
-  const handleScroll = useCallback(() => {
-    if (!containerRef.current || !leftColumnRef.current) return;
-
-    const parentRect = containerRef.current.getBoundingClientRect();
-    const sectionProgress = Math.max(0, Math.min(1, -parentRect.top / (parentRect.height - window.innerHeight)));
-    leftColumnRef.current.style.setProperty('--section-progress', sectionProgress.toString());
-
-    cardRefs.current.forEach((card, index) => {
-      if (!card) return;
-      
-      const rect = card.getBoundingClientRect();
-      const stickyTop = 120 + (index * 35);
-      const nextCard = cardRefs.current[index + 1];
-      let progress = 0;
-
-      if (rect.top <= stickyTop + 1) {
-        if (nextCard) {
-          const nextRect = nextCard.getBoundingClientRect();
-          const distance = 250;
-          progress = Math.max(0, Math.min(1, (stickyTop - nextRect.top + 100) / distance));
-        } else {
-          progress = Math.max(0, Math.min(0.4, sectionProgress * 0.8)); 
-        }
-      }
-      
-      card.style.setProperty('--progress', Math.min(progress, 0.7).toString());
-    });
-  }, []);
-
-  // Mobile/Tablet scroll handler
-  const handleMobileScroll = useCallback(() => {
-    if (!mobileContainerRef.current) return;
-
-    mobileCardRefs.current.forEach((card, index) => {
-      if (!card) return;
-      
-      const rect = card.getBoundingClientRect();
-      const stickyTop = 100 + (index * 25); // Slightly less offset for mobile
-      const nextCard = mobileCardRefs.current[index + 1];
-      let progress = 0;
-
-      if (rect.top <= stickyTop + 1) {
-        if (nextCard) {
-          const nextRect = nextCard.getBoundingClientRect();
-          const distance = 200;
-          progress = Math.max(0, Math.min(1, (stickyTop - nextRect.top + 80) / distance));
-        } else {
-          // Last card fades slightly at end
-          const parentRect = mobileContainerRef.current!.getBoundingClientRect();
-          const sectionProgress = Math.max(0, Math.min(1, -parentRect.top / (parentRect.height - window.innerHeight)));
-          progress = Math.max(0, Math.min(0.4, sectionProgress * 0.8));
-        }
-      }
-      
-      card.style.setProperty('--progress', Math.min(progress, 0.7).toString());
-    });
-  }, []);
-
-
-  useEffect(() => {
-    // Respect prefers-reduced-motion: skip scroll-driven animations
-    const motionOk = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (!motionOk) return;
-
-    if (isMobile) {
-      window.addEventListener('scroll', handleMobileScroll, { passive: true });
-      handleMobileScroll();
-      return () => window.removeEventListener('scroll', handleMobileScroll);
-    } else {
-      window.addEventListener('scroll', handleScroll, { passive: true });
-      handleScroll();
-      return () => window.removeEventListener('scroll', handleScroll);
-    }
-  }, [handleScroll, handleMobileScroll, isMobile]);
-
   return (
     <section 
       id="services" 
       className="py-16 md:py-24 bg-light-card dark:bg-dark-bg relative"
     >
       <Container>
-        {/* ===== MOBILE/TABLET LAYOUT with Stacking ===== */}
-        <div className="lg:hidden max-w-6xl mx-auto">
-          {/* Fixed Header */}
+        <div className="mx-auto max-w-6xl px-4">
           <motion.div
-            className="text-center mb-8 px-4"
-            initial={reduceMotion ? { opacity: 1 } : { opacity: 0, y: 28 }}
-            whileInView={reduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+            className="text-center mb-8 md:mb-10"
+            variants={reduceMotion ? undefined : sectionItem}
+            initial={reduceMotion ? { opacity: 1 } : 'hidden'}
+            whileInView={reduceMotion ? { opacity: 1 } : 'show'}
             viewport={{ once: true, amount: 0.45 }}
-            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           >
             <h2 className={`${typography.sectionTitle} text-light-text dark:text-dark-text mb-4`}>
               {t('services.title')}
@@ -141,155 +46,40 @@ export function Services() {
             </p>
           </motion.div>
 
-          {/* Stacking Cards Container */}
-          <div 
-            ref={mobileContainerRef}
-            className="relative px-4"
-            style={{ minHeight: `${services.length * 35}vh` }}
+          <motion.div
+            className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
+            variants={reduceMotion ? undefined : sectionStagger}
+            initial={reduceMotion ? { opacity: 1 } : 'hidden'}
+            whileInView={reduceMotion ? { opacity: 1 } : 'show'}
+            viewport={{ once: true, amount: 0.25 }}
           >
             {services.map((service, index) => {
               const Icon = service.icon;
               return (
-                <div
+                <motion.article
                   key={index}
-                  ref={(el) => { mobileCardRefs.current[index] = el; }}
-                  className="sticky"
-                  style={{ 
-                    top: `${100 + (index * 25)}px`,
-                    zIndex: index + 1,
-                    marginBottom: '3vh',
-                    ['--progress' as string]: '0',
-                  }}
+                  className={`
+                    rounded-2xl border border-light-border/60 dark:border-dark-border/60
+                    bg-gradient-to-br ${cardColors[index]}
+                    bg-light-bg dark:bg-dark-card
+                    p-6 space-y-4 shadow-lg
+                  `}
+                  variants={reduceMotion ? undefined : sectionItem}
+                  whileHover={reduceMotion ? undefined : { y: -4 }}
                 >
-                  <motion.article
-                    className={`
-                      bg-gradient-to-br ${cardColors[index]} 
-                      bg-light-bg dark:bg-dark-card 
-                      shadow-lg dark:shadow-xl 
-                      p-6 space-y-4 rounded-2xl 
-                      border border-light-border/50 dark:border-dark-border/50
-                    `}
-                    style={{
-                      transform: `scale(calc(1 - (var(--progress) * 0.04))) translateY(calc(var(--progress) * -8px))`,
-                      filter: `brightness(calc(1 - (var(--progress) * 0.1)))`,
-                      transformOrigin: 'top center',
-                      transition: 'box-shadow 0.3s ease',
-                    }}
-                    initial={reduceMotion ? { opacity: 1 } : { opacity: 0, y: 32 }}
-                    whileInView={reduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
-                    whileHover={reduceMotion ? undefined : { scale: 1.02, y: -6 }}
-                    viewport={{ once: true, amount: 0.35 }}
-                    transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1], delay: index * 0.1 }}
-                  >
-                    <div className={`inline-flex items-center justify-center w-14 h-14 rounded-xl ${iconColors[index]}`}>
-                      <Icon className="h-7 w-7" />
-                    </div>
-                    <h3 className={`${typography.cardSubtitle} text-light-text dark:text-dark-text`}>
-                      {service.title}
-                    </h3>
-                    <p className={`${typography.secondary} text-light-textSecondary dark:text-dark-textSecondary leading-relaxed`}>
-                      {service.description}
-                    </p>
-                  </motion.article>
-                </div>
+                  <div className={`inline-flex items-center justify-center w-14 h-14 rounded-xl ${iconColors[index]}`}>
+                    <Icon className="h-7 w-7" />
+                  </div>
+                  <h3 className={`${typography.cardSubtitle} text-light-text dark:text-dark-text`}>
+                    {service.title}
+                  </h3>
+                  <p className={`${typography.secondary} text-light-textSecondary dark:text-dark-textSecondary leading-relaxed`}>
+                    {service.description}
+                  </p>
+                </motion.article>
               );
             })}
-          </div>
-        </div>
-
-        {/* ===== DESKTOP LAYOUT: Premium Sticky Stacking Cards ===== */}
-        <div className="hidden lg:block max-w-7xl mx-auto px-4">
-          <div className="flex gap-16 items-start">
-            
-            {/* Columna izquierda: Texto con Parallax */}
-            <motion.div 
-              ref={leftColumnRef}
-              className="w-[35%] sticky top-32"
-              style={{ 
-                transform: `translateY(calc(var(--section-progress, 0) * -20px))`,
-                opacity: `calc(1 - (var(--section-progress, 0) * 0.3))`,
-                transition: 'opacity 0.1s ease-out',
-                ['--section-progress' as string]: '0',
-              }}
-              initial={reduceMotion ? { opacity: 1 } : { opacity: 0, x: -36 }}
-              whileInView={reduceMotion ? { opacity: 1 } : { opacity: 1, x: 0 }}
-              viewport={{ once: true, amount: 0.4 }}
-              transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
-            >
-              <div className="space-y-6">
-                <h2 className={`${typography.sectionTitle} text-light-text dark:text-dark-text`}>
-                  {t('services.title')}
-                </h2>
-                <p className={`${typography.sectionSubtitle} text-light-textSecondary dark:text-dark-textSecondary leading-relaxed`}>
-                  {t('services.subtitle')}
-                </p>
-              </div>
-            </motion.div>
-
-            {/* Columna derecha: Stacking Cards */}
-            <div className="w-[65%]">
-              <div 
-                ref={containerRef}
-                className="relative"
-                style={{ minHeight: `${services.length * 25}vh` }}
-              >
-                {services.map((service, index) => {
-                  const Icon = service.icon;
-                  return (
-                    <div
-                      key={index}
-                      ref={(el) => { cardRefs.current[index] = el; }}
-                      className="sticky"
-                      style={{ 
-                        top: `${120 + (index * 35)}px`,
-                        zIndex: index + 1,
-                        marginBottom: '2vh',
-                        ['--progress' as string]: '0',
-                      }}
-                    >
-                      <motion.article
-                        className={`
-                          relative overflow-hidden
-                          bg-gradient-to-br ${cardColors[index]}
-                          bg-light-bg dark:bg-dark-card 
-                          p-8 rounded-2xl 
-                          border border-light-border/80 dark:border-dark-border/80
-                          shadow-xl
-                        `}
-                        style={{
-                          transform: `scale(calc(1 - (var(--progress) * 0.04))) translateY(calc(var(--progress) * -10px))`,
-                          filter: `brightness(calc(1 - (var(--progress) * 0.1)))`,
-                          transformOrigin: 'top center',
-                          transition: 'box-shadow 0.3s ease',
-                        }}
-                        initial={reduceMotion ? { opacity: 1 } : { opacity: 0, y: 38 }}
-                        whileInView={reduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
-                        whileHover={reduceMotion ? undefined : { y: -8, scale: 1.02 }}
-                        viewport={{ once: true, amount: 0.3 }}
-                        transition={{ duration: 0.58, ease: [0.22, 1, 0.36, 1], delay: index * 0.12 }}
-                      >
-                        {/* Layout horizontal */}
-                        <div className="flex items-start gap-6">
-                          <div className={`flex-shrink-0 inline-flex items-center justify-center w-16 h-16 rounded-2xl ${iconColors[index]}`}>
-                            <Icon className="h-8 w-8" />
-                          </div>
-                          
-                          <div className="flex-1 space-y-3">
-                            <h3 className={`${typography.cardSubtitle} text-light-text dark:text-dark-text`}>
-                              {service.title}
-                            </h3>
-                            <p className={`${typography.secondary} text-light-textSecondary dark:text-dark-textSecondary leading-relaxed`}>
-                              {service.description}
-                            </p>
-                          </div>
-                        </div>
-                      </motion.article>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
+          </motion.div>
         </div>
       </Container>
     </section>

@@ -3,6 +3,7 @@ import { motion, useReducedMotion } from 'framer-motion';
 import { Search, Compass, Code2, Gauge } from 'lucide-react';
 import { Container } from '../atoms';
 import { typography } from '../../config/typography';
+import { sectionItem, sectionStagger } from '../../config/motion';
 
 export function Process() {
   const { t } = useLanguage();
@@ -41,10 +42,10 @@ export function Process() {
         <div className="mx-auto max-w-6xl">
           <motion.div
             className="mb-8 text-center md:mb-10"
-            initial={reduceMotion ? { opacity: 1 } : { opacity: 0, y: 40 }}
-            whileInView={reduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+            variants={reduceMotion ? undefined : sectionItem}
+            initial={reduceMotion ? { opacity: 1 } : 'hidden'}
+            whileInView={reduceMotion ? { opacity: 1 } : 'show'}
             viewport={{ once: true, amount: 0.5 }}
-            transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
           >
             <h2 className={`${typography.sectionTitle} mb-4 text-light-text dark:text-dark-text`}>
               {t('process.title')}
@@ -54,18 +55,21 @@ export function Process() {
             </p>
           </motion.div>
 
-          <div className="grid gap-3 md:grid-cols-2 md:gap-4">
-            {steps.map((step, index) => {
+          <motion.div
+            className="grid gap-3 md:grid-cols-2 md:gap-4"
+            variants={reduceMotion ? undefined : sectionStagger}
+            initial={reduceMotion ? { opacity: 1 } : 'hidden'}
+            whileInView={reduceMotion ? { opacity: 1 } : 'show'}
+            viewport={{ once: true, amount: 0.35 }}
+          >
+            {steps.map((step) => {
               const StepIcon = step.Icon;
               return (
                 <motion.article
                   key={step.id}
                   className="relative overflow-hidden rounded-3xl border border-light-border bg-light-card p-5 transition-all duration-300 motion-safe:hover:border-primary-400/60 dark:border-dark-border dark:bg-dark-card"
-                  initial={reduceMotion ? { opacity: 1 } : { opacity: 0, y: 28 }}
-                  whileInView={reduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+                  variants={reduceMotion ? undefined : sectionItem}
                   whileHover={reduceMotion ? undefined : { y: -10, scale: 1.02 }}
-                  viewport={{ once: true, amount: 0.35 }}
-                  transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1], delay: index * 0.1 }}
                 >
                   <div className="mb-4 flex items-center justify-between gap-3">
                     <div className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-primary-500/10 text-sm font-bold text-primary-600 dark:text-primary-300">
@@ -82,7 +86,7 @@ export function Process() {
                 </motion.article>
               );
             })}
-          </div>
+          </motion.div>
         </div>
       </Container>
     </section>

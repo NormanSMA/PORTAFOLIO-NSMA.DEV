@@ -2,6 +2,7 @@ import { useLanguage } from '../../hooks';
 import { motion, useReducedMotion } from 'framer-motion';
 import { Container, Logo } from '../atoms';
 import { socialLinks } from '../../data/social';
+import { sectionItem, sectionStagger } from '../../config/motion';
 
 export function Footer() {
   const { language, t } = useLanguage();
@@ -21,15 +22,18 @@ export function Footer() {
       <Container>
         <div className="py-12 md:py-16">
           {/* Top Section */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 mb-8">
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 mb-8"
+            variants={reduceMotion ? undefined : sectionStagger}
+            initial={reduceMotion ? { opacity: 1 } : 'hidden'}
+            whileInView={reduceMotion ? { opacity: 1 } : 'show'}
+            viewport={{ once: true, amount: 0.3 }}
+          >
             
             {/* Branding con Logo */}
             <motion.div
               className="space-y-4 px-4"
-              initial={reduceMotion ? { opacity: 1 } : { opacity: 0, y: 24 }}
-              whileInView={reduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.4 }}
-              transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+              variants={reduceMotion ? undefined : sectionItem}
             >
               {/* Logo Component - link to top for semantics */}
               <div className="mb-4">
@@ -50,10 +54,7 @@ export function Footer() {
             <motion.nav
               aria-label={language === 'es' ? 'Navegación del pie de página' : 'Footer navigation'}
               className="space-y-4 px-4"
-              initial={reduceMotion ? { opacity: 1 } : { opacity: 0, y: 24 }}
-              whileInView={reduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.4 }}
-              transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1], delay: 0.08 }}
+              variants={reduceMotion ? undefined : sectionItem}
             >
               <h4 className="text-lg font-semibold text-light-text dark:text-dark-text">
                 {language === 'es' ? 'Enlaces Rápidos' : 'Quick Links'}
@@ -82,10 +83,7 @@ export function Footer() {
             {/* Social Links */}
             <motion.div
               className="space-y-4"
-              initial={reduceMotion ? { opacity: 1 } : { opacity: 0, y: 24 }}
-              whileInView={reduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.4 }}
-              transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1], delay: 0.16 }}
+              variants={reduceMotion ? undefined : sectionItem}
             >
               <h4 className="text-lg font-semibold text-light-text dark:text-dark-text">
                 {language === 'es' ? 'Conecta Conmigo' : 'Connect With Me'}
@@ -124,15 +122,15 @@ export function Footer() {
                 ))}
               </div>
             </motion.div>
-          </div>
+          </motion.div>
 
           {/* Bottom Section */}
           <motion.div
             className="pt-8 border-t border-light-border dark:border-dark-border"
-            initial={reduceMotion ? { opacity: 1 } : { opacity: 0, y: 16 }}
-            whileInView={reduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+            variants={reduceMotion ? undefined : sectionItem}
+            initial={reduceMotion ? { opacity: 1 } : 'hidden'}
+            whileInView={reduceMotion ? { opacity: 1 } : 'show'}
             viewport={{ once: true, amount: 0.5 }}
-            transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
           >
             <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-light-textSecondary dark:text-dark-textSecondary">
               <p>

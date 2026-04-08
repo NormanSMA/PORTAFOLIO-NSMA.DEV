@@ -6,6 +6,7 @@ import { useLanguage } from '../../hooks';
 import { Container } from '../atoms';
 import { typography } from '../../config/typography';
 import { APP_CONFIG } from '../../config/constants';
+import { sectionItem, sectionSlideLeft, sectionSlideRight, sectionStagger } from '../../config/motion';
 import {
   toContactRequestPayload,
   validateContactForm,
@@ -179,10 +180,10 @@ export function Contact() {
       <Container>
         <motion.div
           className="relative z-10 mb-10 text-center lg:mb-12"
-          initial={reduceMotion ? { opacity: 1 } : { opacity: 0, y: 26 }}
-          whileInView={reduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+          variants={reduceMotion ? undefined : sectionItem}
+          initial={reduceMotion ? { opacity: 1 } : 'hidden'}
+          whileInView={reduceMotion ? { opacity: 1 } : 'show'}
           viewport={{ once: true, amount: 0.45 }}
-          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         >
           <h2 className={`${typography.sectionTitle} mb-4 text-light-text dark:text-dark-text`}>
             {t('contact.title')}
@@ -192,15 +193,18 @@ export function Contact() {
           </p>
         </motion.div>
 
-        <div className="relative z-10 mx-auto grid max-w-6xl items-start gap-6 lg:grid-cols-[0.9fr_1.1fr] lg:gap-8">
-          <div className="space-y-8 lg:sticky lg:top-32">
+        <motion.div
+          className="relative z-10 mx-auto grid max-w-6xl items-start gap-6 lg:grid-cols-[0.9fr_1.1fr] lg:gap-8"
+          variants={reduceMotion ? undefined : sectionStagger}
+          initial={reduceMotion ? { opacity: 1 } : 'hidden'}
+          whileInView={reduceMotion ? { opacity: 1 } : 'show'}
+          viewport={{ once: true, amount: 0.22 }}
+        >
+          <motion.div className="space-y-8 lg:sticky lg:top-32">
             <motion.div
               className="relative overflow-hidden rounded-3xl border border-light-border/80 bg-light-card p-7 shadow-[0_24px_80px_-48px_rgba(15,23,42,0.45)] dark:border-dark-border dark:bg-dark-card hover-lift-soft"
-              initial={reduceMotion ? { opacity: 1 } : { opacity: 0, x: -30, y: 20 }}
-              whileInView={reduceMotion ? { opacity: 1 } : { opacity: 1, x: 0, y: 0 }}
+              variants={reduceMotion ? undefined : sectionSlideLeft}
               whileHover={reduceMotion ? undefined : { y: -7 }}
-              viewport={{ once: true, amount: 0.28 }}
-              transition={{ duration: 0.58, ease: [0.22, 1, 0.36, 1] }}
             >
               <div className="pointer-events-none absolute -right-20 -top-20 h-56 w-56 rounded-full bg-primary-500/10 blur-3xl" />
               <div className="pointer-events-none absolute -bottom-20 -left-12 h-44 w-44 rounded-full bg-emerald-400/10 blur-3xl" />
@@ -229,10 +233,8 @@ export function Contact() {
                         rel={channel.key === 'email' ? undefined : 'noopener noreferrer'}
                         className="group flex items-center gap-4 rounded-2xl border border-light-border bg-light-bg p-4 transition-all hover:border-primary-500/70 dark:border-dark-border dark:bg-dark-bg"
                         whileHover={reduceMotion ? undefined : { y: -4, x: 3 }}
-                        initial={reduceMotion ? { opacity: 1 } : { opacity: 0, y: 14 }}
-                        whileInView={reduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+                        variants={reduceMotion ? undefined : sectionItem}
                         viewport={{ once: true, amount: 0.3 }}
-                        transition={{ duration: 0.38, ease: [0.22, 1, 0.36, 1], delay: index * 0.06 }}
                       >
                         <motion.div 
                           className="rounded-xl bg-primary-500/10 p-2.5 text-primary-600 transition-colors group-hover:text-primary-700 group-hover:bg-primary-500/20 dark:text-primary-400 dark:group-hover:text-primary-300"
@@ -260,15 +262,12 @@ export function Contact() {
                 </div>
               </div>
             </motion.div>
-          </div>
+          </motion.div>
 
           <motion.div
             className="rounded-3xl border border-light-border/80 bg-light-card p-6 shadow-[0_24px_80px_-48px_rgba(15,23,42,0.45)] dark:border-dark-border dark:bg-dark-card md:p-7"
-            initial={reduceMotion ? { opacity: 1 } : { opacity: 0, x: 30, y: 20 }}
-            whileInView={reduceMotion ? { opacity: 1 } : { opacity: 1, x: 0, y: 0 }}
+            variants={reduceMotion ? undefined : sectionSlideRight}
             whileHover={reduceMotion ? undefined : { y: -5 }}
-            viewport={{ once: true, amount: 0.28 }}
-            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: 0.08 }}
           >
             <form onSubmit={handleSubmit} className="space-y-6" noValidate>
               <input
@@ -401,7 +400,7 @@ export function Contact() {
               </div>
             </form>
           </motion.div>
-        </div>
+        </motion.div>
       </Container>
     </section>
   );

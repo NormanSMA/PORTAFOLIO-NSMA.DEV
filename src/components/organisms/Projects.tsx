@@ -5,6 +5,7 @@ import { useLanguage, useTheme } from '../../hooks';
 import { Container } from '../atoms';
 import { typography } from '../../config/typography';
 import { getProjects } from '../../data/projects';
+import { sectionItem, sectionStagger } from '../../config/motion';
 
 export function Projects() {
   const { t } = useLanguage();
@@ -48,10 +49,10 @@ export function Projects() {
           {/* Header */}
           <motion.div
             className="mb-10 text-center md:mb-12"
-            initial={reduceMotion ? { opacity: 1 } : { opacity: 0, y: 16 }}
-            whileInView={reduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+            variants={reduceMotion ? undefined : sectionItem}
+            initial={reduceMotion ? { opacity: 1 } : 'hidden'}
+            whileInView={reduceMotion ? { opacity: 1 } : 'show'}
             viewport={{ once: true, amount: 0.5 }}
-            transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
           >
             <h2 className={`${typography.sectionTitle} text-light-text dark:text-dark-text mb-4`}>
               {t('projects.title')}
@@ -62,7 +63,13 @@ export function Projects() {
           </motion.div>
 
           {/* Projects Grid */}
-          <div className="grid grid-cols-1 gap-5 md:grid-cols-2 md:gap-6 lg:grid-cols-3">
+          <motion.div
+            className="grid grid-cols-1 gap-5 md:grid-cols-2 md:gap-6 lg:grid-cols-3"
+            variants={reduceMotion ? undefined : sectionStagger}
+            initial={reduceMotion ? { opacity: 1 } : 'hidden'}
+            whileInView={reduceMotion ? { opacity: 1 } : 'show'}
+            viewport={{ once: true, amount: 0.22 }}
+          >
             {projects.map((project) => {
               const IconComponent = project.icon;
               const isExpanded = expandedProject === project.id;
@@ -73,11 +80,8 @@ export function Projects() {
                 <motion.article
                   key={project.id}
                   className="group relative overflow-visible rounded-2xl border border-light-border bg-light-card transition-all duration-300 dark:border-dark-border dark:bg-dark-card"
-                  initial={reduceMotion ? { opacity: 1 } : { opacity: 0, y: 16 }}
-                  whileInView={reduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+                  variants={reduceMotion ? undefined : sectionItem}
                   whileHover={reduceMotion ? undefined : { y: -8 }}
-                  viewport={{ once: true, amount: 0.3 }}
-                  transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1], delay }}
                 >
                   {/* Main Card */}
                   <div className="relative">
@@ -244,7 +248,7 @@ export function Projects() {
                 </motion.article>
               );
             })}
-          </div>
+          </motion.div>
         </div>
       </Container>
     </section>
