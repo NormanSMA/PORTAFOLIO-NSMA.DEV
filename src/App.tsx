@@ -20,6 +20,7 @@ const SHOW_IMPACT_METRICS = false;
 
 function App() {
   const reduceMotion = useReducedMotion();
+  const [heroReady, setHeroReady] = useState(false);
   const [introVisible, setIntroVisible] = useState<boolean>(
     () => !sessionStorage.getItem('intro-seen')
   );
@@ -32,7 +33,7 @@ function App() {
   return (
     <ThemeProvider>
       <LanguageProvider>
-        {introVisible && <IntroScreen onDone={handleIntroDone} />}
+        {introVisible && <IntroScreen onDone={handleIntroDone} canExit={heroReady || Boolean(reduceMotion)} />}
         <motion.div
           className="min-h-screen bg-light-bg dark:bg-dark-bg transition-colors"
           style={introVisible ? { visibility: 'hidden' } : undefined}
@@ -41,7 +42,7 @@ function App() {
           transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: introVisible ? 0 : 0.05 }}
         >
           <Navbar />
-          <Hero />
+          <Hero onReady={() => setHeroReady(true)} />
           <About />
           <Services />
           

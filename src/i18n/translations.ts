@@ -19,6 +19,14 @@ export const translations = {
         contact: 'Contáctame',
       },
     },
+    intro: {
+      message: 'Del concepto al producto digital con enfoque real en resultados.',
+      skip: 'Omitir Intro',
+      status: {
+        loading: 'Preparando experiencia',
+        ready: 'Listo para entrar',
+      },
+    },
     services: {
       title: 'Servicios',
       subtitle: 'Soluciones web profesionales de principio a fin',
@@ -229,6 +237,14 @@ export const translations = {
       cta: {
         projects: 'View Projects',
         contact: 'Contact Me',
+      },
+    },
+    intro: {
+      message: 'From concept to digital product with a clear focus on outcomes.',
+      skip: 'Skip Intro',
+      status: {
+        loading: 'Preparing experience',
+        ready: 'Ready to enter',
       },
     },
     services: {
