@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback, type MouseEvent as ReactMouseEvent } from 'react';
+import { useRef, useState, useCallback, type MouseEvent as ReactMouseEvent } from 'react';
 import { useLanguage } from '../../hooks';
 import {
   motion,
@@ -50,22 +50,11 @@ const robotReveal: Variants = {
 };
 
 /* ─── component ─── */
-interface HeroProps {
-  onReady?: () => void;
-}
-
-export function Hero({ onReady }: HeroProps) {
+export function Hero() {
   const { t } = useLanguage();
   const reduceMotion = useReducedMotion();
   const heroRef = useRef<HTMLElement | null>(null);
   const [splineLoaded, setSplineLoaded] = useState(false);
-  const readySentRef = useRef(false);
-
-  const notifyReady = useCallback(() => {
-    if (!onReady || readySentRef.current) return;
-    readySentRef.current = true;
-    onReady();
-  }, [onReady]);
 
   // mouse-parallax values
   const mouseX = useMotionValue(0);
@@ -102,17 +91,7 @@ export function Hero({ onReady }: HeroProps) {
 
   const handleSplineIframeLoad = useCallback(() => {
     setSplineLoaded(true);
-    notifyReady();
-  }, [notifyReady]);
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-
-    const mediaQuery = window.matchMedia('(max-width: 767px)');
-    if (mediaQuery.matches) {
-      notifyReady();
-    }
-  }, [notifyReady]);
+  }, []);
 
   return (
     <section

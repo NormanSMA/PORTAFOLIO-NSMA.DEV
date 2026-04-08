@@ -1,10 +1,9 @@
-import { Suspense, lazy, useState } from 'react';
+import { Suspense, lazy } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { LanguageProvider } from './contexts/LanguageContext';
 import { Navbar, Hero, About, Services } from './components/organisms';
 import { ScrollToTop } from './components/molecules';
-import { IntroScreen } from './components/atoms';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/react';
 
@@ -20,29 +19,18 @@ const SHOW_IMPACT_METRICS = false;
 
 function App() {
   const reduceMotion = useReducedMotion();
-  const [heroReady, setHeroReady] = useState(false);
-  const [introVisible, setIntroVisible] = useState<boolean>(
-    () => !sessionStorage.getItem('intro-seen')
-  );
-
-  const handleIntroDone = () => {
-    sessionStorage.setItem('intro-seen', '1');
-    setIntroVisible(false);
-  };
 
   return (
     <ThemeProvider>
       <LanguageProvider>
-        {introVisible && <IntroScreen onDone={handleIntroDone} canExit={heroReady || Boolean(reduceMotion)} />}
         <motion.div
           className="min-h-screen bg-light-bg dark:bg-dark-bg transition-colors"
-          style={introVisible ? { visibility: 'hidden' } : undefined}
           initial={reduceMotion ? { opacity: 1 } : { opacity: 0, y: 24 }}
           animate={reduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: introVisible ? 0 : 0.05 }}
+          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
         >
           <Navbar />
-          <Hero onReady={() => setHeroReady(true)} />
+          <Hero />
           <About />
           <Services />
           

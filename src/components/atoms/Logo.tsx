@@ -12,6 +12,7 @@ export function Logo({ size = 'md' }: LogoProps) {
   return (
     <span
       className={`select-none pointer-events-none inline-flex items-baseline leading-none font-display font-bold italic ${textSize} text-light-text dark:text-dark-text`}
+      data-logo-mark
       aria-label="nsma.dev"
     >
       nsma.dev
