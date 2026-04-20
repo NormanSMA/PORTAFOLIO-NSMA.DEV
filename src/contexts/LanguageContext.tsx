@@ -36,11 +36,11 @@ export function LanguageProvider({ children }: LanguageProviderProps) {
 
   const t = (key: string): string => {
     const keys = key.split('.');
-    let value: unknown = translations[language];
+    let value: unknown = language === 'es' ? translations.es : translations.en;
 
     for (const k of keys) {
-      if (value && typeof value === 'object' && k in value) {
-        value = (value as Record<string, unknown>)[k];
+      if (value && typeof value === 'object' && Object.hasOwn(value, k)) {
+        value = Reflect.get(value, k);
       } else {
         return key;
       }

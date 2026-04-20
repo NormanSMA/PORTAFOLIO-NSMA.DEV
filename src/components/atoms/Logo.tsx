@@ -1,4 +1,4 @@
-export type LogoVariant = 'A';
+type LogoVariant = 'A';
 
 interface LogoProps {
   size?: 'sm' | 'md' | 'lg';

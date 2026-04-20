@@ -14,8 +14,8 @@ export function Projects() {
   const [expandedProject, setExpandedProject] = useState<string | null>(null);
   const [maxLines, setMaxLines] = useState(3);
   const referenceTextRef = useRef<HTMLParagraphElement>(null);
-  const closeButtonRefs = useRef<Record<string, HTMLButtonElement | null>>({});
-  const toggleButtonRefs = useRef<Record<string, HTMLButtonElement | null>>({});
+  const closeButtonRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
+  const toggleButtonRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
 
   const projects = getProjects(t);
 
@@ -33,11 +33,11 @@ export function Projects() {
     setExpandedProject(prev => {
       if (prev === projectId) {
         // Closing — return focus to toggle button
-        setTimeout(() => toggleButtonRefs.current[projectId]?.focus(), 50);
+        setTimeout(() => toggleButtonRefs.current.get(projectId)?.focus(), 50);
         return null;
       }
       // Opening — focus close button after animation
-      setTimeout(() => closeButtonRefs.current[projectId]?.focus(), 350);
+      setTimeout(() => closeButtonRefs.current.get(projectId)?.focus(), 350);
       return projectId;
     });
   }, []);
@@ -175,7 +175,13 @@ export function Projects() {
                         {/* Ver más button con "..." */}
                         {project.fullDescription && (
                           <button
-                            ref={(el) => { toggleButtonRefs.current[project.id] = el; }}
+                            ref={(el) => {
+                              if (el) {
+                                toggleButtonRefs.current.set(project.id, el);
+                              } else {
+                                toggleButtonRefs.current.delete(project.id);
+                              }
+                            }}
                             onClick={() => toggleExpanded(project.id)}
                             className="flex items-center justify-center gap-1 px-3 py-1.5 rounded-full backdrop-blur-lg bg-light-border/50 dark:bg-dark-card/50 hover:bg-primary-600/20 dark:hover:bg-primary-500/20 transition-all duration-300 cursor-pointer group/btn"
                             aria-label="Ver más información"
@@ -212,7 +218,13 @@ export function Projects() {
                         <div className="flex flex-col h-full">
                           {/* Close button */}
                           <button
-                            ref={(el) => { closeButtonRefs.current[project.id] = el; }}
+                            ref={(el) => {
+                              if (el) {
+                                closeButtonRefs.current.set(project.id, el);
+                              } else {
+                                closeButtonRefs.current.delete(project.id);
+                              }
+                            }}
                             onClick={() => setExpandedProject(null)}
                             className="self-end mb-3 sm:mb-4 w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-full bg-light-border dark:bg-dark-card hover:bg-primary-600/20 dark:hover:bg-primary-500/20 transition-colors flex-shrink-0"
                             aria-label="Cerrar"

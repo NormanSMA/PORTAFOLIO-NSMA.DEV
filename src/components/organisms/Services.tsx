@@ -6,23 +6,38 @@ import { typography } from '../../config/typography';
 import { getServices } from '../../data/services';
 import { sectionItem, sectionStagger } from '../../config/motion';
 
+function getCardColor(index: number) {
+  const normalizedIndex = index % 3;
+
+  if (normalizedIndex === 0) {
+    return 'from-sky-500/10 to-blue-500/10 dark:from-sky-500/10 dark:to-blue-500/10';
+  }
+
+  if (normalizedIndex === 1) {
+    return 'from-blue-500/10 to-indigo-500/10 dark:from-blue-500/10 dark:to-indigo-500/10';
+  }
+
+  return 'from-indigo-500/10 to-violet-500/10 dark:from-indigo-500/10 dark:to-violet-500/10';
+}
+
+function getIconColor(index: number) {
+  const normalizedIndex = index % 3;
+
+  if (normalizedIndex === 0) {
+    return 'bg-sky-500/15 dark:bg-sky-500/20 text-sky-600 dark:text-sky-400';
+  }
+
+  if (normalizedIndex === 1) {
+    return 'bg-blue-500/15 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400';
+  }
+
+  return 'bg-indigo-500/15 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400';
+}
+
 export function Services() {
   const { t } = useLanguage();
   const reduceMotion = useReducedMotion();
   const services = useMemo(() => getServices(t), [t]);
-
-  // Colores para cada tarjeta - tonos de azul sutiles
-  const cardColors = [
-    'from-sky-500/10 to-blue-500/10 dark:from-sky-500/10 dark:to-blue-500/10',
-    'from-blue-500/10 to-indigo-500/10 dark:from-blue-500/10 dark:to-indigo-500/10',
-    'from-indigo-500/10 to-violet-500/10 dark:from-indigo-500/10 dark:to-violet-500/10',
-  ];
-
-  const iconColors = [
-    'bg-sky-500/15 dark:bg-sky-500/20 text-sky-600 dark:text-sky-400',
-    'bg-blue-500/15 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400',
-    'bg-indigo-500/15 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400',
-  ];
 
   return (
     <section 
@@ -60,14 +75,14 @@ export function Services() {
                   key={index}
                   className={`
                     rounded-2xl border border-light-border/60 dark:border-dark-border/60
-                    bg-gradient-to-br ${cardColors[index]}
+                    bg-gradient-to-br ${getCardColor(index)}
                     bg-light-bg dark:bg-dark-card
                     p-6 space-y-4 shadow-lg
                   `}
                   variants={reduceMotion ? undefined : sectionItem}
                   whileHover={reduceMotion ? undefined : { y: -4 }}
                 >
-                  <div className={`inline-flex items-center justify-center w-14 h-14 rounded-xl ${iconColors[index]}`}>
+                  <div className={`inline-flex items-center justify-center w-14 h-14 rounded-xl ${getIconColor(index)}`}>
                     <Icon className="h-7 w-7" />
                   </div>
                   <h3 className={`${typography.cardSubtitle} text-light-text dark:text-dark-text`}>

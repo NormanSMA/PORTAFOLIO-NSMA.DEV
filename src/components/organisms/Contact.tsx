@@ -20,6 +20,61 @@ interface FormErrors {
   message?: string;
 }
 
+function getReasonValue(reasons: ContactFormState['contactReasons'], reason: ContactReasonKey) {
+  switch (reason) {
+    case 'proposal':
+      return reasons.proposal;
+    case 'collaboration':
+      return reasons.collaboration;
+    case 'advisory':
+      return reasons.advisory;
+    case 'others':
+      return reasons.others;
+  }
+}
+
+function toggleReasonValue(reasons: ContactFormState['contactReasons'], reason: ContactReasonKey) {
+  switch (reason) {
+    case 'proposal':
+      return { ...reasons, proposal: !reasons.proposal };
+    case 'collaboration':
+      return { ...reasons, collaboration: !reasons.collaboration };
+    case 'advisory':
+      return { ...reasons, advisory: !reasons.advisory };
+    case 'others':
+      return { ...reasons, others: !reasons.others };
+  }
+}
+
+function hasFieldError(errors: FormErrors, field: keyof Pick<ContactFormState, 'fullName' | 'email' | 'message' | 'company'>) {
+  switch (field) {
+    case 'fullName':
+      return Boolean(errors.fullName);
+    case 'email':
+      return Boolean(errors.email);
+    case 'message':
+      return Boolean(errors.message);
+    case 'company':
+      return false;
+  }
+}
+
+function clearFieldError(
+  currentErrors: FormErrors,
+  field: keyof Pick<ContactFormState, 'fullName' | 'email' | 'message' | 'company'>
+) {
+  switch (field) {
+    case 'fullName':
+      return { ...currentErrors, fullName: undefined };
+    case 'email':
+      return { ...currentErrors, email: undefined };
+    case 'message':
+      return { ...currentErrors, message: undefined };
+    case 'company':
+      return currentErrors;
+  }
+}
+
 export function Contact() {
   const { t, language } = useLanguage();
   const reduceMotion = useReducedMotion();
@@ -94,18 +149,15 @@ export function Contact() {
   ) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
 
-    if (field !== 'company' && errors[field as keyof FormErrors]) {
-      setErrors((prev) => ({ ...prev, [field]: undefined }));
+    if (field !== 'company' && hasFieldError(errors, field)) {
+      setErrors((prev) => clearFieldError(prev, field));
     }
   };
 
   const toggleReason = (reason: ContactReasonKey) => {
     setFormData((prev) => ({
       ...prev,
-      contactReasons: {
-        ...prev.contactReasons,
-        [reason]: !prev.contactReasons[reason],
-      },
+      contactReasons: toggleReasonValue(prev.contactReasons, reason),
     }));
   };
 
@@ -325,7 +377,7 @@ export function Contact() {
 
                 <div className="grid gap-3 sm:grid-cols-2">
                   {reasons.map(({ key, label, desc }) => {
-                    const isActive = formData.contactReasons[key];
+                    const isActive = getReasonValue(formData.contactReasons, key);
 
                     return (
                       <button

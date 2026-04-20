@@ -19,7 +19,7 @@ export interface ContactRequestPayload {
   company?: string;
 }
 
-export interface ContactValidationErrors {
+interface ContactValidationErrors {
   fullName?: string;
   email?: string;
   message?: string;
@@ -65,20 +65,42 @@ export function normalizeContactText(value: string) {
   return value.trim().replace(/\r\n/g, '\n');
 }
 
-export function getSelectedContactReasons(contactReasons: Record<ContactReasonKey, boolean>) {
-  return contactReasonKeys.filter((reason) => contactReasons[reason]);
+function getSelectedContactReasons(contactReasons: Record<ContactReasonKey, boolean>) {
+  return contactReasonKeys.filter((reason) => {
+    switch (reason) {
+      case 'proposal':
+        return contactReasons.proposal;
+      case 'collaboration':
+        return contactReasons.collaboration;
+      case 'advisory':
+        return contactReasons.advisory;
+      case 'others':
+        return contactReasons.others;
+    }
+  });
 }
 
 export function formatContactReasons(reasons: ContactReasonKey[], language: 'es' | 'en') {
-  return reasons.map((reason) => reasonLabels[language][reason]).join(', ');
+  return reasons.map((reason) => getContactReasonLabel(reason, language)).join(', ');
 }
 
-export function getContactReasonLabel(reason: ContactReasonKey, language: 'es' | 'en') {
-  return reasonLabels[language][reason];
+function getContactReasonLabel(reason: ContactReasonKey, language: 'es' | 'en') {
+  const labels = language === 'es' ? reasonLabels.es : reasonLabels.en;
+
+  switch (reason) {
+    case 'proposal':
+      return labels.proposal;
+    case 'collaboration':
+      return labels.collaboration;
+    case 'advisory':
+      return labels.advisory;
+    case 'others':
+      return labels.others;
+  }
 }
 
 export function validateContactForm(values: Pick<ContactFormState, 'fullName' | 'email' | 'message'>, language: 'es' | 'en') {
-  const messages = validationMessages[language];
+  const messages = language === 'es' ? validationMessages.es : validationMessages.en;
   const errors: ContactValidationErrors = {};
 
   if (!values.fullName.trim()) {

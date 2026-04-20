@@ -42,31 +42,31 @@ export function About() {
 
           <div className="mx-auto max-w-5xl px-4">
             <motion.div
-              className="rounded-3xl border border-light-border/60 bg-gradient-to-r from-white/65 via-primary-50/45 to-secondary-50/55 px-5 py-8 backdrop-blur-md dark:border-dark-border dark:from-dark-card/75 dark:via-dark-card/65 dark:to-dark-card/75 md:px-8"
+              className="px-2 py-2 md:px-6 md:py-4"
               variants={reduceMotion ? undefined : sectionStagger}
               initial={reduceMotion ? { opacity: 1 } : 'hidden'}
               whileInView={reduceMotion ? { opacity: 1 } : 'show'}
               viewport={{ once: true, amount: 0.3 }}
             >
-              <div className="grid grid-cols-1 gap-8 sm:grid-cols-3">
-            {stats.map((stat, index) => (
-              <motion.div
-                key={index}
-                role="group"
-                aria-label={`${stat.value}${stat.suffix} ${stat.label}`}
-                tabIndex={0}
-                className="transform text-center transition-all duration-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
-                variants={reduceMotion ? undefined : sectionItem}
-                whileHover={reduceMotion ? undefined : { y: -7, scale: 1.03 }}
-              >
-                <div className="mb-3 text-5xl font-extrabold leading-none tracking-tight text-primary-600 dark:text-primary-400 md:text-6xl">
-                  <Counter end={stat.value} suffix={stat.suffix} className="inline-block" />
-                </div>
-                <div className={`${typography.secondary} font-medium text-light-textSecondary dark:text-dark-textSecondary`}>
-                  {stat.label}
-                </div>
-              </motion.div>
-            ))}
+              <div className="grid grid-cols-1 gap-10 sm:grid-cols-3 sm:gap-8">
+                {stats.map((stat, index) => (
+                  <motion.div
+                    key={index}
+                    role="group"
+                    aria-label={`${stat.value}${stat.suffix} ${stat.label}`}
+                    tabIndex={0}
+                    className="text-center transition-transform duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+                    variants={reduceMotion ? undefined : sectionItem}
+                    whileHover={reduceMotion ? undefined : { y: -3 }}
+                  >
+                    <div className="mb-3 text-5xl font-extrabold leading-none tracking-tight text-primary-600 dark:text-primary-400 md:text-6xl">
+                      <Counter end={stat.value} suffix={stat.suffix} className="inline-block" />
+                    </div>
+                    <div className={`${typography.secondary} font-medium text-light-textSecondary dark:text-dark-textSecondary`}>
+                      {stat.label}
+                    </div>
+                  </motion.div>
+                ))}
               </div>
             </motion.div>
           </div>

@@ -107,7 +107,7 @@ const pageStyles = {
   },
 } as const;
 
-export function ContactNotificationEmail({
+function ContactNotificationEmail({
   fullName,
   email,
   message,

@@ -1,15 +1,14 @@
-import { defineConfig } from 'vite'
+import { defineConfig, type Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
+import { visualizer } from 'rollup-plugin-visualizer'
 
 // Small plugin to add security headers during dev/preview server responses.
 // This helps when exposing the dev server via ngrok for testing.
-function securityHeadersPlugin() {
-  type ResWithHeader = { setHeader: (name: string, value: string) => void };
-
+function securityHeadersPlugin(): Plugin {
   return {
     name: 'dev-security-headers',
-    configureServer(server: { middlewares: { use: (h: unknown) => void } }) {
-      server.middlewares.use((_req: unknown, res: ResWithHeader, next: () => void) => {
+    configureServer(server) {
+      server.middlewares.use((_req, res, next) => {
         try {
           res.setHeader('X-Frame-Options', 'DENY');
           res.setHeader('X-Content-Type-Options', 'nosniff');
@@ -22,8 +21,8 @@ function securityHeadersPlugin() {
         next();
       });
     },
-    configurePreviewServer(server: { middlewares: { use: (h: unknown) => void } }) {
-      server.middlewares.use((_req: unknown, res: ResWithHeader, next: () => void) => {
+    configurePreviewServer(server) {
+      server.middlewares.use((_req, res, next) => {
         try {
           res.setHeader('X-Frame-Options', 'DENY');
           res.setHeader('X-Content-Type-Options', 'nosniff');
@@ -39,26 +38,33 @@ function securityHeadersPlugin() {
 }
 
 // https://vite.dev/config/
-/* eslint-disable @typescript-eslint/no-explicit-any */
+const analyzeBundle = process.env.ANALYZE === 'true' || process.env.BUNDLE_ANALYZE === 'true'
+
 export default defineConfig({
-  plugins: [react(), (securityHeadersPlugin() as any)],
-/* eslint-enable @typescript-eslint/no-explicit-any */
+  plugins: [
+    react(),
+    securityHeadersPlugin(),
+    ...(analyzeBundle
+      ? [
+          visualizer({
+            open: true,
+            filename: 'dist/stats.html',
+            template: 'treemap',
+            gzipSize: true,
+            brotliSize: true,
+          }),
+        ]
+      : []),
+  ],
   server: {
     host: true,
-    allowedHosts: [
-      'localhost',
-      '.ngrok-free.dev',
-      '.ngrok.io',
-      '.ngrok-free.app'
-    ]
-  }
-  ,
+    allowedHosts: ['localhost', '.ngrok-free.dev', '.ngrok.io', '.ngrok-free.app'],
+  },
   esbuild: {
-    drop: ['console', 'debugger'],
+    drop: ['console', 'debugger'] as ('console' | 'debugger')[],
   },
   build: {
-    sourcemap: false,
-    minify: 'esbuild',
+    sourcemap: analyzeBundle,
     rollupOptions: {
       output: {
         manualChunks: {
@@ -67,5 +73,5 @@ export default defineConfig({
         },
       },
     },
-  }
+  },
 })
