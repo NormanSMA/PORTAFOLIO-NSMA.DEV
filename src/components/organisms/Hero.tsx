@@ -200,7 +200,7 @@ export function Hero() {
           >
             {/* floating glow behind photo */}
             <motion.div
-              className="absolute inset-0 rounded-full bg-gradient-to-br from-primary-500 to-secondary-500 opacity-20 blur-3xl"
+              className="absolute -inset-8 rounded-[2.25rem] bg-[radial-gradient(circle_at_20%_16%,rgba(99,102,241,0.24),transparent_44%),radial-gradient(circle_at_82%_22%,rgba(59,130,246,0.2),transparent_46%),linear-gradient(155deg,rgba(10,10,15,0.55),rgba(26,26,36,0.2))] opacity-70 blur-3xl"
               animate={
                 reduceMotion
                   ? undefined
@@ -215,9 +215,9 @@ export function Hero() {
 
             <div className="relative z-10">
               <div className="hero-photo-glow relative mx-auto w-full max-w-xs sm:max-w-sm md:max-w-md">
-                <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary-500 to-secondary-500 opacity-50 blur-xl md:rounded-3xl" />
+                <div className="absolute inset-0 rounded-2xl bg-[radial-gradient(circle_at_34%_18%,rgba(255,255,255,0.12),transparent_56%),linear-gradient(160deg,rgba(99,102,241,0.22),rgba(59,130,246,0.14)_55%,rgba(10,10,15,0.06))] opacity-80 blur-xl md:rounded-3xl" />
                 <div
-                  className="relative overflow-hidden rounded-2xl border border-light-border/70 bg-light-card p-1.5 shadow-2xl dark:border-dark-border dark:bg-dark-card md:rounded-3xl md:p-2"
+                  className="relative overflow-hidden rounded-2xl shadow-2xl md:rounded-3xl"
                 >
                   <div className="relative overflow-hidden rounded-xl md:rounded-2xl">
                     <img
@@ -231,7 +231,8 @@ export function Hero() {
                     <div
                       className="absolute inset-0 pointer-events-none rounded-xl md:rounded-2xl"
                       style={{
-                        background: 'linear-gradient(to top, rgba(99,102,241,0.18) 0%, rgba(45,212,191,0.06) 30%, transparent 60%)',
+                        background:
+                          'linear-gradient(to top, rgba(10,10,15,0.22) 0%, rgba(10,10,15,0.08) 32%, transparent 64%), radial-gradient(circle at 50% 6%, rgba(255,255,255,0.14), transparent 42%)',
                       }}
                     />
                   </div>
