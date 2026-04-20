@@ -200,7 +200,7 @@ export function Hero() {
           >
             {/* floating glow behind photo */}
             <motion.div
-              className="absolute -inset-8 rounded-[2.25rem] bg-[radial-gradient(circle_at_20%_16%,rgba(99,102,241,0.24),transparent_44%),radial-gradient(circle_at_82%_22%,rgba(59,130,246,0.2),transparent_46%),linear-gradient(155deg,rgba(10,10,15,0.55),rgba(26,26,36,0.2))] opacity-70 blur-3xl"
+              className="absolute -inset-8 rounded-[2.25rem] bg-[radial-gradient(circle_at_20%_16%,rgba(99,102,241,0.2),transparent_44%),radial-gradient(circle_at_82%_22%,rgba(59,130,246,0.16),transparent_46%),linear-gradient(155deg,rgba(255,255,255,0.85),rgba(238,242,255,0.46))] opacity-70 blur-3xl dark:bg-[radial-gradient(circle_at_20%_16%,rgba(99,102,241,0.24),transparent_44%),radial-gradient(circle_at_82%_22%,rgba(59,130,246,0.2),transparent_46%),linear-gradient(155deg,rgba(10,10,15,0.55),rgba(26,26,36,0.2))]"
               animate={
                 reduceMotion
                   ? undefined
@@ -215,11 +215,12 @@ export function Hero() {
 
             <div className="relative z-10">
               <div className="hero-photo-glow relative mx-auto w-full max-w-xs sm:max-w-sm md:max-w-md">
-                <div className="absolute inset-0 rounded-2xl bg-[radial-gradient(circle_at_34%_18%,rgba(255,255,255,0.12),transparent_56%),linear-gradient(160deg,rgba(99,102,241,0.22),rgba(59,130,246,0.14)_55%,rgba(10,10,15,0.06))] opacity-80 blur-xl md:rounded-3xl" />
+                <div className="absolute inset-0 rounded-2xl bg-[radial-gradient(circle_at_34%_18%,rgba(255,255,255,0.46),transparent_58%),linear-gradient(160deg,rgba(99,102,241,0.18),rgba(59,130,246,0.1)_55%,rgba(255,255,255,0.12))] opacity-80 blur-xl dark:bg-[radial-gradient(circle_at_34%_18%,rgba(255,255,255,0.12),transparent_56%),linear-gradient(160deg,rgba(99,102,241,0.22),rgba(59,130,246,0.14)_55%,rgba(10,10,15,0.06))] md:rounded-3xl" />
                 <div
-                  className="relative overflow-hidden rounded-2xl shadow-2xl md:rounded-3xl"
+                  className="relative overflow-hidden rounded-2xl border border-white/45 bg-white/16 shadow-[0_18px_42px_rgba(15,23,42,0.18)] backdrop-blur-xl backdrop-saturate-150 dark:border-white/12 dark:bg-slate-900/30 dark:shadow-[0_22px_56px_rgba(2,6,23,0.5)] md:rounded-3xl"
                 >
                   <div className="relative overflow-hidden rounded-xl md:rounded-2xl">
+                    <div className="absolute inset-0 pointer-events-none rounded-xl bg-[linear-gradient(145deg,rgba(255,255,255,0.34),rgba(255,255,255,0.12)_42%,rgba(255,255,255,0.04)_70%)] dark:bg-[linear-gradient(145deg,rgba(255,255,255,0.14),rgba(30,41,59,0.22)_45%,rgba(2,6,23,0.18)_74%)] md:rounded-2xl" />
                     <img
                       src="/norman_sf.webp"
                       alt="Norman Martínez - Full Stack Developer"
@@ -229,11 +230,7 @@ export function Hero() {
                     />
                     {/* subtle inner gradient overlay */}
                     <div
-                      className="absolute inset-0 pointer-events-none rounded-xl md:rounded-2xl"
-                      style={{
-                        background:
-                          'linear-gradient(to top, rgba(10,10,15,0.22) 0%, rgba(10,10,15,0.08) 32%, transparent 64%), radial-gradient(circle at 50% 6%, rgba(255,255,255,0.14), transparent 42%)',
-                      }}
+                      className="absolute inset-0 pointer-events-none rounded-xl bg-[linear-gradient(to_top,rgba(255,255,255,0.18)_0%,rgba(255,255,255,0.06)_32%,transparent_62%),radial-gradient(circle_at_50%_6%,rgba(255,255,255,0.3),transparent_42%)] dark:bg-[linear-gradient(to_top,rgba(2,6,23,0.28)_0%,rgba(2,6,23,0.12)_34%,transparent_66%),radial-gradient(circle_at_50%_6%,rgba(255,255,255,0.12),transparent_42%)] md:rounded-2xl"
                     />
                   </div>
                 </div>
