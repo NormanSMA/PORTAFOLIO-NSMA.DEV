@@ -26,7 +26,7 @@ export interface ButtonProps {
 }
 
 // Project Types
-interface Project {
+export interface Project {
   id: string;
   title: string;
   description: string;
@@ -38,7 +38,7 @@ interface Project {
 }
 
 // Skill Types
-interface Skill {
+export interface Skill {
   name: string;
   level: number;
   icon: string;
@@ -46,7 +46,7 @@ interface Skill {
 }
 
 // Experience Types
-interface Experience {
+export interface Experience {
   id: string;
   company: string;
   position: string;
