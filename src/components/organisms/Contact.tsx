@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { FormEvent } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { Mail, Linkedin, Github } from 'lucide-react';
@@ -6,7 +6,7 @@ import { useLanguage } from '../../hooks';
 import { Container } from '../atoms';
 import { typography } from '../../config/typography';
 import { APP_CONFIG } from '../../config/constants';
-import { sectionItem, sectionSlideLeft, sectionSlideRight, sectionStagger } from '../../config/motion';
+import { hoverLift, sectionItem, sectionSlideLeft, sectionSlideRight, sectionStagger } from '../../config/motion';
 import {
   toContactRequestPayload,
   validateContactForm,
@@ -20,73 +20,36 @@ interface FormErrors {
   message?: string;
 }
 
-function getReasonValue(reasons: ContactFormState['contactReasons'], reason: ContactReasonKey) {
-  switch (reason) {
-    case 'proposal':
-      return reasons.proposal;
-    case 'collaboration':
-      return reasons.collaboration;
-    case 'advisory':
-      return reasons.advisory;
-    case 'others':
-      return reasons.others;
-  }
+// ─── Access helpers en lugar de switch ───
+const reasonKeys: ContactReasonKey[] = ['proposal', 'collaboration', 'advisory', 'others'];
+
+function getReasonValue(reasons: ContactFormState['contactReasons'], reason: ContactReasonKey): boolean {
+  return reasons[reason];
 }
 
-function toggleReasonValue(reasons: ContactFormState['contactReasons'], reason: ContactReasonKey) {
-  switch (reason) {
-    case 'proposal':
-      return { ...reasons, proposal: !reasons.proposal };
-    case 'collaboration':
-      return { ...reasons, collaboration: !reasons.collaboration };
-    case 'advisory':
-      return { ...reasons, advisory: !reasons.advisory };
-    case 'others':
-      return { ...reasons, others: !reasons.others };
-  }
+function toggleReasonValue(reasons: ContactFormState['contactReasons'], reason: ContactReasonKey): ContactFormState['contactReasons'] {
+  return { ...reasons, [reason]: !reasons[reason] };
 }
 
-function hasFieldError(errors: FormErrors, field: keyof Pick<ContactFormState, 'fullName' | 'email' | 'message' | 'company'>) {
-  switch (field) {
-    case 'fullName':
-      return Boolean(errors.fullName);
-    case 'email':
-      return Boolean(errors.email);
-    case 'message':
-      return Boolean(errors.message);
-    case 'company':
-      return false;
-  }
+function hasFieldError(errors: FormErrors, field: keyof Pick<ContactFormState, 'fullName' | 'email' | 'message' | 'company'>): boolean {
+  if (field === 'company') return false;
+  return Boolean(errors[field]);
 }
 
-function clearFieldError(
-  currentErrors: FormErrors,
-  field: keyof Pick<ContactFormState, 'fullName' | 'email' | 'message' | 'company'>
-) {
-  switch (field) {
-    case 'fullName':
-      return { ...currentErrors, fullName: undefined };
-    case 'email':
-      return { ...currentErrors, email: undefined };
-    case 'message':
-      return { ...currentErrors, message: undefined };
-    case 'company':
-      return currentErrors;
-  }
+function clearFieldError(currentErrors: FormErrors, field: keyof Pick<ContactFormState, 'fullName' | 'email' | 'message' | 'company'>): FormErrors {
+  if (field === 'company') return currentErrors;
+  return { ...currentErrors, [field]: undefined };
 }
 
 export function Contact() {
   const { t, language } = useLanguage();
   const reduceMotion = useReducedMotion();
+  const [isOnline, setIsOnline] = useState(true);
+
   const [formData, setFormData] = useState<ContactFormState>({
     fullName: '',
     email: '',
-    contactReasons: {
-      proposal: false,
-      collaboration: false,
-      advisory: false,
-      others: false,
-    },
+    contactReasons: { proposal: false, collaboration: false, advisory: false, others: false },
     message: '',
     company: '',
   });
@@ -96,51 +59,27 @@ export function Contact() {
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [submitMessage, setSubmitMessage] = useState('');
 
-  const reasons: Array<{ key: ContactReasonKey; label: string; desc: string }> = [
-    {
-      key: 'proposal',
-      label: t('contact.form.reasons.proposal.title'),
-      desc: t('contact.form.reasons.proposal.desc'),
-    },
-    {
-      key: 'collaboration',
-      label: t('contact.form.reasons.collaboration.title'),
-      desc: t('contact.form.reasons.collaboration.desc'),
-    },
-    {
-      key: 'advisory',
-      label: t('contact.form.reasons.advisory.title'),
-      desc: t('contact.form.reasons.advisory.desc'),
-    },
-    {
-      key: 'others',
-      label: t('contact.form.reasons.others.title'),
-      desc: t('contact.form.reasons.others.desc'),
-    },
-  ];
+  // Detectar conectividad
+  useEffect(() => {
+    const updateOnline = () => setIsOnline(navigator.onLine);
+    window.addEventListener('online', updateOnline);
+    window.addEventListener('offline', updateOnline);
+    return () => {
+      window.removeEventListener('online', updateOnline);
+      window.removeEventListener('offline', updateOnline);
+    };
+  }, []);
+
+  const reasons: Array<{ key: ContactReasonKey; label: string; desc: string }> = reasonKeys.map((key) => ({
+    key,
+    label: t(`contact.form.reasons.${key}.title`),
+    desc: t(`contact.form.reasons.${key}.desc`),
+  }));
 
   const directChannels = [
-    {
-      key: 'email',
-      title: 'Email',
-      value: APP_CONFIG.email,
-      href: `mailto:${APP_CONFIG.email}`,
-      Icon: Mail,
-    },
-    {
-      key: 'linkedin',
-      title: 'LinkedIn',
-      value: '@norman-martinez',
-      href: 'https://www.linkedin.com/in/norman-martinez',
-      Icon: Linkedin,
-    },
-    {
-      key: 'github',
-      title: 'GitHub',
-      value: '@NormanSMA',
-      href: 'https://github.com/NormanSMA',
-      Icon: Github,
-    },
+    { key: 'email', title: 'Email', value: APP_CONFIG.email, href: `mailto:${APP_CONFIG.email}`, Icon: Mail },
+    { key: 'linkedin', title: 'LinkedIn', value: '@norman-martinez', href: 'https://www.linkedin.com/in/norman-martinez', Icon: Linkedin },
+    { key: 'github', title: 'GitHub', value: '@NormanSMA', href: 'https://github.com/NormanSMA', Icon: Github },
   ];
 
   const handleInputChange = (
@@ -148,7 +87,6 @@ export function Contact() {
     value: string
   ) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-
     if (field !== 'company' && hasFieldError(errors, field)) {
       setErrors((prev) => clearFieldError(prev, field));
     }
@@ -163,6 +101,12 @@ export function Contact() {
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    if (!isOnline) {
+      setSubmitStatus('error');
+      setSubmitMessage(language === 'es' ? 'Sin conexión a internet. Verifica tu conexión.' : 'No internet connection. Please check your connection.');
+      return;
+    }
 
     const validation = validateContactForm(formData, language);
     if (!validation.isValid) {
@@ -180,17 +124,11 @@ export function Contact() {
       const payload = toContactRequestPayload(formData, language);
       const response = await fetch('/api/contact', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
 
-      const result = (await response.json()) as {
-        ok: boolean;
-        message?: string;
-        errors?: FormErrors;
-      };
+      const result = (await response.json()) as { ok: boolean; message?: string; errors?: FormErrors };
 
       if (!response.ok || !result.ok) {
         setSubmitStatus('error');
@@ -204,12 +142,7 @@ export function Contact() {
       setFormData({
         fullName: '',
         email: '',
-        contactReasons: {
-          proposal: false,
-          collaboration: false,
-          advisory: false,
-          others: false,
-        },
+        contactReasons: { proposal: false, collaboration: false, advisory: false, others: false },
         message: '',
         company: '',
       });
@@ -225,10 +158,7 @@ export function Contact() {
 
   return (
     <section id="contact" className="relative overflow-hidden bg-light-bg py-14 md:py-18 dark:bg-dark-bg">
-      <div
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(59,130,246,0.14),transparent_36%),radial-gradient(circle_at_bottom_right,rgba(16,185,129,0.12),transparent_32%)]"
-        aria-hidden
-      />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(59,130,246,0.14),transparent_36%),radial-gradient(circle_at_bottom_right,rgba(16,185,129,0.12),transparent_32%)]" aria-hidden />
       <Container>
         <motion.div
           className="relative z-10 mb-10 text-center lg:mb-12"
@@ -252,11 +182,12 @@ export function Contact() {
           whileInView={reduceMotion ? { opacity: 1 } : 'show'}
           viewport={{ once: true, amount: 0.22 }}
         >
+          {/* Left Sidebar */}
           <motion.div className="space-y-8 lg:sticky lg:top-32">
             <motion.div
-              className="relative overflow-hidden rounded-3xl border border-light-border/80 bg-light-card p-7 shadow-[0_24px_80px_-48px_rgba(15,23,42,0.45)] dark:border-dark-border dark:bg-dark-card hover-lift-soft"
+              className="relative overflow-hidden rounded-3xl border border-light-border/80 bg-light-card p-7 shadow-[0_24px_80px_-48px_rgba(15,23,42,0.45)] dark:border-dark-border dark:bg-dark-card"
               variants={reduceMotion ? undefined : sectionSlideLeft}
-              whileHover={reduceMotion ? undefined : { y: -7 }}
+              whileHover={reduceMotion ? undefined : hoverLift}
             >
               <div className="pointer-events-none absolute -right-20 -top-20 h-56 w-56 rounded-full bg-primary-500/10 blur-3xl" />
               <div className="pointer-events-none absolute -bottom-20 -left-12 h-44 w-44 rounded-full bg-emerald-400/10 blur-3xl" />
@@ -277,7 +208,7 @@ export function Contact() {
                     {language === 'es' ? 'Trabajemos Juntos' : 'Let us work together'}
                   </h4>
                   <div className="space-y-3">
-                    {directChannels.map((channel, index) => (
+                    {directChannels.map((channel) => (
                       <motion.a
                         key={channel.key}
                         href={channel.href}
@@ -288,22 +219,9 @@ export function Contact() {
                         variants={reduceMotion ? undefined : sectionItem}
                         viewport={{ once: true, amount: 0.3 }}
                       >
-                        <motion.div 
-                          className="rounded-xl bg-primary-500/10 p-2.5 text-primary-600 transition-colors group-hover:text-primary-700 group-hover:bg-primary-500/20 dark:text-primary-400 dark:group-hover:text-primary-300"
-                          animate={reduceMotion ? undefined : { y: [0, -4, 0] }}
-                          whileHover={reduceMotion ? undefined : { 
-                            rotate: [0, -10, 10, -10, 10, 0],
-                            scale: 1.15
-                          }}
-                          transition={reduceMotion ? undefined : {
-                            duration: 3,
-                            repeat: Infinity,
-                            ease: "easeInOut",
-                            delay: index * 0.2
-                          }}
-                        >
+                        <div className="rounded-xl bg-primary-500/10 p-2.5 text-primary-600 transition-colors group-hover:text-primary-700 group-hover:bg-primary-500/20 dark:text-primary-400 dark:group-hover:text-primary-300">
                           <channel.Icon className="w-[26px] h-[26px]" />
-                        </motion.div>
+                        </div>
                         <div className="min-w-0">
                           <p className="text-sm font-medium text-light-textSecondary dark:text-dark-textSecondary">{channel.title}</p>
                           <p className="truncate font-semibold text-light-text dark:text-dark-text">{channel.value}</p>
@@ -316,12 +234,14 @@ export function Contact() {
             </motion.div>
           </motion.div>
 
+          {/* Form */}
           <motion.div
             className="rounded-3xl border border-light-border/80 bg-light-card p-6 shadow-[0_24px_80px_-48px_rgba(15,23,42,0.45)] dark:border-dark-border dark:bg-dark-card md:p-7"
             variants={reduceMotion ? undefined : sectionSlideRight}
-            whileHover={reduceMotion ? undefined : { y: -5 }}
+            whileHover={reduceMotion ? undefined : hoverLift}
           >
             <form onSubmit={handleSubmit} className="space-y-6" noValidate>
+              {/* Honeypot */}
               <input
                 type="text"
                 name="company"
@@ -332,6 +252,15 @@ export function Contact() {
                 className="absolute left-[-9999px] opacity-0"
                 aria-hidden="true"
               />
+
+              {/* Offline banner */}
+              {!isOnline && (
+                <div className="rounded-xl border border-amber-500/20 bg-amber-500/10 p-4 text-center">
+                  <p className="text-amber-600 dark:text-amber-400 font-medium">
+                    {language === 'es' ? 'Sin conexión a internet. Los mensajes no se podrán enviar.' : 'No internet connection. Messages cannot be sent.'}
+                  </p>
+                </div>
+              )}
 
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                 <div className="space-y-2">
@@ -348,7 +277,6 @@ export function Contact() {
                   />
                   {errors.fullName && <p className="text-sm text-red-500">{errors.fullName}</p>}
                 </div>
-
                 <div className="space-y-2">
                   <label htmlFor="email" className="block text-sm font-medium text-light-text dark:text-dark-text">
                     {t('contact.form.email')}
@@ -365,20 +293,15 @@ export function Contact() {
                 </div>
               </div>
 
+              {/* Reasons */}
               <div className="space-y-3">
                 <div className="space-y-1">
-                  <label className="block text-sm font-medium text-light-text dark:text-dark-text">
-                    {t('contact.form.reason')}
-                  </label>
-                  <p className="text-sm text-light-textSecondary dark:text-dark-textSecondary">
-                    {t('contact.form.selectHint')}
-                  </p>
+                  <label className="block text-sm font-medium text-light-text dark:text-dark-text">{t('contact.form.reason')}</label>
+                  <p className="text-sm text-light-textSecondary dark:text-dark-textSecondary">{t('contact.form.selectHint')}</p>
                 </div>
-
                 <div className="grid gap-3 sm:grid-cols-2">
                   {reasons.map(({ key, label, desc }) => {
                     const isActive = getReasonValue(formData.contactReasons, key);
-
                     return (
                       <button
                         key={key}
@@ -402,6 +325,7 @@ export function Contact() {
                 </div>
               </div>
 
+              {/* Message */}
               <div className="space-y-2">
                 <label htmlFor="message" className="block text-sm font-medium text-light-text dark:text-dark-text">
                   {t('contact.form.message')}
@@ -417,10 +341,11 @@ export function Contact() {
                 {errors.message && <p className="text-sm text-red-500">{errors.message}</p>}
               </div>
 
+              {/* Submit */}
               <button
                 type="submit"
-                disabled={isSubmitting}
-                className={`w-full rounded-xl py-3.5 font-bold shadow-lg shadow-primary-500/20 transition-all duration-200 ${isSubmitting ? 'cursor-not-allowed bg-gray-400 text-white' : 'bg-primary-600 text-white hover:bg-primary-700 hover:shadow-primary-500/30 hover:scale-[1.01] active:scale-[0.99]'}`}
+                disabled={isSubmitting || !isOnline}
+                className={`w-full rounded-xl py-3.5 font-bold shadow-lg shadow-primary-500/20 transition-all duration-200 ${isSubmitting || !isOnline ? 'cursor-not-allowed bg-gray-400 text-white' : 'bg-primary-600 text-white hover:bg-primary-700 hover:shadow-primary-500/30 hover:scale-[1.01] active:scale-[0.99]'}`}
                 aria-busy={isSubmitting}
               >
                 {isSubmitting ? (
@@ -434,6 +359,7 @@ export function Contact() {
                 ) : t('contact.form.submit')}
               </button>
 
+              {/* Status messages */}
               <div aria-live="polite" className="space-y-3">
                 {submitMessage && (
                   <div className={`rounded-xl border p-4 ${submitStatus === 'success' ? 'border-green-500/20 bg-green-500/10' : 'border-red-500/20 bg-red-500/10'}`}>

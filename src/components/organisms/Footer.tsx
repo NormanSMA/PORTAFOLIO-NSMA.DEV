@@ -29,21 +29,15 @@ export function Footer() {
             whileInView={reduceMotion ? { opacity: 1 } : 'show'}
             viewport={{ once: true, amount: 0.3 }}
           >
-            
-            {/* Branding con Logo */}
-            <motion.div
-              className="space-y-4 px-4"
-              variants={reduceMotion ? undefined : sectionItem}
-            >
-              {/* Logo Component - link to top for semantics */}
+            {/* Branding */}
+            <motion.div className="space-y-4 px-4" variants={reduceMotion ? undefined : sectionItem}>
               <div className="mb-4">
-                <a href="#home" aria-label="Go to top" onClick={(e) => { e.preventDefault(); const el = document.getElementById('home'); el?.scrollIntoView({ behavior: 'smooth' }); }}>
+                <a href="#home" aria-label="Go to top" onClick={(e) => { e.preventDefault(); document.getElementById('home')?.scrollIntoView({ behavior: 'smooth' }); }}>
                   <Logo size="lg" />
                 </a>
               </div>
-              
               <p className="text-light-textSecondary dark:text-dark-textSecondary">
-                {language === 'es' 
+                {language === 'es'
                   ? 'Ingeniero de Sistemas especializado en desarrollo web full-stack y redes.'
                   : 'Systems Engineer specialized in full-stack web development and networking.'
                 }
@@ -66,8 +60,7 @@ export function Footer() {
                       href={`#${link.id}`}
                       onClick={(e) => {
                         e.preventDefault();
-                        const el = document.getElementById(link.id);
-                        el?.scrollIntoView({ behavior: 'smooth' });
+                        document.getElementById(link.id)?.scrollIntoView({ behavior: 'smooth' });
                       }}
                       className="text-light-textSecondary dark:text-dark-textSecondary hover:text-primary-500 dark:hover:text-primary-400 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 rounded-sm px-1"
                       whileHover={reduceMotion ? undefined : { x: 6 }}
@@ -81,10 +74,7 @@ export function Footer() {
             </motion.nav>
 
             {/* Social Links */}
-            <motion.div
-              className="space-y-4"
-              variants={reduceMotion ? undefined : sectionItem}
-            >
+            <motion.div className="space-y-4" variants={reduceMotion ? undefined : sectionItem}>
               <h4 className="text-lg font-semibold text-light-text dark:text-dark-text">
                 {language === 'es' ? 'Conecta Conmigo' : 'Connect With Me'}
               </h4>
@@ -95,29 +85,12 @@ export function Footer() {
                     href={social.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="p-3 rounded-lg bg-light-bg dark:bg-dark-bg text-light-text dark:text-dark-text hover:text-primary-500 dark:hover:text-primary-400 hover:bg-primary-500/10 transition-all transform motion-safe:hover:scale-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+                    className="p-3 rounded-lg bg-light-bg dark:bg-dark-bg text-light-text dark:text-dark-text hover:text-primary-500 dark:hover:text-primary-400 hover:bg-primary-500/10 transition-all transform focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
                     aria-label={social.name}
                     whileHover={reduceMotion ? undefined : { y: -4, scale: 1.08 }}
                     transition={{ duration: 0.22, ease: 'easeOut' }}
                   >
-                    <motion.div
-                      animate={reduceMotion ? undefined : { 
-                        y: [0, -3, 0],
-                      }}
-                      whileHover={reduceMotion ? undefined : { 
-                        rotate: [0, -15, 15, -15, 15, 0],
-                        scale: 1.25
-                      }}
-                      transition={reduceMotion ? undefined : {
-                        duration: 3,
-                        repeat: Infinity,
-                        ease: "easeInOut",
-                        delay: 0.1
-                      }}
-                      className="flex items-center justify-center p-0.5"
-                    >
-                      <social.icon className="w-6 h-6" />
-                    </motion.div>
+                    <social.icon className="w-6 h-6" />
                   </motion.a>
                 ))}
               </div>
@@ -133,9 +106,7 @@ export function Footer() {
             viewport={{ once: true, amount: 0.5 }}
           >
             <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-light-textSecondary dark:text-dark-textSecondary">
-              <p>
-                © {currentYear} Norman Martínez. {language === 'es' ? 'Todos los derechos reservados.' : 'All rights reserved.'}
-              </p>
+              <p>© {currentYear} Norman Martínez. {language === 'es' ? 'Todos los derechos reservados.' : 'All rights reserved.'}</p>
             </div>
           </motion.div>
         </div>

@@ -66,18 +66,7 @@ export function normalizeContactText(value: string) {
 }
 
 function getSelectedContactReasons(contactReasons: Record<ContactReasonKey, boolean>) {
-  return contactReasonKeys.filter((reason) => {
-    switch (reason) {
-      case 'proposal':
-        return contactReasons.proposal;
-      case 'collaboration':
-        return contactReasons.collaboration;
-      case 'advisory':
-        return contactReasons.advisory;
-      case 'others':
-        return contactReasons.others;
-    }
-  });
+  return contactReasonKeys.filter((reason) => contactReasons[reason]);
 }
 
 export function formatContactReasons(reasons: ContactReasonKey[], language: 'es' | 'en') {
@@ -85,18 +74,7 @@ export function formatContactReasons(reasons: ContactReasonKey[], language: 'es'
 }
 
 function getContactReasonLabel(reason: ContactReasonKey, language: 'es' | 'en') {
-  const labels = language === 'es' ? reasonLabels.es : reasonLabels.en;
-
-  switch (reason) {
-    case 'proposal':
-      return labels.proposal;
-    case 'collaboration':
-      return labels.collaboration;
-    case 'advisory':
-      return labels.advisory;
-    case 'others':
-      return labels.others;
-  }
+  return language === 'es' ? reasonLabels.es[reason] : reasonLabels.en[reason];
 }
 
 export function validateContactForm(values: Pick<ContactFormState, 'fullName' | 'email' | 'message'>, language: 'es' | 'en') {

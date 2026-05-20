@@ -1,3 +1,33 @@
+// Easing estándar del proyecto — cubic-bezier suave y natural
+export const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
+
+// Duración base para animaciones de entrada
+export const DURATION = 0.5;
+
+// Variant estándar para hover en cards y botones
+export const hoverLift = {
+  y: -4,
+  transition: { duration: 0.26, ease: EASE },
+};
+
+// Variant estándar para iconos con micro-bounce
+export const iconBounce = {
+  y: [0, -4, 0],
+  transition: {
+    duration: 3,
+    repeat: Infinity,
+    ease: 'easeInOut' as const,
+  },
+};
+
+// Variant estándar para iconos con wobble en hover
+export const iconWobble = {
+  rotate: [0, -10, 10, -10, 10, 0],
+  scale: 1.15,
+  transition: { duration: 0.5, ease: 'easeInOut' as const },
+};
+
+// Stagger para secciones
 export const sectionStagger = {
   hidden: {},
   show: {
@@ -8,6 +38,7 @@ export const sectionStagger = {
   },
 };
 
+// Item con fade + slide up
 export const sectionItem = {
   hidden: {
     opacity: 0,
@@ -17,12 +48,13 @@ export const sectionItem = {
     opacity: 1,
     y: 0,
     transition: {
-      duration: 0.5,
-        ease: [0.22, 1, 0.36, 1] as const,
+      duration: DURATION,
+      ease: EASE,
     },
   },
 };
 
+// Slide desde la izquierda
 export const sectionSlideLeft = {
   hidden: {
     opacity: 0,
@@ -33,11 +65,12 @@ export const sectionSlideLeft = {
     x: 0,
     transition: {
       duration: 0.55,
-        ease: [0.22, 1, 0.36, 1] as const,
+      ease: EASE,
     },
   },
 };
 
+// Slide desde la derecha
 export const sectionSlideRight = {
   hidden: {
     opacity: 0,
@@ -48,7 +81,7 @@ export const sectionSlideRight = {
     x: 0,
     transition: {
       duration: 0.55,
-        ease: [0.22, 1, 0.36, 1] as const,
+      ease: EASE,
     },
   },
 };

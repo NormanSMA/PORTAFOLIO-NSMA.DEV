@@ -25,33 +25,36 @@ export interface ButtonProps {
   disabled?: boolean;
 }
 
-// Project Types
+// Project Types — acorde a los datos reales en src/data/projects.ts
 export interface Project {
   id: string;
   title: string;
-  description: string;
+  category: string;
+  shortDescription: string;
+  fullDescription: string | null;
   image: string;
+  imageDark?: string;
+  url: string | null;
   technologies: string[];
-  liveUrl?: string;
-  githubUrl?: string;
-  featured: boolean;
+  icon: React.ComponentType;
 }
 
-// Skill Types
+// Skill Types — acorde a src/data/skills.ts
 export interface Skill {
   name: string;
-  level: number;
-  icon: string;
-  category: 'frontend' | 'backend' | 'tools' | 'other';
+  icon: React.ComponentType;
 }
 
-// Experience Types
-export interface Experience {
-  id: string;
-  company: string;
-  position: string;
-  startDate: string;
-  endDate: string | null;
+// Service Types — acorde a src/data/services.ts
+export interface Service {
+  icon: React.ComponentType<{ className?: string }>;
+  title: string;
   description: string;
-  technologies: string[];
+}
+
+// Social Link Types — acorde a src/data/social.ts
+export interface SocialLink {
+  name: string;
+  url: string;
+  icon: React.ComponentType;
 }

@@ -6,7 +6,6 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-// Format date
 // Throttle function
 export function throttle<T extends (...args: unknown[]) => unknown>(
   func: T,

@@ -149,10 +149,6 @@ export const translations = {
             title: 'Colaboración',
             desc: 'Trabajar juntos en un proyecto',
           },
-          recruitment: {
-            title: 'Reclutamiento',
-            desc: 'Búsqueda o selección de talento',
-          },
           advisory: {
             title: 'Asesoría',
             desc: 'Consultoría técnica o mentoría',
@@ -368,10 +364,6 @@ export const translations = {
           collaboration: {
             title: 'Collaboration',
             desc: 'Work together on a project',
-          },
-          recruitment: {
-            title: 'Recruitment',
-            desc: 'Hiring or talent search',
           },
           advisory: {
             title: 'Advisory',

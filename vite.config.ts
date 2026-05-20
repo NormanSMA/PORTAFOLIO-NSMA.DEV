@@ -59,7 +59,14 @@ export default defineConfig({
   server: {
     host: true,
     allowedHosts: ['localhost', '.ngrok-free.dev', '.ngrok.io', '.ngrok-free.app'],
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3001',
+        changeOrigin: true,
+      },
+    },
   },
+
   esbuild: {
     drop: ['console', 'debugger'] as ('console' | 'debugger')[],
   },

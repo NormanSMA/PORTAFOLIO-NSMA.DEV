@@ -5,7 +5,7 @@ import { useLanguage, useTheme } from '../../hooks';
 import { Container } from '../atoms';
 import { typography } from '../../config/typography';
 import { getProjects } from '../../data/projects';
-import { sectionItem, sectionStagger } from '../../config/motion';
+import { hoverLift, sectionItem, sectionStagger } from '../../config/motion';
 
 export function Projects() {
   const { t } = useLanguage();
@@ -32,11 +32,9 @@ export function Projects() {
   const toggleExpanded = useCallback((projectId: string) => {
     setExpandedProject(prev => {
       if (prev === projectId) {
-        // Closing — return focus to toggle button
         setTimeout(() => toggleButtonRefs.current.get(projectId)?.focus(), 50);
         return null;
       }
-      // Opening — focus close button after animation
       setTimeout(() => closeButtonRefs.current.get(projectId)?.focus(), 350);
       return projectId;
     });
@@ -73,15 +71,14 @@ export function Projects() {
             {projects.map((project) => {
               const IconComponent = project.icon;
               const isExpanded = expandedProject === project.id;
-              const isReference = project.id === 'bolsa'; // Android card es la referencia
-              const delay = project.id === 'pantano' ? 0.08 : project.id === 'bolsa' ? 0.16 : project.id === 'portfolio' ? 0.24 : 0;
-              
+              const isReference = project.id === 'bolsa';
+
               return (
                 <motion.article
                   key={project.id}
                   className="group relative overflow-visible rounded-2xl border border-light-border bg-light-card transition-all duration-300 dark:border-dark-border dark:bg-dark-card"
                   variants={reduceMotion ? undefined : sectionItem}
-                  whileHover={reduceMotion ? undefined : { y: -8 }}
+                  whileHover={reduceMotion ? undefined : hoverLift}
                 >
                   {/* Main Card */}
                   <div className="relative">
@@ -94,21 +91,7 @@ export function Projects() {
                       />
                       {/* Category Badge con icono */}
                       <div className="absolute top-3 left-3 sm:top-4 sm:left-4 bg-primary-600 dark:bg-primary-500 text-white px-3 py-1.5 sm:px-4 rounded-full text-xs sm:text-sm font-semibold flex items-center gap-1.5 sm:gap-2 overflow-hidden group/badge">
-                        <motion.div
-                          animate={reduceMotion ? undefined : { 
-                            rotate: [0, 15, -15, 0],
-                            scale: [1, 1.1, 1]
-                          }}
-                          transition={reduceMotion ? undefined : {
-                            duration: 3,
-                            repeat: Infinity,
-                            ease: "easeInOut",
-                            delay: delay + 0.5
-                          }}
-                          className="flex items-center justify-center relative z-10"
-                        >
-                          <IconComponent className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
-                        </motion.div>
+                        <IconComponent className="w-4 h-4 flex-shrink-0" />
                         <span className="relative z-10">{project.category}</span>
                       </div>
                     </div>
@@ -120,12 +103,9 @@ export function Projects() {
                         {project.title}
                       </h3>
 
-                      {/* Description - Reference text (Android) sin line-clamp */}
+                      {/* Description */}
                       {isReference ? (
-                        <p
-                          ref={referenceTextRef}
-                          className="text-sm sm:text-base md:text-sm lg:text-base text-light-textSecondary dark:text-dark-textSecondary leading-relaxed"
-                        >
+                        <p ref={referenceTextRef} className="text-sm sm:text-base md:text-sm lg:text-base text-light-textSecondary dark:text-dark-textSecondary leading-relaxed">
                           {project.shortDescription}
                         </p>
                       ) : (
@@ -135,14 +115,14 @@ export function Projects() {
                             display: '-webkit-box',
                             WebkitLineClamp: maxLines,
                             WebkitBoxOrient: 'vertical',
-                            overflow: 'hidden'
+                            overflow: 'hidden',
                           }}
                         >
                           {project.shortDescription}
                         </p>
                       )}
 
-                      {/* Technologies - Centradas */}
+                      {/* Technologies */}
                       <div className="flex flex-wrap gap-2 min-h-[2.5rem]">
                         {project.technologies.map((tech, techIndex) => (
                           <span
@@ -172,32 +152,21 @@ export function Projects() {
                           </span>
                         )}
 
-                        {/* Ver más button con "..." */}
                         {project.fullDescription && (
                           <button
                             ref={(el) => {
-                              if (el) {
-                                toggleButtonRefs.current.set(project.id, el);
-                              } else {
-                                toggleButtonRefs.current.delete(project.id);
-                              }
+                              if (el) toggleButtonRefs.current.set(project.id, el);
+                              else toggleButtonRefs.current.delete(project.id);
                             }}
                             onClick={() => toggleExpanded(project.id)}
                             className="flex items-center justify-center gap-1 px-3 py-1.5 rounded-full backdrop-blur-lg bg-light-border/50 dark:bg-dark-card/50 hover:bg-primary-600/20 dark:hover:bg-primary-500/20 transition-all duration-300 cursor-pointer group/btn"
                             aria-label="Ver más información"
                           >
-                            <span className="text-xs sm:text-sm text-light-text dark:text-dark-text font-medium">
-                              ...
-                            </span>
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              viewBox="0 0 12 12"
+                            <span className="text-xs sm:text-sm text-light-text dark:text-dark-text font-medium">...</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 12"
                               className={`w-3 h-3 sm:w-3.5 sm:h-3.5 text-light-text dark:text-dark-text transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`}
                             >
-                              <path
-                                d="M4.646 2.146a.5.5 0 0 0 0 .708L7.793 6L4.646 9.146a.5.5 0 1 0 .708.708l3.5-3.5a.5.5 0 0 0 0-.708l-3.5-3.5a.5.5 0 0 0-.708 0z"
-                                fill="currentColor"
-                              />
+                              <path d="M4.646 2.146a.5.5 0 0 0 0 .708L7.793 6L4.646 9.146a.5.5 0 1 0 .708.708l3.5-3.5a.5.5 0 0 0 0-.708l-3.5-3.5a.5.5 0 0 0-.708 0z" fill="currentColor" />
                             </svg>
                           </button>
                         )}
@@ -209,46 +178,28 @@ export function Projects() {
                   {project.fullDescription && (
                     <div
                       className={`absolute top-0 right-0 w-full h-full transition-all duration-500 ease-in-out z-10 ${
-                        isExpanded 
-                          ? 'translate-x-0 opacity-100 pointer-events-auto' 
-                          : 'translate-x-full opacity-0 pointer-events-none'
+                        isExpanded ? 'translate-x-0 opacity-100 pointer-events-auto' : 'translate-x-full opacity-0 pointer-events-none'
                       }`}
                     >
                       <div className="w-full h-full p-5 sm:p-6 rounded-2xl backdrop-blur-xl bg-light-card/95 dark:bg-dark-card/95 border border-light-border dark:border-dark-border shadow-2xl">
                         <div className="flex flex-col h-full">
-                          {/* Close button */}
                           <button
                             ref={(el) => {
-                              if (el) {
-                                closeButtonRefs.current.set(project.id, el);
-                              } else {
-                                closeButtonRefs.current.delete(project.id);
-                              }
+                              if (el) closeButtonRefs.current.set(project.id, el);
+                              else closeButtonRefs.current.delete(project.id);
                             }}
                             onClick={() => setExpandedProject(null)}
                             className="self-end mb-3 sm:mb-4 w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-full bg-light-border dark:bg-dark-card hover:bg-primary-600/20 dark:hover:bg-primary-500/20 transition-colors flex-shrink-0"
                             aria-label="Cerrar"
                           >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
                               className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-light-text dark:text-dark-text"
                             >
-                              <line x1="18" y1="6" x2="6" y2="18" />
-                              <line x1="6" y1="6" x2="18" y2="18" />
+                              <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
                             </svg>
                           </button>
-
-                          {/* Full content */}
                           <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
-                            <h4 className="text-lg sm:text-xl md:text-lg lg:text-xl text-light-text dark:text-dark-text font-bold mb-3 sm:mb-4">
-                              {project.title}
-                            </h4>
+                            <h4 className="text-lg sm:text-xl md:text-lg lg:text-xl text-light-text dark:text-dark-text font-bold mb-3 sm:mb-4">{project.title}</h4>
                             <p className="text-sm sm:text-base md:text-sm lg:text-base text-light-textSecondary dark:text-dark-textSecondary leading-relaxed">
                               {project.fullDescription}
                             </p>

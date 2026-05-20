@@ -6,6 +6,7 @@ import { Navbar, Hero, About, Services } from './components/organisms';
 import { ScrollToTop } from './components/molecules';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/react';
+import { FEATURE_FLAGS } from './config/constants';
 
 // Lazy load below-the-fold components
 const Projects = lazy(() => import('./components/organisms/Projects').then(module => ({ default: module.Projects })));
@@ -14,8 +15,6 @@ const Process = lazy(() => import('./components/organisms/Process').then(module 
 const EducationSkills = lazy(() => import('./components/organisms/EducationSkills').then(module => ({ default: module.EducationSkills })));
 const Contact = lazy(() => import('./components/organisms/Contact').then(module => ({ default: module.Contact })));
 const Footer = lazy(() => import('./components/organisms/Footer').then(module => ({ default: module.Footer })));
-
-const SHOW_IMPACT_METRICS = false;
 
 function App() {
   const reduceMotion = useReducedMotion();
@@ -50,7 +49,7 @@ function App() {
             ))}
           </div>
         }>
-          {SHOW_IMPACT_METRICS ? <ImpactMetrics /> : null}
+          {FEATURE_FLAGS.SHOW_IMPACT_METRICS && <ImpactMetrics />}
             <Process />
             <Projects />
             <EducationSkills />

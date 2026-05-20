@@ -3,7 +3,7 @@ import { motion, useReducedMotion } from 'framer-motion';
 import { useLanguage } from '../../hooks';
 import { Container, Counter } from '../atoms';
 import { typography } from '../../config/typography';
-import { sectionItem, sectionStagger } from '../../config/motion';
+import { hoverLift, sectionItem, sectionStagger } from '../../config/motion';
 
 export function About() {
   const { t } = useLanguage();
@@ -57,7 +57,7 @@ export function About() {
                     tabIndex={0}
                     className="text-center transition-transform duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
                     variants={reduceMotion ? undefined : sectionItem}
-                    whileHover={reduceMotion ? undefined : { y: -3 }}
+                    whileHover={reduceMotion ? undefined : hoverLift}
                   >
                     <div className="mb-3 text-5xl font-extrabold leading-none tracking-tight text-primary-600 dark:text-primary-400 md:text-6xl">
                       <Counter end={stat.value} suffix={stat.suffix} className="inline-block" />

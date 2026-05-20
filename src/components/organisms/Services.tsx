@@ -4,33 +4,19 @@ import { Container } from '../atoms';
 import { useMemo } from 'react';
 import { typography } from '../../config/typography';
 import { getServices } from '../../data/services';
-import { sectionItem, sectionStagger } from '../../config/motion';
+import { hoverLift, sectionItem, sectionStagger } from '../../config/motion';
 
 function getCardColor(index: number) {
   const normalizedIndex = index % 3;
-
-  if (normalizedIndex === 0) {
-    return 'from-sky-500/10 to-blue-500/10 dark:from-sky-500/10 dark:to-blue-500/10';
-  }
-
-  if (normalizedIndex === 1) {
-    return 'from-blue-500/10 to-indigo-500/10 dark:from-blue-500/10 dark:to-indigo-500/10';
-  }
-
+  if (normalizedIndex === 0) return 'from-sky-500/10 to-blue-500/10 dark:from-sky-500/10 dark:to-blue-500/10';
+  if (normalizedIndex === 1) return 'from-blue-500/10 to-indigo-500/10 dark:from-blue-500/10 dark:to-indigo-500/10';
   return 'from-indigo-500/10 to-violet-500/10 dark:from-indigo-500/10 dark:to-violet-500/10';
 }
 
 function getIconColor(index: number) {
   const normalizedIndex = index % 3;
-
-  if (normalizedIndex === 0) {
-    return 'bg-sky-500/15 dark:bg-sky-500/20 text-sky-600 dark:text-sky-400';
-  }
-
-  if (normalizedIndex === 1) {
-    return 'bg-blue-500/15 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400';
-  }
-
+  if (normalizedIndex === 0) return 'bg-sky-500/15 dark:bg-sky-500/20 text-sky-600 dark:text-sky-400';
+  if (normalizedIndex === 1) return 'bg-blue-500/15 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400';
   return 'bg-indigo-500/15 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400';
 }
 
@@ -80,7 +66,7 @@ export function Services() {
                     p-6 space-y-4 shadow-lg
                   `}
                   variants={reduceMotion ? undefined : sectionItem}
-                  whileHover={reduceMotion ? undefined : { y: -4 }}
+                  whileHover={reduceMotion ? undefined : hoverLift}
                 >
                   <div className={`inline-flex items-center justify-center w-14 h-14 rounded-xl ${getIconColor(index)}`}>
                     <Icon className="h-7 w-7" />

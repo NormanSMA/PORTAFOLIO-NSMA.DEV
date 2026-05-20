@@ -4,7 +4,7 @@ import { GraduationCap, BadgeCheck, Languages } from 'lucide-react';
 import { Container } from '../atoms';
 import { typography } from '../../config/typography';
 import { technicalSkills } from '../../data/skills';
-import { sectionItem, sectionSlideLeft, sectionSlideRight, sectionStagger } from '../../config/motion';
+import { hoverLift, iconBounce, iconWobble, sectionItem, sectionSlideLeft, sectionSlideRight, sectionStagger } from '../../config/motion';
 
 export function EducationSkills() {
   const { t } = useLanguage();
@@ -14,7 +14,7 @@ export function EducationSkills() {
     <section id="education-skills" className="py-16 md:py-24 bg-light-bg dark:bg-dark-bg relative overflow-hidden">
       <Container>
         <div className="max-w-6xl mx-auto">
-          {/* Header con decoración de puntos */}
+          {/* Header */}
           <motion.div
             className="text-center mb-12 md:mb-16 relative"
             variants={reduceMotion ? undefined : sectionItem}
@@ -22,30 +22,6 @@ export function EducationSkills() {
             whileInView={reduceMotion ? { opacity: 1 } : 'show'}
             viewport={{ once: true, amount: 0.45 }}
           >
-            {/* Patrón de puntos decorativo */}
-            <svg
-              viewBox="0 0 52 24"
-              fill="currentColor"
-              className="absolute top-0 left-1/2 -translate-x-1/2 z-0 w-32 -mt-4 text-primary-100 dark:text-primary-900/30 hidden sm:block"
-            >
-              <defs>
-                <pattern
-                  id="education-dots-pattern"
-                  x="0"
-                  y="0"
-                  width=".135"
-                  height=".30"
-                >
-                  <circle cx="1" cy="1" r=".7" />
-                </pattern>
-              </defs>
-              <rect
-                fill="url(#education-dots-pattern)"
-                width="52"
-                height="24"
-              />
-            </svg>
-            
             <h2 className={`${typography.sectionTitle} text-light-text dark:text-dark-text mb-4 relative z-10`}>
               {t('educationSkills.title')}
             </h2>
@@ -54,7 +30,6 @@ export function EducationSkills() {
             </p>
           </motion.div>
 
-          {/* Layout de dos columnas con divisor */}
           <motion.div
             className="grid max-w-screen-lg mx-auto space-y-8 lg:grid-cols-2 lg:space-y-0 lg:divide-x lg:divide-light-border dark:lg:divide-dark-border"
             variants={reduceMotion ? undefined : sectionStagger}
@@ -62,17 +37,15 @@ export function EducationSkills() {
             whileInView={reduceMotion ? { opacity: 1 } : 'show'}
             viewport={{ once: true, amount: 0.2 }}
           >
-            
-            {/* Columna Izquierda: Educación */}
+            {/* Left Column: Education */}
             <motion.div
               className="space-y-6 sm:px-8 lg:pr-12"
               variants={reduceMotion ? undefined : sectionSlideLeft}
             >
-              
-              {/* Universidad */}
+              {/* University */}
               <motion.div
                 className="flex flex-col lg:flex-row items-center lg:items-start max-w-md mx-auto lg:mx-0 rounded-2xl p-3 transition-all duration-300 hover:bg-light-card/60 dark:hover:bg-dark-card/50"
-                whileHover={reduceMotion ? undefined : { y: -5, scale: 1.02 }}
+                whileHover={reduceMotion ? undefined : hoverLift}
                 variants={reduceMotion ? undefined : sectionItem}
               >
                 <div className="mb-4 lg:mb-0 lg:mr-4">
@@ -96,10 +69,10 @@ export function EducationSkills() {
                 </div>
               </motion.div>
 
-              {/* Certificaciones */}
+              {/* Certifications */}
               <motion.div
                 className="flex flex-col lg:flex-row items-center lg:items-start max-w-md mx-auto lg:mx-0 rounded-2xl p-3 transition-all duration-300 hover:bg-light-card/60 dark:hover:bg-dark-card/50"
-                whileHover={reduceMotion ? undefined : { y: -5, scale: 1.02 }}
+                whileHover={reduceMotion ? undefined : hoverLift}
                 variants={reduceMotion ? undefined : sectionItem}
               >
                 <div className="mb-4 lg:mb-0 lg:mr-4">
@@ -120,10 +93,10 @@ export function EducationSkills() {
                 </div>
               </motion.div>
 
-              {/* Idiomas */}
+              {/* Languages */}
               <motion.div
                 className="flex flex-col lg:flex-row items-center lg:items-start max-w-md mx-auto lg:mx-0 rounded-2xl p-3 transition-all duration-300 hover:bg-light-card/60 dark:hover:bg-dark-card/50"
-                whileHover={reduceMotion ? undefined : { y: -5, scale: 1.02 }}
+                whileHover={reduceMotion ? undefined : hoverLift}
                 variants={reduceMotion ? undefined : sectionItem}
               >
                 <div className="mb-4 lg:mb-0 lg:mr-4">
@@ -147,42 +120,30 @@ export function EducationSkills() {
               </motion.div>
             </motion.div>
 
-            {/* Separador visual para móvil/tablet */}
-            <div className="lg:hidden flex items-center gap-4 my-8">
-              <div className="flex-1 h-px bg-gradient-to-r from-transparent via-primary-300 dark:via-primary-600 to-transparent"></div>
-              <span className="text-sm font-medium text-primary-500 dark:text-primary-400 uppercase tracking-wider">
-                {t('educationSkills.skills.title')}
-              </span>
-              <div className="flex-1 h-px bg-gradient-to-r from-transparent via-primary-300 dark:via-primary-600 to-transparent"></div>
-            </div>
-
-            {/* Columna Derecha: Habilidades Técnicas */}
+            {/* Right Column: Technical Skills */}
             <motion.div
               className="space-y-6 sm:px-8 lg:pl-12"
               variants={reduceMotion ? undefined : sectionSlideRight}
             >
-
-              {/* Grid de tecnologías - 3 columnas para mejor distribución */}
               <div className="grid grid-cols-3 gap-4">
                 {technicalSkills.map((skill, index) => {
                   const Icon = skill.icon;
                   return (
                     <motion.div
                       key={index}
-                      className="flex flex-col items-center gap-2 p-3 rounded-xl bg-light-card dark:bg-dark-card hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-all duration-300 hover:-translate-y-1 group"
+                      className="flex flex-col items-center gap-2 p-3 rounded-xl bg-light-card dark:bg-dark-card hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-all duration-300 group"
                       variants={reduceMotion ? undefined : sectionItem}
-                      whileHover={reduceMotion ? undefined : { y: -6, scale: 1.03 }}
+                      whileHover={reduceMotion ? undefined : hoverLift}
                     >
                       <motion.div 
                         className="w-10 h-10 text-primary-600 dark:text-primary-400"
-                        animate={reduceMotion ? undefined : { 
-                          y: [0, -4, 0],
-                        }}
-                        transition={reduceMotion ? undefined : {
+                        animate={reduceMotion ? undefined : iconBounce}
+                        whileHover={reduceMotion ? undefined : iconWobble}
+                        transition={{
                           duration: 3,
                           repeat: Infinity,
-                          ease: "easeInOut",
-                          delay: index * 0.2
+                          ease: 'easeInOut',
+                          delay: index * 0.2,
                         }}
                       >
                         <Icon className="w-full h-full drop-shadow-sm transition-transform duration-300 group-hover:scale-110 group-hover:text-primary-500" />
@@ -195,7 +156,7 @@ export function EducationSkills() {
                 })}
               </div>
 
-              {/* Conceptos adicionales */}
+              {/* Additional Concepts */}
               <div className="pt-4 border-t border-light-border dark:border-dark-border">
                 <h4 className={`${typography.secondary} text-light-text dark:text-dark-text font-semibold mb-3`}>
                   {t('educationSkills.skills.concepts.title')}
