@@ -2,7 +2,8 @@ import type { IncomingMessage, ServerResponse } from 'node:http';
 import { resolveMx } from 'node:dns/promises';
 import { render } from '@react-email/render';
 import { Resend } from 'resend';
-import ContactNotificationEmail from '../src/emails/ContactNotificationEmail';
+import ContactNotificationEmail from '../src/emails/ContactNotificationEmail.jsx';
+
 import {
   contactReasonKeys,
   formatContactReasons,
@@ -10,7 +11,8 @@ import {
   normalizeContactText,
   type ContactRequestPayload,
   type ContactReasonKey,
-} from '../src/utils/contact';
+} from '../src/utils/contact.js';
+
 
 type ApiRequest = IncomingMessage & {
   body?: unknown;

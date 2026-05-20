@@ -12,7 +12,8 @@ import {
   Text,
   Hr,
 } from '@react-email/components';
-import { formatContactReasons, type ContactReasonKey } from '../utils/contact';
+import { formatContactReasons, type ContactReasonKey } from '../utils/contact.js';
+
 
 interface ContactNotificationEmailProps {
   fullName: string;
