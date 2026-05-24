@@ -22,9 +22,4 @@ export const LANGUAGE_CONFIG = {
   supported: ['es', 'en'],
 } as const;
 
-// Feature Flags
-export const FEATURE_FLAGS = {
-  SHOW_IMPACT_METRICS: true,
-} as const;
-
 // Nota: si en el futuro se agregan URLs externas, se colocan aquí como constantes tipadas.

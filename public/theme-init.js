@@ -2,10 +2,13 @@
   try {
     const key = 'nsma-theme';
     const saved = localStorage.getItem(key);
+    const root = document.documentElement;
+    root.classList.remove('light', 'dark');
+
     if (saved === 'dark' || (!saved && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-      document.documentElement.classList.add('dark');
+      root.classList.add('dark');
     } else {
-      document.documentElement.classList.remove('dark');
+      root.classList.add('light');
     }
   } catch (e) {
     // ignore (localStorage may be unavailable)

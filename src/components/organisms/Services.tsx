@@ -1,86 +1,64 @@
 import { useLanguage } from '../../hooks';
-import { motion, useReducedMotion } from 'framer-motion';
 import { Container } from '../atoms';
 import { useMemo } from 'react';
 import { typography } from '../../config/typography';
 import { getServices } from '../../data/services';
-import { hoverLift, sectionItem, sectionStagger } from '../../config/motion';
-
-function getCardColor(index: number) {
-  const normalizedIndex = index % 3;
-  if (normalizedIndex === 0) return 'from-sky-500/10 to-blue-500/10 dark:from-sky-500/10 dark:to-blue-500/10';
-  if (normalizedIndex === 1) return 'from-blue-500/10 to-indigo-500/10 dark:from-blue-500/10 dark:to-indigo-500/10';
-  return 'from-indigo-500/10 to-violet-500/10 dark:from-indigo-500/10 dark:to-violet-500/10';
-}
 
 function getIconColor(index: number) {
   const normalizedIndex = index % 3;
-  if (normalizedIndex === 0) return 'bg-sky-500/15 dark:bg-sky-500/20 text-sky-600 dark:text-sky-400';
-  if (normalizedIndex === 1) return 'bg-blue-500/15 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400';
-  return 'bg-indigo-500/15 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400';
+  if (normalizedIndex === 0) return 'bg-foreground/8 text-foreground';
+  if (normalizedIndex === 1) return 'bg-chart-2/12 text-foreground';
+  return 'bg-chart-3/12 text-foreground';
 }
 
 export function Services() {
   const { t } = useLanguage();
-  const reduceMotion = useReducedMotion();
   const services = useMemo(() => getServices(t), [t]);
 
   return (
     <section 
       id="services" 
-      className="py-16 md:py-24 bg-light-card dark:bg-dark-bg relative"
+      className="relative bg-secondary py-16 md:py-24"
     >
       <Container>
         <div className="mx-auto max-w-6xl px-4">
-          <motion.div
+          <div
             className="text-center mb-8 md:mb-10"
-            variants={reduceMotion ? undefined : sectionItem}
-            initial={reduceMotion ? { opacity: 1 } : 'hidden'}
-            whileInView={reduceMotion ? { opacity: 1 } : 'show'}
-            viewport={{ once: true, amount: 0.45 }}
           >
-            <h2 className={`${typography.sectionTitle} text-light-text dark:text-dark-text mb-4`}>
+            <h2 className={`${typography.sectionTitle} text-foreground mb-4`}>
               {t('services.title')}
             </h2>
-            <p className={`${typography.sectionSubtitle} text-light-textSecondary dark:text-dark-textSecondary max-w-3xl mx-auto`}>
+            <p className={`${typography.sectionSubtitle} text-muted-foreground max-w-3xl mx-auto`}>
               {t('services.subtitle')}
             </p>
-          </motion.div>
+          </div>
 
-          <motion.div
+          <div
             className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
-            variants={reduceMotion ? undefined : sectionStagger}
-            initial={reduceMotion ? { opacity: 1 } : 'hidden'}
-            whileInView={reduceMotion ? { opacity: 1 } : 'show'}
-            viewport={{ once: true, amount: 0.25 }}
           >
             {services.map((service, index) => {
               const Icon = service.icon;
               return (
-                <motion.article
+                <article
                   key={index}
                   className={`
-                    rounded-2xl border border-light-border/60 dark:border-dark-border/60
-                    bg-gradient-to-br ${getCardColor(index)}
-                    bg-light-bg dark:bg-dark-card
-                    p-6 space-y-4 shadow-lg
+                    rounded-2xl border border-border bg-card p-6
+                    space-y-4
                   `}
-                  variants={reduceMotion ? undefined : sectionItem}
-                  whileHover={reduceMotion ? undefined : hoverLift}
                 >
-                  <div className={`inline-flex items-center justify-center w-14 h-14 rounded-xl ${getIconColor(index)}`}>
+                  <div className={`inline-flex h-14 w-14 items-center justify-center rounded-xl ${getIconColor(index)}`}>
                     <Icon className="h-7 w-7" />
                   </div>
-                  <h3 className={`${typography.cardSubtitle} text-light-text dark:text-dark-text`}>
+                  <h3 className={`${typography.cardSubtitle} text-foreground`}>
                     {service.title}
                   </h3>
-                  <p className={`${typography.secondary} text-light-textSecondary dark:text-dark-textSecondary leading-relaxed`}>
+                  <p className={`${typography.secondary} text-muted-foreground leading-relaxed`}>
                     {service.description}
                   </p>
-                </motion.article>
+                </article>
               );
             })}
-          </motion.div>
+          </div>
         </div>
       </Container>
     </section>

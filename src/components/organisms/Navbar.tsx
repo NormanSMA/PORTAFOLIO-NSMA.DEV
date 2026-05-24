@@ -1,11 +1,9 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
-import { motion, useReducedMotion } from 'framer-motion';
 import { useLanguage, useScrollPosition } from '../../hooks';
 import { Logo, Container, StarBorder, AnimatedThemeToggler } from '../atoms';
 import { cn, scrollToElement } from '../../utils/helpers';
 
 export function Navbar() {
-  const reduceMotion = useReducedMotion();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const lastScrollY = useRef(0);
@@ -83,17 +81,14 @@ export function Navbar() {
   };
 
   return (
-    <motion.nav
+    <nav
       className={cn(
-        'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
+        'fixed top-0 left-0 right-0 z-50',
         isScrolled || isMenuOpen
-          ? 'bg-light-bg/80 dark:bg-dark-bg/80 backdrop-blur-lg shadow-lg'
+          ? 'bg-background/80 shadow-lg backdrop-blur'
           : 'bg-transparent',
-        isVisible ? 'translate-y-0' : '-translate-y-full'
+        isVisible ? 'block' : 'hidden'
       )}
-      initial={reduceMotion ? { opacity: 1 } : { opacity: 0, y: -26 }}
-      animate={reduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
-      transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1], delay: 0.12 }}
     >
 
       <Container>
@@ -107,21 +102,19 @@ export function Navbar() {
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center gap-8">
             {navLinks.map((link) => (
-              <motion.button
+              <button
                 key={link.id}
                 onClick={() => handleNavClick(link.id)}
                 className={cn(
-                  'transition-colors font-medium cursor-pointer rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-dark-bg',
+                  'font-medium cursor-pointer rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
                   activeSection === link.id
-                    ? 'text-primary-500 dark:text-primary-400'
-                    : 'text-light-text dark:text-dark-text hover:text-primary-500 dark:hover:text-primary-400'
+                    ? 'text-foreground'
+                    : 'text-muted-foreground'
                 )}
                 aria-current={activeSection === link.id ? 'page' : undefined}
-                whileHover={reduceMotion ? undefined : { y: -2, scale: 1.03 }}
-                transition={{ duration: 0.2, ease: 'easeOut' }}
               >
                 {link.label}
-              </motion.button>
+              </button>
             ))}
           </div>
 
@@ -129,7 +122,7 @@ export function Navbar() {
           <div className="hidden md:flex items-center gap-4">
             <StarBorder color="#3B82F6" speed="8s" thickness={1}>
               <AnimatedThemeToggler
-                className="p-2 rounded-lg bg-light-card dark:bg-dark-card hover:bg-primary-500/10 transition-colors"
+                className="p-2 rounded-lg bg-card border border-border"
                 iconSize={20}
               />
             </StarBorder>
@@ -137,11 +130,11 @@ export function Navbar() {
             <StarBorder color="#6366F1" speed="8s" thickness={1}>
               <button
                 onClick={toggleLanguage}
-                className="p-2 rounded-lg bg-light-card/80 dark:bg-dark-card/80 hover:bg-primary-500/10 transition-colors font-semibold text-sm flex items-center justify-center min-w-[56px]"
+                className="p-2 rounded-lg bg-card/90 border border-border font-semibold text-sm flex items-center justify-center min-w-[56px]"
                 aria-label="Toggle language"
               >
                 {/* clearer, slightly larger language label */}
-                <span className="inline-block w-8 text-center text-light-text dark:text-white">{language.toUpperCase()}</span>
+                <span className="inline-block w-8 text-center text-foreground">{language.toUpperCase()}</span>
               </button>
             </StarBorder>
           </div>
@@ -151,14 +144,14 @@ export function Navbar() {
             <StarBorder color="#3B82F6" speed="6s" thickness={1}>
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="p-2 rounded-lg bg-light-card dark:bg-dark-card"
+                className="p-2 rounded-lg bg-card border border-border"
                 aria-label="Toggle menu"
                 aria-expanded={isMenuOpen}
               >
                 <div className="w-6 h-5 flex flex-col justify-between">
-                  <span className={cn('w-full h-0.5 bg-light-text dark:bg-dark-text transition-all', isMenuOpen && 'rotate-45 translate-y-2')} />
-                  <span className={cn('w-full h-0.5 bg-light-text dark:bg-dark-text transition-all', isMenuOpen && 'opacity-0')} />
-                  <span className={cn('w-full h-0.5 bg-light-text dark:bg-dark-text transition-all', isMenuOpen && '-rotate-45 -translate-y-2')} />
+                  <span className={cn('w-full h-0.5 bg-foreground', isMenuOpen && 'rotate-45 translate-y-2')} />
+                  <span className={cn('w-full h-0.5 bg-foreground', isMenuOpen && 'opacity-0')} />
+                  <span className={cn('w-full h-0.5 bg-foreground', isMenuOpen && '-rotate-45 -translate-y-2')} />
                 </div>
               </button>
             </StarBorder>
@@ -166,44 +159,46 @@ export function Navbar() {
         </div>
 
         {/* Mobile Menu */}
-        <div className={cn('md:hidden overflow-hidden transition-all duration-300', isMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0')}>
-          <div className="py-4 space-y-2">
-            {navLinks.map((link) => (
-              <button
-                key={link.id}
-                onClick={() => handleNavClick(link.id)}
-                className={cn(
-                  'block w-full text-left px-4 py-2 rounded-lg transition-colors',
-                  activeSection === link.id
-                    ? 'text-primary-500 dark:text-primary-400'
-                    : 'text-light-text dark:text-dark-text hover:bg-light-card dark:hover:bg-dark-card'
-                )}
-                aria-current={activeSection === link.id ? 'page' : undefined}
-              >
-                {link.label}
-              </button>
-            ))}
-
-            <div className="flex gap-2 px-4 pt-2">
-              <StarBorder color="#3B82F6" speed="8s" thickness={1} className="flex-1">
-                <AnimatedThemeToggler
-                  className="w-full p-2 rounded-lg bg-light-card dark:bg-dark-card hover:bg-primary-500/10 transition-colors flex items-center justify-center gap-2"
-                  iconSize={18}
-                />
-              </StarBorder>
-              
-              <StarBorder color="#6366F1" speed="8s" thickness={1} className="flex-1">
+        {isMenuOpen && (
+          <div className="md:hidden">
+            <div className="py-4 space-y-2">
+              {navLinks.map((link) => (
                 <button
-                  onClick={toggleLanguage}
-                  className="w-full p-2 rounded-lg bg-light-card/80 dark:bg-dark-card/80 hover:bg-primary-500/10 transition-colors font-semibold text-sm flex items-center justify-center"
+                  key={link.id}
+                  onClick={() => handleNavClick(link.id)}
+                  className={cn(
+                    'block w-full text-left px-4 py-2 rounded-lg',
+                    activeSection === link.id
+                      ? 'text-foreground'
+                      : 'text-muted-foreground'
+                  )}
+                  aria-current={activeSection === link.id ? 'page' : undefined}
                 >
-                  <span className="inline-block w-8 text-center text-light-text dark:text-white">{language === 'es' ? 'EN' : 'ES'}</span>
+                  {link.label}
                 </button>
-              </StarBorder>
+              ))}
+
+              <div className="flex gap-2 px-4 pt-2">
+                <StarBorder color="#3B82F6" speed="8s" thickness={1} className="flex-1">
+                  <AnimatedThemeToggler
+                    className="w-full p-2 rounded-lg bg-card border border-border flex items-center justify-center gap-2"
+                    iconSize={18}
+                  />
+                </StarBorder>
+                
+                <StarBorder color="#6366F1" speed="8s" thickness={1} className="flex-1">
+                  <button
+                    onClick={toggleLanguage}
+                    className="w-full p-2 rounded-lg bg-card/90 border border-border font-semibold text-sm flex items-center justify-center"
+                  >
+                    <span className="inline-block w-8 text-center text-foreground">{language === 'es' ? 'EN' : 'ES'}</span>
+                  </button>
+                </StarBorder>
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </Container>
-    </motion.nav>
+    </nav>
   );
 }

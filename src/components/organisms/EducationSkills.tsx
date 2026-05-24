@@ -1,180 +1,145 @@
 import { useLanguage } from '../../hooks';
-import { motion, useReducedMotion } from 'framer-motion';
 import { GraduationCap, BadgeCheck, Languages } from 'lucide-react';
 import { Container } from '../atoms';
 import { typography } from '../../config/typography';
 import { technicalSkills } from '../../data/skills';
-import { hoverLift, iconBounce, iconWobble, sectionItem, sectionSlideLeft, sectionSlideRight, sectionStagger } from '../../config/motion';
 
 export function EducationSkills() {
   const { t } = useLanguage();
-  const reduceMotion = useReducedMotion();
 
   return (
-    <section id="education-skills" className="py-16 md:py-24 bg-light-bg dark:bg-dark-bg relative overflow-hidden">
+    <section id="education-skills" className="py-16 md:py-24 bg-background relative overflow-hidden">
       <Container>
         <div className="max-w-6xl mx-auto">
           {/* Header */}
-          <motion.div
+          <div
             className="text-center mb-12 md:mb-16 relative"
-            variants={reduceMotion ? undefined : sectionItem}
-            initial={reduceMotion ? { opacity: 1 } : 'hidden'}
-            whileInView={reduceMotion ? { opacity: 1 } : 'show'}
-            viewport={{ once: true, amount: 0.45 }}
           >
-            <h2 className={`${typography.sectionTitle} text-light-text dark:text-dark-text mb-4 relative z-10`}>
+            <h2 className={`${typography.sectionTitle} text-foreground mb-4 relative z-10`}>
               {t('educationSkills.title')}
             </h2>
-            <p className={`${typography.sectionSubtitle} text-light-textSecondary dark:text-dark-textSecondary max-w-3xl mx-auto px-4`}>
+            <p className={`${typography.sectionSubtitle} text-muted-foreground max-w-3xl mx-auto px-4`}>
               {t('educationSkills.subtitle')}
             </p>
-          </motion.div>
+          </div>
 
-          <motion.div
-            className="grid max-w-screen-lg mx-auto space-y-8 lg:grid-cols-2 lg:space-y-0 lg:divide-x lg:divide-light-border dark:lg:divide-dark-border"
-            variants={reduceMotion ? undefined : sectionStagger}
-            initial={reduceMotion ? { opacity: 1 } : 'hidden'}
-            whileInView={reduceMotion ? { opacity: 1 } : 'show'}
-            viewport={{ once: true, amount: 0.2 }}
+          <div
+            className="grid max-w-screen-lg mx-auto space-y-8 lg:grid-cols-2 lg:space-y-0 lg:divide-x lg:divide-border"
           >
             {/* Left Column: Education */}
-            <motion.div
+            <div
               className="space-y-6 sm:px-8 lg:pr-12"
-              variants={reduceMotion ? undefined : sectionSlideLeft}
             >
               {/* University */}
-              <motion.div
-                className="flex flex-col lg:flex-row items-center lg:items-start max-w-md mx-auto lg:mx-0 rounded-2xl p-3 transition-all duration-300 hover:bg-light-card/60 dark:hover:bg-dark-card/50"
-                whileHover={reduceMotion ? undefined : hoverLift}
-                variants={reduceMotion ? undefined : sectionItem}
-              >
+              <div className="flex flex-col lg:flex-row items-center lg:items-start max-w-md mx-auto lg:mx-0 rounded-2xl p-3">
                 <div className="mb-4 lg:mb-0 lg:mr-4">
-                  <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary-50 dark:bg-primary-900/30">
-                    <GraduationCap className="h-7 w-7 text-primary-600 dark:text-primary-400" strokeWidth={2.1} />
+                  <div className="flex items-center justify-center w-12 h-12 rounded-full bg-secondary">
+                    <GraduationCap className="h-7 w-7 text-foreground" strokeWidth={2.1} />
                   </div>
                 </div>
                 <div className="text-center lg:text-left">
-                  <h4 className={`${typography.cardSubtitle} text-light-text dark:text-dark-text mb-2`}>
+                  <h4 className={`${typography.cardSubtitle} text-foreground mb-2`}>
                     {t('educationSkills.education.university.title')}
                   </h4>
-                  <p className={`${typography.secondary} text-light-textSecondary dark:text-dark-textSecondary mb-1`}>
+                  <p className={`${typography.secondary} text-muted-foreground mb-1`}>
                     {t('educationSkills.education.university.degree')}
                   </p>
-                  <p className={`${typography.small} text-primary-600 dark:text-primary-400 font-medium`}>
+                  <p className={`${typography.small} text-foreground font-medium`}>
                     {t('educationSkills.education.university.year')}
                   </p>
-                  <p className={`${typography.small} text-light-textSecondary dark:text-dark-textSecondary`}>
+                  <p className={`${typography.small} text-muted-foreground`}>
                     {t('educationSkills.education.university.period')}
                   </p>
                 </div>
-              </motion.div>
+              </div>
 
               {/* Certifications */}
-              <motion.div
-                className="flex flex-col lg:flex-row items-center lg:items-start max-w-md mx-auto lg:mx-0 rounded-2xl p-3 transition-all duration-300 hover:bg-light-card/60 dark:hover:bg-dark-card/50"
-                whileHover={reduceMotion ? undefined : hoverLift}
-                variants={reduceMotion ? undefined : sectionItem}
-              >
+              <div className="flex flex-col lg:flex-row items-center lg:items-start max-w-md mx-auto lg:mx-0 rounded-2xl p-3">
                 <div className="mb-4 lg:mb-0 lg:mr-4">
-                  <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary-50 dark:bg-primary-900/30">
-                    <BadgeCheck className="h-7 w-7 text-primary-600 dark:text-primary-400" strokeWidth={2.1} />
+                  <div className="flex items-center justify-center w-12 h-12 rounded-full bg-secondary">
+                    <BadgeCheck className="h-7 w-7 text-foreground" strokeWidth={2.1} />
                   </div>
                 </div>
                 <div className="text-center lg:text-left">
-                  <h4 className={`${typography.cardSubtitle} text-light-text dark:text-dark-text mb-2`}>
+                  <h4 className={`${typography.cardSubtitle} text-foreground mb-2`}>
                     {t('educationSkills.education.certifications.title')}
                   </h4>
-                  <p className={`${typography.secondary} text-light-textSecondary dark:text-dark-textSecondary`}>
+                  <p className={`${typography.secondary} text-muted-foreground`}>
                     {t('educationSkills.education.certifications.scrum')}
                   </p>
-                  <p className={`${typography.secondary} text-gray-600 dark:text-gray-400`}>
+                  <p className={`${typography.secondary} text-muted-foreground`}>
                     {t('educationSkills.education.certifications.rpa')}
                   </p>
                 </div>
-              </motion.div>
+              </div>
 
               {/* Languages */}
-              <motion.div
-                className="flex flex-col lg:flex-row items-center lg:items-start max-w-md mx-auto lg:mx-0 rounded-2xl p-3 transition-all duration-300 hover:bg-light-card/60 dark:hover:bg-dark-card/50"
-                whileHover={reduceMotion ? undefined : hoverLift}
-                variants={reduceMotion ? undefined : sectionItem}
-              >
+              <div className="flex flex-col lg:flex-row items-center lg:items-start max-w-md mx-auto lg:mx-0 rounded-2xl p-3">
                 <div className="mb-4 lg:mb-0 lg:mr-4">
-                  <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary-50 dark:bg-primary-900/30">
-                    <Languages className="h-7 w-7 text-primary-600 dark:text-primary-400" strokeWidth={2.1} />
+                  <div className="flex items-center justify-center w-12 h-12 rounded-full bg-secondary">
+                    <Languages className="h-7 w-7 text-foreground" strokeWidth={2.1} />
                   </div>
                 </div>
                 <div className="text-center lg:text-left">
-                  <h4 className={`${typography.cardSubtitle} text-light-text dark:text-dark-text mb-2`}>
+                  <h4 className={`${typography.cardSubtitle} text-foreground mb-2`}>
                     {t('educationSkills.education.languages.title')}
                   </h4>
-                  <p className={`${typography.secondary} text-light-textSecondary dark:text-dark-textSecondary`}>
+                  <p className={`${typography.secondary} text-muted-foreground`}>
                     <span className="font-medium">{t('educationSkills.education.languages.spanish')}:</span>{' '}
                     {t('educationSkills.education.languages.native')}
                   </p>
-                  <p className={`${typography.secondary} text-gray-600 dark:text-gray-400`}>
+                  <p className={`${typography.secondary} text-muted-foreground`}>
                     <span className="font-medium">{t('educationSkills.education.languages.english')}:</span>{' '}
                     {t('educationSkills.education.languages.level')}
                   </p>
                 </div>
-              </motion.div>
-            </motion.div>
+              </div>
+            </div>
 
             {/* Right Column: Technical Skills */}
-            <motion.div
+            <div
               className="space-y-6 sm:px-8 lg:pl-12"
-              variants={reduceMotion ? undefined : sectionSlideRight}
             >
               <div className="grid grid-cols-3 gap-4">
                 {technicalSkills.map((skill, index) => {
                   const Icon = skill.icon;
                   return (
-                    <motion.div
+                    <div
                       key={index}
-                      className="flex flex-col items-center gap-2 p-3 rounded-xl bg-light-card dark:bg-dark-card hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-all duration-300 group"
-                      variants={reduceMotion ? undefined : sectionItem}
-                      whileHover={reduceMotion ? undefined : hoverLift}
+                      className="flex flex-col items-center gap-2 p-3 rounded-xl bg-card border border-border group"
                     >
-                      <motion.div 
-                        className="w-10 h-10 text-primary-600 dark:text-primary-400"
-                        animate={reduceMotion ? undefined : iconBounce}
-                        whileHover={reduceMotion ? undefined : iconWobble}
-                        transition={{
-                          duration: 3,
-                          repeat: Infinity,
-                          ease: 'easeInOut',
-                          delay: index * 0.2,
-                        }}
+                      <div 
+                        className="w-10 h-10 text-foreground"
                       >
-                        <Icon className="w-full h-full drop-shadow-sm transition-transform duration-300 group-hover:scale-110 group-hover:text-primary-500" />
-                      </motion.div>
-                      <span className={`${typography.small} text-light-textSecondary dark:text-dark-textSecondary text-center font-medium`}>
+                        <Icon className="w-full h-full drop-shadow-sm" />
+                      </div>
+                      <span className={`${typography.small} text-muted-foreground text-center font-medium`}>
                         {skill.name}
                       </span>
-                    </motion.div>
+                    </div>
                   );
                 })}
               </div>
 
               {/* Additional Concepts */}
-              <div className="pt-4 border-t border-light-border dark:border-dark-border">
-                <h4 className={`${typography.secondary} text-light-text dark:text-dark-text font-semibold mb-3`}>
+              <div className="pt-4 border-t border-border">
+                <h4 className={`${typography.secondary} text-foreground font-semibold mb-3`}>
                   {t('educationSkills.skills.concepts.title')}
                 </h4>
                 <div className="flex flex-wrap gap-2">
-                  <span className="px-3 py-1.5 bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 rounded-full text-sm">
+                  <span className="px-3 py-1.5 bg-secondary text-secondary-foreground rounded-full text-sm">
                     {t('educationSkills.skills.concepts.agile')}
                   </span>
-                  <span className="px-3 py-1.5 bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 rounded-full text-sm">
+                  <span className="px-3 py-1.5 bg-secondary text-secondary-foreground rounded-full text-sm">
                     {t('educationSkills.skills.concepts.uxui')}
                   </span>
-                  <span className="px-3 py-1.5 bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 rounded-full text-sm">
+                  <span className="px-3 py-1.5 bg-secondary text-secondary-foreground rounded-full text-sm">
                     Git/GitHub
                   </span>
                 </div>
               </div>
-            </motion.div>
-          </motion.div>
+            </div>
+          </div>
         </div>
       </Container>
     </section>

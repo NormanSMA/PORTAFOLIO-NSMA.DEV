@@ -9,14 +9,14 @@ export function Button({
   className,
   disabled = false,
 }: ButtonProps) {
-  const baseStyles = 'font-medium rounded-lg transition-all duration-300 inline-flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed';
+  const baseStyles = 'font-medium rounded-lg inline-flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed';
 
   const variantStyles =
     variant === 'secondary'
-      ? 'bg-secondary-500 hover:bg-secondary-600 text-white shadow-lg'
+      ? 'bg-secondary text-secondary-foreground shadow-sm'
       : variant === 'outline'
-        ? 'border-2 border-primary-500 text-primary-500 hover:bg-primary-500 hover:text-white dark:border-primary-400 dark:text-primary-400'
-        : 'bg-primary-500 hover:bg-primary-600 text-white shadow-lg hover:shadow-glow';
+        ? 'border border-border text-foreground bg-transparent'
+        : 'bg-foreground text-background shadow-sm';
 
   const sizeStyles =
     size === 'sm'

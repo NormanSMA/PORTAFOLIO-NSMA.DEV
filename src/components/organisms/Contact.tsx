@@ -1,12 +1,10 @@
 import { useState, useEffect } from 'react';
 import type { FormEvent } from 'react';
-import { motion, useReducedMotion } from 'framer-motion';
 import { Mail, Linkedin, Github } from 'lucide-react';
 import { useLanguage } from '../../hooks';
 import { Container } from '../atoms';
 import { typography } from '../../config/typography';
 import { APP_CONFIG } from '../../config/constants';
-import { hoverLift, sectionItem, sectionSlideLeft, sectionSlideRight, sectionStagger } from '../../config/motion';
 import {
   toContactRequestPayload,
   validateContactForm,
@@ -43,7 +41,6 @@ function clearFieldError(currentErrors: FormErrors, field: keyof Pick<ContactFor
 
 export function Contact() {
   const { t, language } = useLanguage();
-  const reduceMotion = useReducedMotion();
   const [isOnline, setIsOnline] = useState(true);
 
   const [formData, setFormData] = useState<ContactFormState>({
@@ -157,89 +154,67 @@ export function Contact() {
   };
 
   return (
-    <section id="contact" className="relative overflow-hidden bg-light-bg py-14 md:py-18 dark:bg-dark-bg">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(59,130,246,0.14),transparent_36%),radial-gradient(circle_at_bottom_right,rgba(16,185,129,0.12),transparent_32%)]" aria-hidden />
+    <section id="contact" className="relative overflow-hidden bg-background py-14 md:py-18">
       <Container>
-        <motion.div
+        <div
           className="relative z-10 mb-10 text-center lg:mb-12"
-          variants={reduceMotion ? undefined : sectionItem}
-          initial={reduceMotion ? { opacity: 1 } : 'hidden'}
-          whileInView={reduceMotion ? { opacity: 1 } : 'show'}
-          viewport={{ once: true, amount: 0.45 }}
         >
-          <h2 className={`${typography.sectionTitle} mb-4 text-light-text dark:text-dark-text`}>
+          <h2 className={`${typography.sectionTitle} mb-4 text-foreground`}>
             {t('contact.title')}
           </h2>
-          <p className={`${typography.sectionSubtitle} mx-auto max-w-2xl text-light-textSecondary dark:text-dark-textSecondary`}>
+          <p className={`${typography.sectionSubtitle} mx-auto max-w-2xl text-muted-foreground`}>
             {t('contact.subtitle')}
           </p>
-        </motion.div>
+        </div>
 
-        <motion.div
+        <div
           className="relative z-10 mx-auto grid max-w-6xl items-start gap-6 lg:grid-cols-[0.9fr_1.1fr] lg:gap-8"
-          variants={reduceMotion ? undefined : sectionStagger}
-          initial={reduceMotion ? { opacity: 1 } : 'hidden'}
-          whileInView={reduceMotion ? { opacity: 1 } : 'show'}
-          viewport={{ once: true, amount: 0.22 }}
         >
           {/* Left Sidebar */}
-          <motion.div className="space-y-8 lg:sticky lg:top-32">
-            <motion.div
-              className="relative overflow-hidden rounded-3xl border border-light-border/80 bg-light-card p-7 shadow-[0_24px_80px_-48px_rgba(15,23,42,0.45)] dark:border-dark-border dark:bg-dark-card"
-              variants={reduceMotion ? undefined : sectionSlideLeft}
-              whileHover={reduceMotion ? undefined : hoverLift}
-            >
-              <div className="pointer-events-none absolute -right-20 -top-20 h-56 w-56 rounded-full bg-primary-500/10 blur-3xl" />
-              <div className="pointer-events-none absolute -bottom-20 -left-12 h-44 w-44 rounded-full bg-emerald-400/10 blur-3xl" />
+          <div className="space-y-8 lg:sticky lg:top-32">
+            <div className="relative overflow-hidden rounded-3xl border border-border bg-card p-7">
 
-              <h3 className="mb-6 text-2xl font-bold text-light-text dark:text-dark-text">
+              <h3 className="mb-6 text-2xl font-bold text-foreground">
                 {language === 'es' ? 'Contacto' : 'Contact'}
               </h3>
 
               <div className="relative z-10 space-y-6">
-                <p className={`${typography.body} text-light-textSecondary dark:text-dark-textSecondary`}>
+                <p className={`${typography.body} text-muted-foreground`}>
                   {language === 'es'
                     ? 'Aquí encontrarás una forma directa y clara de contactarme para nuevos proyectos, colaboraciones o asesorías.'
                     : 'Here you will find a direct and clear way to contact me for new projects, collaborations or advisory work.'}
                 </p>
 
                 <div>
-                  <h4 className="mb-3 text-sm font-semibold uppercase tracking-wider text-light-text dark:text-dark-text">
+                  <h4 className="mb-3 text-sm font-semibold uppercase tracking-wider text-foreground">
                     {language === 'es' ? 'Trabajemos Juntos' : 'Let us work together'}
                   </h4>
                   <div className="space-y-3">
                     {directChannels.map((channel) => (
-                      <motion.a
+                      <a
                         key={channel.key}
                         href={channel.href}
                         target={channel.key === 'email' ? undefined : '_blank'}
                         rel={channel.key === 'email' ? undefined : 'noopener noreferrer'}
-                        className="group flex items-center gap-4 rounded-2xl border border-light-border bg-light-bg p-4 transition-all hover:border-primary-500/70 dark:border-dark-border dark:bg-dark-bg"
-                        whileHover={reduceMotion ? undefined : { y: -4, x: 3 }}
-                        variants={reduceMotion ? undefined : sectionItem}
-                        viewport={{ once: true, amount: 0.3 }}
+                        className="flex items-center gap-4 rounded-2xl border border-border bg-background p-4"
                       >
-                        <div className="rounded-xl bg-primary-500/10 p-2.5 text-primary-600 transition-colors group-hover:text-primary-700 group-hover:bg-primary-500/20 dark:text-primary-400 dark:group-hover:text-primary-300">
+                        <div className="rounded-xl bg-foreground/8 p-2.5 text-foreground">
                           <channel.Icon className="w-[26px] h-[26px]" />
                         </div>
                         <div className="min-w-0">
-                          <p className="text-sm font-medium text-light-textSecondary dark:text-dark-textSecondary">{channel.title}</p>
-                          <p className="truncate font-semibold text-light-text dark:text-dark-text">{channel.value}</p>
+                          <p className="text-sm font-medium text-muted-foreground">{channel.title}</p>
+                          <p className="truncate font-semibold text-foreground">{channel.value}</p>
                         </div>
-                      </motion.a>
+                      </a>
                     ))}
                   </div>
                 </div>
               </div>
-            </motion.div>
-          </motion.div>
+            </div>
+          </div>
 
           {/* Form */}
-          <motion.div
-            className="rounded-3xl border border-light-border/80 bg-light-card p-6 shadow-[0_24px_80px_-48px_rgba(15,23,42,0.45)] dark:border-dark-border dark:bg-dark-card md:p-7"
-            variants={reduceMotion ? undefined : sectionSlideRight}
-            whileHover={reduceMotion ? undefined : hoverLift}
-          >
+          <div className="rounded-3xl border border-border bg-card p-6 md:p-7">
             <form onSubmit={handleSubmit} className="space-y-6" noValidate>
               {/* Honeypot */}
               <input
@@ -264,7 +239,7 @@ export function Contact() {
 
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                 <div className="space-y-2">
-                  <label htmlFor="fullName" className="block text-sm font-medium text-light-text dark:text-dark-text">
+                  <label htmlFor="fullName" className="block text-sm font-medium text-foreground">
                     {t('contact.form.fullName')}
                   </label>
                   <input
@@ -273,12 +248,12 @@ export function Contact() {
                     value={formData.fullName}
                     onChange={(event) => handleInputChange('fullName', event.target.value)}
                     placeholder={t('contact.form.fullNamePlaceholder')}
-                    className={`w-full rounded-xl border bg-light-bg px-4 py-3 text-light-text outline-none transition-all placeholder:text-light-textSecondary focus:border-transparent focus:ring-2 dark:bg-dark-bg dark:text-dark-text dark:placeholder:text-dark-textSecondary ${errors.fullName ? 'border-red-500 focus:ring-red-500' : 'border-light-border dark:border-dark-border'}`}
+                    className={`w-full rounded-xl border bg-background px-4 py-3 text-foreground outline-none transition-all placeholder:text-muted-foreground focus:border-transparent focus:ring-2 focus:ring-ring ${errors.fullName ? 'border-red-500 focus:ring-red-500' : 'border-input'}`}
                   />
                   {errors.fullName && <p className="text-sm text-red-500">{errors.fullName}</p>}
                 </div>
                 <div className="space-y-2">
-                  <label htmlFor="email" className="block text-sm font-medium text-light-text dark:text-dark-text">
+                  <label htmlFor="email" className="block text-sm font-medium text-foreground">
                     {t('contact.form.email')}
                   </label>
                   <input
@@ -287,7 +262,7 @@ export function Contact() {
                     value={formData.email}
                     onChange={(event) => handleInputChange('email', event.target.value)}
                     placeholder={t('contact.form.emailPlaceholder')}
-                    className={`w-full rounded-xl border bg-light-bg px-4 py-3 text-light-text outline-none transition-all placeholder:text-light-textSecondary focus:border-transparent focus:ring-2 dark:bg-dark-bg dark:text-dark-text dark:placeholder:text-dark-textSecondary ${errors.email ? 'border-red-500 focus:ring-red-500' : 'border-light-border dark:border-dark-border'}`}
+                    className={`w-full rounded-xl border bg-background px-4 py-3 text-foreground outline-none transition-all placeholder:text-muted-foreground focus:border-transparent focus:ring-2 focus:ring-ring ${errors.email ? 'border-red-500 focus:ring-red-500' : 'border-input'}`}
                   />
                   {errors.email && <p className="text-sm text-red-500">{errors.email}</p>}
                 </div>
@@ -296,8 +271,8 @@ export function Contact() {
               {/* Reasons */}
               <div className="space-y-3">
                 <div className="space-y-1">
-                  <label className="block text-sm font-medium text-light-text dark:text-dark-text">{t('contact.form.reason')}</label>
-                  <p className="text-sm text-light-textSecondary dark:text-dark-textSecondary">{t('contact.form.selectHint')}</p>
+                  <label className="block text-sm font-medium text-foreground">{t('contact.form.reason')}</label>
+                  <p className="text-sm text-muted-foreground">{t('contact.form.selectHint')}</p>
                 </div>
                 <div className="grid gap-3 sm:grid-cols-2">
                   {reasons.map(({ key, label, desc }) => {
@@ -308,12 +283,12 @@ export function Contact() {
                         type="button"
                         onClick={() => toggleReason(key)}
                         aria-pressed={isActive}
-                        className={`rounded-2xl border p-4 text-left transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-1 dark:focus:ring-offset-dark-card ${isActive ? 'border-primary-500 bg-primary-500/10 text-primary-600 dark:text-primary-400' : 'border-light-border bg-light-bg text-light-textSecondary hover:border-primary-500/50 dark:border-dark-border dark:bg-dark-bg dark:text-dark-textSecondary'}`}
+                        className={`rounded-2xl border p-4 text-left focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-1 focus:ring-offset-card ${isActive ? 'border-foreground bg-foreground/8 text-foreground' : 'border-border bg-background text-muted-foreground'}`}
                       >
                         <div className="flex items-start justify-between gap-3">
                           <div>
-                            <p className="font-semibold text-light-text dark:text-dark-text">{label}</p>
-                            <p className="mt-1 text-sm leading-5 text-light-textSecondary dark:text-dark-textSecondary">{desc}</p>
+                            <p className="font-semibold text-foreground">{label}</p>
+                            <p className="mt-1 text-sm leading-5 text-muted-foreground">{desc}</p>
                           </div>
                           <span className="mt-1 inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full border border-current text-[10px]">
                             {isActive ? '•' : ''}
@@ -327,7 +302,7 @@ export function Contact() {
 
               {/* Message */}
               <div className="space-y-2">
-                <label htmlFor="message" className="block text-sm font-medium text-light-text dark:text-dark-text">
+                <label htmlFor="message" className="block text-sm font-medium text-foreground">
                   {t('contact.form.message')}
                 </label>
                 <textarea
@@ -336,7 +311,7 @@ export function Contact() {
                   value={formData.message}
                   onChange={(event) => handleInputChange('message', event.target.value)}
                   placeholder={t('contact.form.messagePlaceholder')}
-                  className={`w-full resize-none rounded-xl border bg-light-bg px-4 py-3 text-light-text outline-none transition-all placeholder:text-light-textSecondary focus:border-transparent focus:ring-2 dark:bg-dark-bg dark:text-dark-text dark:placeholder:text-dark-textSecondary ${errors.message ? 'border-red-500 focus:ring-red-500' : 'border-light-border dark:border-dark-border'}`}
+                  className={`w-full resize-none rounded-xl border bg-background px-4 py-3 text-foreground outline-none transition-all placeholder:text-muted-foreground focus:border-transparent focus:ring-2 focus:ring-ring ${errors.message ? 'border-red-500 focus:ring-red-500' : 'border-input'}`}
                 />
                 {errors.message && <p className="text-sm text-red-500">{errors.message}</p>}
               </div>
@@ -345,17 +320,11 @@ export function Contact() {
               <button
                 type="submit"
                 disabled={isSubmitting || !isOnline}
-                className={`w-full rounded-xl py-3.5 font-bold shadow-lg shadow-primary-500/20 transition-all duration-200 ${isSubmitting || !isOnline ? 'cursor-not-allowed bg-gray-400 text-white' : 'bg-primary-600 text-white hover:bg-primary-700 hover:shadow-primary-500/30 hover:scale-[1.01] active:scale-[0.99]'}`}
+                className={`w-full rounded-xl py-3.5 font-bold ${isSubmitting || !isOnline ? 'cursor-not-allowed bg-muted text-muted-foreground' : 'bg-foreground text-background'}`}
                 aria-busy={isSubmitting}
               >
                 {isSubmitting ? (
-                  <span className="flex items-center justify-center gap-2">
-                    <svg className="h-5 w-5 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                    </svg>
-                    {t('contact.form.sending')}
-                  </span>
+                  t('contact.form.sending')
                 ) : t('contact.form.submit')}
               </button>
 
@@ -377,8 +346,8 @@ export function Contact() {
                 )}
               </div>
             </form>
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
       </Container>
     </section>
   );

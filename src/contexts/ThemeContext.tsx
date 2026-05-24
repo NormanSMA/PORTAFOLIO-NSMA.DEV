@@ -11,8 +11,16 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
   const [theme, setTheme] = useState<Theme>(() => {
     try {
       if (typeof window === 'undefined') return THEME_CONFIG.default;
+
+      const root = document.documentElement;
+      if (root.classList.contains('dark')) return 'dark';
+      if (root.classList.contains('light')) return 'light';
+
       const savedTheme = localStorage.getItem(THEME_CONFIG.storageKey) as Theme | null;
-      return savedTheme || THEME_CONFIG.default;
+      if (savedTheme === 'dark' || savedTheme === 'light') return savedTheme;
+
+      if (window.matchMedia?.('(prefers-color-scheme: dark)').matches) return 'dark';
+      return THEME_CONFIG.default;
     } catch {
       return THEME_CONFIG.default;
     }
