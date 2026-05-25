@@ -58,6 +58,7 @@ export function Hero() {
                 from={{ opacity: 0, y: 24 }}
                 to={{ opacity: 1, y: 0 }}
                 textAlign="left"
+                animateOn="mount"
               />
               <SplitText
                 tag="h1"
@@ -69,6 +70,7 @@ export function Hero() {
                 from={{ opacity: 0, y: 28 }}
                 to={{ opacity: 1, y: 0 }}
                 textAlign="left"
+                animateOn="mount"
               />
             </div>
 

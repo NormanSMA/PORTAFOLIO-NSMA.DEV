@@ -17,6 +17,7 @@ type SplitTextProps = {
   threshold?: number;
   rootMargin?: string;
   textAlign?: 'left' | 'center' | 'right';
+  animateOn?: 'mount' | 'scroll';
   onLetterAnimationComplete?: () => void;
 };
 
@@ -33,6 +34,7 @@ export default function SplitText({
   threshold = 0.1,
   rootMargin = '-100px',
   textAlign = 'center',
+  animateOn = 'scroll',
   onLetterAnimationComplete,
 }: SplitTextProps) {
   const ref = useRef<HTMLElement | null>(null);
@@ -63,6 +65,7 @@ export default function SplitText({
           chSpan.className = 'split-char';
           chSpan.textContent = ch;
           chSpan.style.display = 'inline-block';
+          chSpan.style.willChange = 'transform, opacity';
           wordWrap.appendChild(chSpan);
           targets.push(chSpan);
         });
@@ -76,6 +79,7 @@ export default function SplitText({
         chSpan.textContent = ch;
         chSpan.style.display = 'inline-block';
         chSpan.style.whiteSpace = 'pre';
+        chSpan.style.willChange = 'transform, opacity';
         container.appendChild(chSpan);
         targets.push(chSpan);
       });
@@ -83,31 +87,46 @@ export default function SplitText({
 
     el.appendChild(container);
 
-    const tween = gsap.fromTo(
-      targets,
-      { ...from },
-      {
-        ...to,
-        duration,
-        ease,
-        stagger: delay / 1000,
-        onComplete: () => onLetterAnimationComplete?.(),
-        scrollTrigger: {
-          trigger: el,
-          start: `top ${ (1 - threshold) * 100 }%`,
-          once: true,
-        },
-      }
-    );
+    const animationConfig = {
+      ...to,
+      duration,
+      ease,
+      stagger: delay / 1000,
+      force3D: true, // Habilitar aceleración de hardware por GPU
+      onComplete: () => onLetterAnimationComplete?.(),
+    };
+
+    let tween: gsap.core.Tween;
+
+    if (animateOn === 'mount') {
+      // Animación inmediata sin inicializar ScrollTrigger
+      tween = gsap.fromTo(targets, { ...from }, { ...animationConfig });
+    } else {
+      // Animación por ScrollTrigger
+      tween = gsap.fromTo(
+        targets,
+        { ...from },
+        {
+          ...animationConfig,
+          scrollTrigger: {
+            trigger: el,
+            start: `top ${(1 - threshold) * 100}%`,
+            once: true,
+          },
+        }
+      );
+    }
 
     return () => {
       tween.kill();
-      ScrollTrigger.getAll().forEach((st) => {
-        if (st.trigger === el) st.kill();
-      });
+      if (animateOn === 'scroll') {
+        ScrollTrigger.getAll().forEach((st) => {
+          if (st.trigger === el) st.kill();
+        });
+      }
     };
-  }, [text, delay, duration, ease, splitType, JSON.stringify(from), JSON.stringify(to), threshold, rootMargin, textAlign, onLetterAnimationComplete]);
+  }, [text, delay, duration, ease, splitType, JSON.stringify(from), JSON.stringify(to), threshold, rootMargin, textAlign, animateOn, onLetterAnimationComplete]);
 
   const Tag = tag as any;
-  return <Tag ref={ref} className={`split-parent ${className}`} style={{ overflow: 'hidden', display: 'block' }}>{text}</Tag>;
+  return <Tag ref={ref} className={`split-parent ${className}`} style={{ overflow: 'hidden', display: 'block', willChange: 'transform, opacity' }}>{text}</Tag>;
 }
