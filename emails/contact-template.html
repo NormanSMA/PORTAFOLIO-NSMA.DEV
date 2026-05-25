@@ -1,0 +1,273 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Forzar modo oscuro estricto en iOS y clientes de correo modernos -->
+    <meta name="color-scheme" content="only dark" />
+    <meta name="supported-color-schemes" content="only dark" />
+    <title>Nuevo Mensaje de Contacto - nsma.dev</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Fira+Code:wght@400;500&family=Sora:wght@600;700;800&display=swap" rel="stylesheet" />
+    <style type="text/css">
+      /* Forzar esquema de color oscuro en raíz */
+      :root {
+        color-scheme: only dark !important;
+        supported-color-schemes: only dark !important;
+      }
+      
+      body {
+        margin: 0;
+        padding: 0;
+        width: 100% !important;
+        background-color: #050508 !important;
+        font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        text-size-adjust: none;
+      }
+      table {
+        border-collapse: collapse;
+        mso-table-lspace: 0pt;
+        mso-table-rspace: 0pt;
+      }
+      td {
+        font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      }
+      img {
+        border: 0;
+        height: auto;
+        line-height: 100%;
+        outline: none;
+        text-decoration: none;
+      }
+      a {
+        text-decoration: none;
+        color: #3B82F6;
+      }
+      
+      /* Media Queries */
+      @media only screen and (max-width: 600px) {
+        .container {
+          width: 100% !important;
+          padding: 8px !important;
+        }
+        .card {
+          padding: 20px !important;
+        }
+        .header-title {
+          font-size: 22px !important;
+          line-height: 30px !important;
+        }
+        .meta-table td {
+          display: block !important;
+          width: 100% !important;
+          box-sizing: border-box !important;
+          padding-bottom: 12px !important;
+        }
+        .meta-table tr:last-child td:last-child {
+          padding-bottom: 0 !important;
+        }
+      }
+
+      /* Sobreescribir inversiones automáticas en iOS Mail */
+      @media (prefers-color-scheme: dark) {
+        body, table, td {
+          background-color: #050508 !important;
+          color: #E5E7EB !important;
+        }
+        .card {
+          background-color: #0F0F16 !important;
+          border-color: #1F1F2E !important;
+        }
+        .dark-box {
+          background-color: #06060A !important;
+          border-color: #1F1F2E !important;
+        }
+      }
+    </style>
+  </head>
+  <body style="margin: 0; padding: 0; background-color: #050508; width: 100%; color: #E5E7EB;">
+    <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #050508; table-layout: fixed;">
+      <tr>
+        <td align="center" style="padding: 30px 0 50px 0;">
+          
+          <table class="container" width="600" border="0" cellspacing="0" cellpadding="0" style="width: 600px; margin: 0 auto;">
+            
+            <!-- Logo Header superior (Cuadrado con bordes rectos) -->
+            <tr>
+              <td align="center" style="padding-bottom: 24px;">
+                <table border="0" cellspacing="0" cellpadding="0">
+                  <tr>
+                    <td align="center" style="background-color: #0F0F16; border: 1px solid #1F1F2E; padding: 10px 24px;">
+                      <!-- Logo Sora con degradado simulado -->
+                      <span style="font-family: 'Sora', sans-serif; font-weight: 800; font-size: 18px; color: #FFFFFF; letter-spacing: -0.5px;">nsma<span style="color: #6366F1;">.</span>dev</span>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+
+            <!-- Tarjeta Principal (Sharp Minimalist Tech Style - Bordes completamente cuadrados) -->
+            <tr>
+              <td class="card" style="background-color: #0F0F16; border: 1px solid #1F1F2E; padding: 35px; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6); border-radius: 0px !important;">
+                
+                <!-- Barra superior de lujo (Glow Gradient - Recta sin redondeo) -->
+                <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-bottom: 24px;">
+                  <tr>
+                    <td height="4" style="background: linear-gradient(90deg, #6366F1 0%, #3B82F6 50%, #8B5CF6 100%); line-height: 4px; font-size: 1px;">&nbsp;</td>
+                  </tr>
+                </table>
+
+                <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                  
+                  <!-- Tag Superior -->
+                  <tr>
+                    <td style="padding-bottom: 10px;">
+                      <table border="0" cellspacing="0" cellpadding="0">
+                        <tr>
+                          <td style="background-color: rgba(99, 102, 241, 0.1); padding: 4px 10px;">
+                            <span style="font-family: 'Sora', sans-serif; font-weight: 700; font-size: 10px; color: #9C9CFF; text-transform: uppercase; letter-spacing: 1.5px;">Notificación de Contacto</span>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+
+                  <!-- Título de Cabecera -->
+                  <tr>
+                    <td style="padding-bottom: 24px; border-bottom: 1px solid #1F1F2E;">
+                      <h1 class="header-title" style="margin: 0; font-family: 'Sora', sans-serif; font-weight: 800; font-size: 28px; line-height: 36px; color: #FFFFFF; letter-spacing: -0.5px;">
+                        ¡Tienes un nuevo mensaje!
+                      </h1>
+                    </td>
+                  </tr>
+
+                  <!-- Sección 1: Información del Remitente (Clean Flat Text) -->
+                  <tr>
+                    <td style="padding: 24px 0 20px 0;">
+                      <h3 style="margin: 0 0 12px 0; font-family: 'Sora', sans-serif; font-weight: 600; font-size: 14px; color: #E5E7EB; text-transform: uppercase; letter-spacing: 1px; border-left: 3px solid #3B82F6; padding-left: 8px;">
+                        Información del Remitente
+                      </h3>
+                      
+                      <!-- Contenedor del Remitente Rectangular sin Avatar -->
+                      <table class="dark-box" width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #06060A; border: 1px solid #1F1F2E; padding: 20px; border-radius: 0px !important;">
+                        <tr>
+                          <td>
+                            <span style="font-size: 10px; font-weight: 700; color: #6B7280; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 2px;">Nombre Completo</span>
+                            <span style="font-family: 'Sora', sans-serif; font-size: 16px; font-weight: 700; color: #FFFFFF; display: block; margin-bottom: 12px;">{{from_name}}</span>
+                            
+                            <span style="font-size: 10px; font-weight: 700; color: #6B7280; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 2px;">Correo Electrónico</span>
+                            <a href="mailto:{{from_email}}" style="font-size: 15px; font-weight: 600; color: #3B82F6; display: block;">{{from_email}}</a>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+
+                  <!-- Sección 2: Motivos de Contacto (Contenedor Rectangular e Inyección HTML) -->
+                  <tr>
+                    <td style="padding: 10px 0;">
+                      <h3 style="margin: 0 0 12px 0; font-family: 'Sora', sans-serif; font-weight: 600; font-size: 14px; color: #E5E7EB; text-transform: uppercase; letter-spacing: 1px; border-left: 3px solid #3B82F6; padding-left: 8px;">
+                        Motivos del Contacto
+                      </h3>
+                      
+                      <!-- Inyección HTML Limpia de badges individuales cuadrados desde el Hook -->
+                      <div style="margin: 0; padding: 0; display: block;">
+                        {{{reasons}}}
+                      </div>
+                    </td>
+                  </tr>
+
+                  <!-- Sección 3: Mensaje (Caja Rectangular con Borde Izquierdo) -->
+                  <tr>
+                    <td style="padding: 20px 0 16px 0;">
+                      <h3 style="margin: 0 0 12px 0; font-family: 'Sora', sans-serif; font-weight: 600; font-size: 14px; color: #E5E7EB; text-transform: uppercase; letter-spacing: 1px; border-left: 3px solid #3B82F6; padding-left: 8px;">
+                        Mensaje Recibido
+                      </h3>
+                      
+                      <!-- Caja del Mensaje Rectangular -->
+                      <table class="dark-box" width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #06060A; border-left: 4px solid #6366F1; border-top: 1px solid #1F1F2E; border-right: 1px solid #1F1F2E; border-bottom: 1px solid #1F1F2E; padding: 22px; border-radius: 0px !important;">
+                        <tr>
+                          <td style="font-family: 'DM Sans', sans-serif; font-size: 15px; line-height: 25px; color: #D1D5DB; font-style: italic;">
+                            "{{message}}"
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+
+                  <!-- Divisor Sutil -->
+                  <tr>
+                    <td style="padding-top: 24px; border-bottom: 1px solid #1F1F2E;">&nbsp;</td>
+                  </tr>
+
+                  <!-- Sección 4: Metadatos Técnicos (Developer Terminal Rectangular) -->
+                  <tr>
+                    <td style="padding-top: 24px;">
+                      <h4 style="margin: 0 0 12px 0; font-family: 'Sora', sans-serif; font-weight: 600; font-size: 12px; color: #9CA3AF; text-transform: uppercase; letter-spacing: 1.5px;">
+                        Consola del Sistema
+                      </h4>
+                      
+                      <!-- Terminal Rectangular -->
+                      <table class="dark-box" width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #06060A; border: 1px solid #1F1F2E; padding: 20px; font-family: 'Fira Code', 'Courier New', monospace; border-radius: 0px !important;">
+                        
+                        <!-- Primera fila de metadatos -->
+                        <tr>
+                          <td width="33%" style="padding-bottom: 14px; padding-right: 10px; vertical-align: top;">
+                            <span style="font-size: 9px; color: #4B5563; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 4px;">&gt; Dirección IP</span>
+                            <span style="font-size: 12px; color: #E5E7EB; font-family: 'Fira Code', monospace; display: block;">{{ip}}</span>
+                          </td>
+                          <td width="33%" style="padding-bottom: 14px; padding-right: 10px; vertical-align: top;">
+                            <span style="font-size: 9px; color: #4B5563; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 4px;">&gt; Ubicación</span>
+                            <span style="font-size: 12px; color: #E5E7EB; display: block;">{{location}}</span>
+                          </td>
+                          <td width="33%" style="padding-bottom: 14px; vertical-align: top;">
+                            <span style="font-size: 9px; color: #4B5563; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 4px;">&gt; Registro</span>
+                            <span style="font-size: 12px; color: #E5E7EB; display: block;">{{received_at}}</span>
+                          </td>
+                        </tr>
+                        
+                        <!-- Segunda fila (User-Agent) -->
+                        <tr>
+                          <td colspan="3" style="padding-top: 12px; border-top: 1px solid #161622;">
+                            <span style="font-size: 9px; color: #4B5563; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 6px;">&gt; Agente de Usuario (User-Agent)</span>
+                            <span style="font-size: 11px; color: #38BDF8; font-family: 'Fira Code', monospace; line-height: 16px; display: block; word-break: break-all;">{{device}}</span>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+
+                </table>
+                
+              </td>
+            </tr>
+
+            <!-- Pie de Página (Footer con Copyright Recto) -->
+            <tr>
+              <td align="center" style="padding-top: 32px;">
+                <p style="margin: 0 0 16px 0; font-family: 'DM Sans', sans-serif; font-size: 12px; line-height: 20px; color: #4B5563; text-align: center;">
+                  Este es un correo automatizado enviado desde el formulario de tu portafolio en 
+                  <a href="https://portafolio-nsma-dev.vercel.app/" style="color: #3B82F6; font-weight: 700;">nsma.dev</a>.
+                </p>
+                
+                <table width="40" border="0" cellspacing="0" cellpadding="0" style="margin-bottom: 20px;">
+                  <tr>
+                    <td height="1" style="background-color: #1F1F2E; line-height: 1px; font-size: 1px;">&nbsp;</td>
+                  </tr>
+                </table>
+                
+                <p style="margin: 0; font-family: 'DM Sans', sans-serif; font-size: 10px; color: #374151; text-align: center; text-transform: uppercase; letter-spacing: 1.5px;">
+                  © 2026 Norman Martínez. Todos los derechos reservados.
+                </p>
+              </td>
+            </tr>
+
+          </table>
+          
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

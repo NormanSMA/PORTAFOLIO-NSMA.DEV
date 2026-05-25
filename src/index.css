@@ -36,6 +36,13 @@ html {
   scroll-behavior: smooth;
 }
 
+input,
+textarea,
+select,
+[contenteditable='true'] {
+  cursor: text !important;
+}
+
 @layer utilities {
   .custom-scrollbar::-webkit-scrollbar {
     width: 6px;

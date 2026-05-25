@@ -1,6 +1,6 @@
-import { useLanguage } from '../../hooks';
+import { useLanguage, useStackingCards } from '../../hooks';
 import { Container } from '../atoms';
-import { useMemo, useRef, useEffect, useCallback, useState } from 'react';
+import { useMemo } from 'react';
 import { typography } from '../../config/typography';
 import { getServices } from '../../data/services';
 
@@ -8,15 +8,20 @@ export function Services() {
   const { t } = useLanguage();
   const services = useMemo(() => getServices(t), [t]);
   
-  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const leftColumnRef = useRef<HTMLDivElement>(null);
-  
-  // Mobile stacking refs
-  const mobileCardRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const mobileContainerRef = useRef<HTMLDivElement>(null);
-  
-  const [isMobile, setIsMobile] = useState(false);
+  const {
+    isMobile,
+    containerRef,
+    cardRefs,
+    leftColumnRef,
+  } = useStackingCards({
+    cardCount: services.length,
+    mobileStickyTop: 80,
+    mobileIncrement: 20,
+    mobileDistance: 200,
+    desktopStickyTop: 120,
+    desktopIncrement: 35,
+    desktopDistance: 250,
+  });
 
   // Colores para cada tarjeta - tonos de azul sutiles
   const cardColors = [
@@ -31,129 +36,47 @@ export function Services() {
     'bg-indigo-500/15 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400',
   ];
 
-  // Check for mobile/tablet
-  useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 1024);
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
-  // Desktop scroll handler
-  const handleScroll = useCallback(() => {
-    if (!containerRef.current || !leftColumnRef.current) return;
-
-    const parentRect = containerRef.current.getBoundingClientRect();
-    const sectionProgress = Math.max(0, Math.min(1, -parentRect.top / (parentRect.height - window.innerHeight)));
-    leftColumnRef.current.style.setProperty('--section-progress', sectionProgress.toString());
-
-    cardRefs.current.forEach((card, index) => {
-      if (!card) return;
-      
-      const rect = card.getBoundingClientRect();
-      const stickyTop = 120 + (index * 35);
-      const nextCard = cardRefs.current[index + 1];
-      let progress = 0;
-
-      if (rect.top <= stickyTop + 1) {
-        if (nextCard) {
-          const nextRect = nextCard.getBoundingClientRect();
-          const distance = 250;
-          progress = Math.max(0, Math.min(1, (stickyTop - nextRect.top + 100) / distance));
-        } else {
-          progress = Math.max(0, Math.min(0.4, sectionProgress * 0.8)); 
-        }
-      }
-      
-      card.style.setProperty('--progress', Math.min(progress, 0.7).toString());
-    });
-  }, []);
-
-  // Mobile/Tablet scroll handler
-  const handleMobileScroll = useCallback(() => {
-    if (!mobileContainerRef.current) return;
-
-    mobileCardRefs.current.forEach((card, index) => {
-      if (!card) return;
-      
-      const rect = card.getBoundingClientRect();
-      const stickyTop = 100 + (index * 25); // Slightly less offset for mobile
-      const nextCard = mobileCardRefs.current[index + 1];
-      let progress = 0;
-
-      if (rect.top <= stickyTop + 1) {
-        if (nextCard) {
-          const nextRect = nextCard.getBoundingClientRect();
-          const distance = 200;
-          progress = Math.max(0, Math.min(1, (stickyTop - nextRect.top + 80) / distance));
-        } else {
-          // Last card fades slightly at end
-          const parentRect = mobileContainerRef.current!.getBoundingClientRect();
-          const sectionProgress = Math.max(0, Math.min(1, -parentRect.top / (parentRect.height - window.innerHeight)));
-          progress = Math.max(0, Math.min(0.4, sectionProgress * 0.8));
-        }
-      }
-      
-      card.style.setProperty('--progress', Math.min(progress, 0.7).toString());
-    });
-  }, []);
-
-
-  useEffect(() => {
-    // Respect prefers-reduced-motion: skip scroll-driven animations
-    const motionOk = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (!motionOk) return;
-
-    if (isMobile) {
-      window.addEventListener('scroll', handleMobileScroll, { passive: true });
-      handleMobileScroll();
-      return () => window.removeEventListener('scroll', handleMobileScroll);
-    } else {
-      window.addEventListener('scroll', handleScroll, { passive: true });
-      handleScroll();
-      return () => window.removeEventListener('scroll', handleScroll);
-    }
-  }, [handleScroll, handleMobileScroll, isMobile]);
-
   return (
     <section 
       id="services" 
+      aria-labelledby="services-heading"
       className="py-16 md:py-24 bg-light-card dark:bg-dark-bg relative"
     >
       <Container>
         {/* ===== MOBILE/TABLET LAYOUT with Stacking ===== */}
         <div className="lg:hidden max-w-6xl mx-auto">
           {/* Fixed Header */}
-          <div className="text-center mb-8 px-4">
-            <h2 className={`${typography.sectionTitle} text-light-text dark:text-dark-text mb-4`}>
+          <div className="text-center mb-8 sm:mb-10">
+            <h2 id="services-heading" className={`${typography.h2} text-light-text dark:text-dark-text mb-4`}>
               {t('services.title')}
             </h2>
-            <p className={`${typography.sectionSubtitle} text-light-textSecondary dark:text-dark-textSecondary max-w-3xl mx-auto`}>
+            <p className={`${typography.sectionSubtitle} text-light-textSecondary dark:text-dark-textSecondary max-w-2xl mx-auto`}>
               {t('services.subtitle')}
             </p>
           </div>
 
           {/* Stacking Cards Container */}
           <div 
-            ref={mobileContainerRef}
-            className="relative px-4"
-            style={{ minHeight: `${services.length * 35}vh` }}
+            ref={isMobile ? containerRef : null}
+            className="relative max-w-2xl mx-auto"
+            style={{ minHeight: `${services.length * 28}vh` }}
           >
             {services.map((service, index) => {
               const Icon = service.icon;
               return (
                 <div
                   key={index}
-                  ref={(el) => { mobileCardRefs.current[index] = el; }}
+                  ref={(el) => { if (isMobile) cardRefs.current[index] = el; }}
                   className="sticky"
                   style={{ 
-                    top: `${100 + (index * 25)}px`,
+                    top: `${80 + (index * 20)}px`,
                     zIndex: index + 1,
-                    marginBottom: '3vh',
+                    marginBottom: '2.5vh',
                     ['--progress' as string]: '0',
                   }}
                 >
                   <article
+                    aria-label={service.title}
                     className={`
                       bg-gradient-to-br ${cardColors[index]} 
                       bg-light-bg dark:bg-dark-card 
@@ -185,12 +108,12 @@ export function Services() {
         </div>
 
         {/* ===== DESKTOP LAYOUT: Premium Sticky Stacking Cards ===== */}
-        <div className="hidden lg:block max-w-7xl mx-auto px-4">
-          <div className="flex gap-16 items-start">
+        <div className="hidden lg:block max-w-7xl mx-auto">
+          <div className="flex gap-10 xl:gap-16 items-start">
             
             {/* Columna izquierda: Texto con Parallax */}
             <div 
-              ref={leftColumnRef}
+              ref={!isMobile ? leftColumnRef : null}
               className="w-[35%] sticky top-32"
               style={{ 
                 transform: `translateY(calc(var(--section-progress, 0) * -20px))`,
@@ -200,7 +123,7 @@ export function Services() {
               }}
             >
               <div className="space-y-6">
-                <h2 className={`${typography.sectionTitle} text-light-text dark:text-dark-text`}>
+                <h2 aria-hidden="true" className={`${typography.h2} text-light-text dark:text-dark-text`}>
                   {t('services.title')}
                 </h2>
                 <p className={`${typography.sectionSubtitle} text-light-textSecondary dark:text-dark-textSecondary leading-relaxed`}>
@@ -212,7 +135,7 @@ export function Services() {
             {/* Columna derecha: Stacking Cards */}
             <div className="w-[65%]">
               <div 
-                ref={containerRef}
+                ref={!isMobile ? containerRef : null}
                 className="relative"
                 style={{ minHeight: `${services.length * 25}vh` }}
               >
@@ -222,7 +145,7 @@ export function Services() {
                   return (
                     <div
                       key={index}
-                      ref={(el) => { cardRefs.current[index] = el; }}
+                      ref={(el) => { if (!isMobile) cardRefs.current[index] = el; }}
                       className="sticky"
                       style={{ 
                         top: `${120 + (index * 35)}px`,
@@ -232,6 +155,7 @@ export function Services() {
                       }}
                     >
                       <article
+                        aria-label={service.title}
                         className={`
                           relative overflow-hidden
                           bg-gradient-to-br ${cardColors[index]}

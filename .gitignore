@@ -31,3 +31,9 @@ tools
 *.njsproj
 *.sln
 *.sw?
+
+# Local Agent & AI metadata
+.gemini/
+.antigravity/
+.antigravity-ide/
+.gemini-agent/

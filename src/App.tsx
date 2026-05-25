@@ -1,8 +1,9 @@
 import { Suspense, lazy } from 'react';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { LanguageProvider } from './contexts/LanguageContext';
-import { Navbar, Hero, About, Services } from './components/organisms';
+import { Navbar, Hero, About, Services, Process } from './components/organisms';
 import { ScrollToTop } from './components/molecules';
+import { SmoothCursor } from './components/atoms';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/react';
 
@@ -17,10 +18,12 @@ function App() {
     <ThemeProvider>
       <LanguageProvider>
         <div className="min-h-screen bg-light-bg dark:bg-dark-bg transition-colors">
+          <SmoothCursor />
           <Navbar />
           <Hero />
           <About />
           <Services />
+          <Process />
           
           {/* Lazy sections with skeleton fallback to prevent CLS */}
         <Suspense fallback={

@@ -6,6 +6,7 @@ import {
   PhpIcon,
   SqlIcon,
   AwsIcon,
+  DockerIcon,
   WordPressIcon,
   PostgresIcon,
 } from '../components/atoms/icons/tech';
@@ -18,6 +19,7 @@ export const technicalSkills = [
   { name: 'PHP', icon: PhpIcon },
   { name: 'SQL Server', icon: SqlIcon },
   { name: 'AWS', icon: AwsIcon },
+  { name: 'Docker', icon: DockerIcon },
   { name: 'PostgreSQL', icon: PostgresIcon },
   { name: 'WordPress', icon: WordPressIcon },
 ];

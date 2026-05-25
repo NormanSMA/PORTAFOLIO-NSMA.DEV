@@ -3,3 +3,4 @@ export { useLanguage } from './useLanguage';
 export { useScrollAnimation } from './useScrollAnimation';
 export { useMediaQuery, useIsMobile, useIsTablet, useIsDesktop } from './useMediaQuery';
 export { useScrollPosition } from './useScrollPosition';
+export { useStackingCards } from './useStackingCards';

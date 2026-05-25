@@ -40,12 +40,12 @@ export function Projects() {
   }, []);
 
   return (
-    <section id="projects" className="py-16 md:py-24 bg-light-bg dark:bg-dark-bg relative overflow-hidden">
+    <section id="projects" aria-labelledby="projects-heading" className="py-16 md:py-24 lg:py-28 bg-light-bg dark:bg-dark-bg relative overflow-hidden">
       <Container>
         <div className="max-w-7xl mx-auto">
           {/* Header */}
           <div className="text-center mb-12 md:mb-16">
-            <h2 className={`${typography.sectionTitle} text-light-text dark:text-dark-text mb-4`}>
+            <h2 id="projects-heading" className={`${typography.h2} text-light-text dark:text-dark-text mb-4`}>
               {t('projects.title')}
             </h2>
             <p className={`${typography.sectionSubtitle} text-light-textSecondary dark:text-dark-textSecondary max-w-3xl mx-auto px-4`}>
@@ -63,6 +63,7 @@ export function Projects() {
               return (
                 <article
                   key={project.id}
+                  aria-label={project.title}
                   className="group relative bg-light-card dark:bg-dark-card rounded-2xl overflow-visible border border-light-border dark:border-dark-border motion-safe:hover:-translate-y-2 transition-all duration-300"
                 >
                   {/* Main Card */}
@@ -131,12 +132,12 @@ export function Projects() {
                             rel="noopener noreferrer"
                             className="inline-flex items-center gap-1.5 sm:gap-2 text-sm sm:text-base text-primary-600 dark:text-primary-400 hover:text-primary-500 dark:hover:text-primary-300 font-semibold transition-colors group/link"
                           >
-                            <span>Ver proyecto</span>
+                            <span>{t('projects.viewProject')}</span>
                             <ExternalLinkIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4 group-hover/link:translate-x-1 group-hover/link:-translate-y-1 transition-transform" />
                           </a>
                         ) : (
                           <span className="inline-flex items-center gap-2 text-light-textSecondary dark:text-dark-textSecondary font-semibold text-xs sm:text-sm">
-                            Aplicación móvil
+                            {t('projects.mobileApp')}
                           </span>
                         )}
 
@@ -146,7 +147,7 @@ export function Projects() {
                             ref={(el) => { toggleButtonRefs.current[project.id] = el; }}
                             onClick={() => toggleExpanded(project.id)}
                             className="flex items-center justify-center gap-1 px-3 py-1.5 rounded-full backdrop-blur-lg bg-light-border/50 dark:bg-dark-card/50 hover:bg-primary-600/20 dark:hover:bg-primary-500/20 transition-all duration-300 cursor-pointer group/btn"
-                            aria-label="Ver más información"
+                            aria-label={`${t('projects.viewMore')} - ${project.title}`}
                           >
                             <span className="text-xs sm:text-sm text-light-text dark:text-dark-text font-medium">
                               ...
@@ -183,7 +184,7 @@ export function Projects() {
                             ref={(el) => { closeButtonRefs.current[project.id] = el; }}
                             onClick={() => setExpandedProject(null)}
                             className="self-end mb-3 sm:mb-4 w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-full bg-light-border dark:bg-dark-card hover:bg-primary-600/20 dark:hover:bg-primary-500/20 transition-colors flex-shrink-0"
-                            aria-label="Cerrar"
+                            aria-label={`${t('projects.close')} - ${project.title}`}
                           >
                             <svg
                               xmlns="http://www.w3.org/2000/svg"

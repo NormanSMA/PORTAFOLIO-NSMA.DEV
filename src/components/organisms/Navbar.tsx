@@ -38,6 +38,10 @@ export function Navbar() {
       } else {
         // Scrolling hacia arriba - mostrar
         setIsVisible(true);
+        // Cerrar menú móvil también al scroll significativo hacia arriba por UX
+        if (Math.abs(currentScrollY - lastScrollY.current) > 10) {
+          setIsMenuOpen(false);
+        }
       }
 
       lastScrollY.current = currentScrollY;
@@ -83,10 +87,10 @@ export function Navbar() {
   return (
     <nav
   className={cn(
-    'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
+    'fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b border-transparent',
     // Navbar sólido cuando: 1) se hace scroll O 2) el menú móvil está abierto
     isScrolled || isMenuOpen
-      ? 'bg-light-bg/80 dark:bg-dark-bg/80 backdrop-blur-lg shadow-lg'
+      ? 'bg-light-bg/95 dark:bg-dark-bg/95 md:bg-light-bg/85 md:dark:bg-dark-bg/85 backdrop-blur-lg shadow-lg border-light-border/40 dark:border-dark-border/40'
       : 'bg-transparent',
     isVisible ? 'translate-y-0' : '-translate-y-full'
   )}
@@ -96,8 +100,8 @@ export function Navbar() {
         <div className="flex items-center justify-between h-16 md:h-20">
           
           {/* Logo */}
-          <div className="cursor-pointer" onClick={() => handleNavClick('home')} role="button" aria-label="Go to homepage" tabIndex={0} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') handleNavClick('home'); }}>
-            <Logo size="md" />
+          <div className="cursor-pointer" onClick={() => handleNavClick('home')} role="button" aria-label={t('nav.logoAria')} tabIndex={0} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') handleNavClick('home'); }}>
+            <Logo size="lg" />
           </div>
 
           {/* Desktop Menu */}
@@ -132,7 +136,7 @@ export function Navbar() {
               <button
                 onClick={toggleLanguage}
                 className="p-2 rounded-lg bg-light-card/80 dark:bg-dark-card/80 hover:bg-primary-500/10 transition-colors font-semibold text-sm flex items-center justify-center min-w-[56px]"
-                aria-label="Toggle language"
+                aria-label={t('nav.langAria')}
               >
                 {/* clearer, slightly larger language label */}
                 <span className="inline-block w-8 text-center text-light-text dark:text-white">{language.toUpperCase()}</span>
@@ -146,7 +150,7 @@ export function Navbar() {
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                 className="p-2 rounded-lg bg-light-card dark:bg-dark-card"
-                aria-label="Toggle menu"
+                aria-label={t('nav.menuAria')}
                 aria-expanded={isMenuOpen}
               >
                 <div className="w-6 h-5 flex flex-col justify-between">
@@ -190,8 +194,9 @@ export function Navbar() {
                 <button
                   onClick={toggleLanguage}
                   className="w-full p-2 rounded-lg bg-light-card/80 dark:bg-dark-card/80 hover:bg-primary-500/10 transition-colors font-semibold text-sm flex items-center justify-center"
+                  aria-label={t('nav.langAria')}
                 >
-                  <span className="inline-block w-8 text-center text-light-text dark:text-white">{language === 'es' ? 'EN' : 'ES'}</span>
+                  <span className="inline-block w-8 text-center text-light-text dark:text-white">{language.toUpperCase()}</span>
                 </button>
               </StarBorder>
             </div>

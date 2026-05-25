@@ -4,39 +4,92 @@ export const translations = {
       home: 'Inicio',
       about: 'Sobre mí',
       services: 'Servicios',
+      process: 'Proceso',
       projects: 'Proyectos',
       experience: 'Experiencia',
       contact: 'Contacto',
+      logoAria: 'Ir al inicio',
+      langAria: 'Cambiar idioma',
+      menuAria: 'Alternar menú',
     },
     hero: {
-      tag: 'Diseño y construyo experiencias digitales',
-      greeting: 'Diseño y construyo experiencias digitales',
-      description: 'Ingeniero en Sistemas y desarrollador web full‑stack. Transformo ideas en productos digitales: landing pages, plataformas de eventos, APIs REST y soluciones a medida. Trabajo con React, Vue.js, Laravel y WordPress. Disponible para proyectos freelance y colaboraciones.',
+      tag: 'Soluciones digitales claras',
+      greeting: 'Diseño soluciones digitales claras',
+      description: 'Soy ingeniero en Sistemas con experiencia en proyectos académicos y trabajos freelance. Me enfoco en resolver problemas, construir soluciones funcionales y seguir aprendiendo en cada entrega.',
       cta: {
         projects: 'Ver Proyectos',
         contact: 'Contáctame',
       },
     },
+    intro: {
+      message: 'Del concepto al producto digital con enfoque real en resultados.',
+      skip: 'Omitir Intro',
+      status: {
+        loading: 'Preparando experiencia',
+        ready: 'Listo para entrar',
+      },
+    },
     services: {
       title: 'Servicios',
-      subtitle: 'Soluciones web profesionales de principio a fin',
+      subtitle: 'Soluciones web pensadas para trabajar de forma clara y estable',
       webDev: {
         title: 'Desarrollo Web & Apps',
-        description: 'Sitios web modernos y aplicaciones responsivas con React, Vue.js, TypeScript, WordPress, y las últimas tecnologías. Desde landing pages hasta e-commerce y dashboards complejos.',
+        description: 'Creo sitios y aplicaciones que priorizan claridad, velocidad y facilidad de mantenimiento. Puedo ir desde una landing simple hasta una plataforma con varias vistas y flujos.',
       },
       backend: {
         title: 'Backend & APIs',
-        description: 'Desarrollo de APIs RESTful robustas con Laravel, Node.js y bases de datos PostgreSQL/MySQL. Integración con servicios externos y arquitecturas escalables.',
+        description: 'Construyo APIs y servicios que sostienen el producto y conectan lo que necesita funcionar detrás. También integro servicios externos cuando el proyecto lo requiere.',
       },
       deployment: {
         title: 'Hosting & Despliegue',
-        description: 'Gestión completa de hosting en AWS y servidores VPS. Compra y configuración de dominios, certificados SSL, optimización SEO, y vinculación con Google Analytics y Search Console.',
+        description: 'Me encargo del despliegue y la configuración básica para dejar el proyecto estable y listo para usarse. También reviso dominios, SSL y seguimiento técnico cuando hace falta.',
+      },
+    },
+    process: {
+      title: 'Proceso de trabajo',
+      subtitle: 'Una ruta simple para pasar de una idea a algo usable.',
+      steps: {
+        discovery: {
+          title: 'Descubrimiento',
+          description: 'Entiendo el objetivo, el contexto y las prioridades antes de empezar.',
+        },
+        strategy: {
+          title: 'Estrategia visual y técnica',
+          description: 'Defino estructura y enfoque visual antes de construir.',
+        },
+        build: {
+          title: 'Construcción y validación',
+          description: 'Desarrollo, pruebo y ajusto con revisiones cortas.',
+        },
+        optimize: {
+          title: 'Optimización y lanzamiento',
+          description: 'Corrijo detalles, mejoro accesibilidad y preparo el despliegue.',
+        },
+      },
+    },
+
+    metrics: {
+      title: 'Resultados que se pueden medir',
+      subtitle: 'Indicadores simples para leer cómo avanza cada proyecto.',
+      cards: {
+        projects: {
+          title: 'Entregas Publicadas',
+          detail: 'Sitios y productos publicados con foco en claridad y mantenimiento simple.',
+        },
+        performance: {
+          title: 'Rendimiento Promedio',
+          detail: 'Ajustes de carga y estructura para cuidar la experiencia de uso.',
+        },
+        response: {
+          title: 'Tiempo de Respuesta',
+          detail: 'Respuesta ágil en momentos clave para no frenar el avance.',
+        },
       },
     },
 
     about: {
       title: 'Sobre mí',
-      description: 'Soy Norman Martínez, Ingeniero en Sistemas de Información con sólidas bases en programación, diseño de sistemas y gestión de bases de datos. Me enfoco en convertir ideas en productos digitales claros y medibles: desde landing pages hasta plataformas para eventos y sistemas de gestión. He liderado desarrollos para congresos y negocios locales, priorizando rendimiento, accesibilidad y SEO.',
+      description: 'Soy Norman Martínez, ingeniero en sistemas. He trabajado en proyectos académicos y freelance donde tocó construir, corregir y mantener soluciones reales. Me interesa resolver problemas concretos, aprender lo necesario y dejar cada entrega mejor de lo que la encontré.',
       stats: {
         projects: 'Proyectos Completados',
         experience: 'Años de Experiencia',
@@ -46,24 +99,28 @@ export const translations = {
 
     projects: {
       title: 'Proyectos',
-      subtitle: 'Algunos de los proyectos en los que he trabajado',
+      subtitle: 'Una muestra de los proyectos en los que he trabajado',
       systech: {
-        shortDescription: 'Desarrollo y gestión de la plataforma web oficial para el congreso anual de ingeniería SYSTECH de la Universidad Americana. Lideré el diseño de arquitectura...',
-        fullDescription: 'Desarrollo y gestión de la plataforma web oficial para el congreso anual de ingeniería SYSTECH de la Universidad Americana. Lideré el diseño de arquitectura, personalización de plantillas y configuración de plugins, implementando un sistema escalable con módulos de registro y agenda interactiva que optimizó la experiencia para ponentes, patrocinadores y más de 220 asistentes.',
+        shortDescription: 'Plataforma web para el congreso anual de ingeniería SYSTECH de la Universidad Americana. Me encargué de la estructura, la personalización y el sistema de registro...',
+        fullDescription: 'Plataforma web para el congreso anual de ingeniería SYSTECH de la Universidad Americana. Me encargué de la arquitectura, la personalización de plantillas y la configuración de plugins para organizar registros y agenda en un sistema estable y fácil de mantener.',
       },
       pantano: {
-        shortDescription: 'Desarrollo integral de 0 a 100 del sitio web para Hotel-Restaurante El Pantano. Gestioné el proyecto completo desde consultoría inicial hasta el despliegue con Astro...',
-        fullDescription: 'Desarrollo integral de 0 a 100 del sitio web para Hotel-Restaurante El Pantano. Gestioné el proyecto completo desde consultoría inicial hasta el lanzamiento, incluyendo UX/UI, desarrollo con Astro y Tailwind CSS, y gestión de infraestructura (Vercel, Dominio y SSL). El sitio cuenta con alto rendimiento, SEO optimizado y galería dinámica.',
+        shortDescription: 'Sitio web para Hotel-Restaurante El Pantano. Acompañé el proyecto desde la consultoría inicial hasta el despliegue con Astro...',
+        fullDescription: 'Sitio web para Hotel-Restaurante El Pantano. Acompañé el proyecto desde la consultoría inicial hasta el lanzamiento, incluyendo UX/UI, desarrollo con Astro y Tailwind CSS, y la configuración de infraestructura en Vercel con dominio y SSL.',
       },
       bolsa: {
         title: 'Bolsa de Trabajo UAM',
-        description: 'Aplicación móvil Android para conectar empleadores y candidatos. Incluye búsqueda de empleos, postulaciones, perfil profesional y notificaciones en tiempo real. Obtuve 2° lugar en la Feria de Proyectos.',
+        description: 'Aplicación Android para conectar empleadores y candidatos. Incluye búsqueda, postulaciones, perfil profesional y notificaciones en tiempo real. Obtuvo 2° lugar en la Feria de Proyectos.',
       },
       portfolio: {
         title: 'Portafolio Personal',
-        shortDescription: 'Mi sitio web personal construido con React 19, TypeScript y Tailwind CSS. Diseño responsive, modo oscuro, i18n, animaciones con Framer Motion y rendimiento optimizado...',
-        fullDescription: 'Mi sitio web personal construido con React 19, TypeScript y Tailwind CSS. Incluye diseño responsive, modo oscuro/claro con transiciones suaves, internacionalización (ES/EN), animaciones con Framer Motion, formulario de contacto con EmailJS, imágenes optimizadas en WebP, SEO completo con Open Graph, lazy loading y Atomic Design. Desplegado en Vercel con Analytics y Speed Insights.',
+        shortDescription: 'Mi sitio personal hecho con React 19, TypeScript y Tailwind CSS. Lo uso para mostrar trabajo real y seguir ajustando detalles...',
+        fullDescription: 'Mi sitio personal hecho con React 19, TypeScript y Tailwind CSS. Incluye diseño responsive, modo oscuro/claro, internacionalización ES/EN, animaciones suaves, un formulario de contacto con EmailJS, imágenes en WebP, SEO básico y lazy loading. Está desplegado en Vercel con Analytics y Speed Insights.',
       },
+      viewProject: 'Ver proyecto',
+      mobileApp: 'Aplicación móvil',
+      viewMore: 'Ver más detalles',
+      close: 'Cerrar',
     },
 
     skills: {
@@ -80,7 +137,8 @@ export const translations = {
     contact: {
       label: 'CONTÁCTAME',
       title: 'Trabajemos Juntos',
-      subtitle: 'Escribe tu mensaje o consulta y te contactaré lo antes posible.',
+      subtitle: 'Si tienes una idea, una mejora o una consulta, escríbeme y la revisamos.',
+      description: 'Aquí encontrarás una forma directa y clara de contactarme para nuevos proyectos, colaboraciones o asesorías.',
       form: {
         fullName: 'Nombre Completo',
         fullNamePlaceholder: 'Escribe tu nombre aquí',
@@ -88,6 +146,12 @@ export const translations = {
         emailPlaceholder: 'tu@email.com',
         reason: 'Motivo de contacto',
         selectHint: 'Selecciona uno o más motivos y describe los detalles en el mensaje.',
+        errors: {
+          nameRequired: 'El nombre es requerido',
+          emailRequired: 'El correo es requerido',
+          emailInvalid: 'Correo inválido',
+          messageRequired: 'El mensaje es requerido',
+        },
         reasons: {
           proposal: {
             title: 'Propuesta de trabajo',
@@ -96,10 +160,6 @@ export const translations = {
           collaboration: {
             title: 'Colaboración',
             desc: 'Trabajar juntos en un proyecto',
-          },
-          recruitment: {
-            title: 'Reclutamiento',
-            desc: 'Búsqueda o selección de talento',
           },
           advisory: {
             title: 'Asesoría',
@@ -111,7 +171,7 @@ export const translations = {
           },
         },
         message: 'Tu Mensaje',
-        messagePlaceholder: 'Cuéntame los detalles: plazos, presupuesto o enlaces relevantes...',
+        messagePlaceholder: 'Cuéntame qué necesitas, plazos o referencias...',
         submit: 'Enviar Mensaje',
         sending: 'Enviando...',
         successMessage: '¡Mensaje enviado con éxito! Te responderé pronto.',
@@ -123,6 +183,11 @@ export const translations = {
       rights: 'Todos los derechos reservados',
       madeWith: 'Hecho con',
       by: 'por',
+      branding: 'Ingeniero en Sistemas con experiencia en proyectos académicos y freelance. Me enfoco en resolver problemas y construir soluciones útiles.',
+      quickLinks: 'Enlaces Rápidos',
+      connect: 'Conecta Conmigo',
+      ariaNav: 'Navegación del pie de página',
+      goToTop: 'Volver arriba',
     },
     common: {
       loading: 'Cargando...',
@@ -172,39 +237,92 @@ export const translations = {
       home: 'Home',
       about: 'About',
       services: 'Services',
+      process: 'Process',
       projects: 'Projects',
       experience: 'Experience',
       contact: 'Contact',
+      logoAria: 'Go to homepage',
+      langAria: 'Toggle language',
+      menuAria: 'Toggle menu',
     },
     hero: {
-      tag: 'I design and build digital experiences',
-      greeting: 'I design and build digital experiences',
-      description: 'Information Systems Engineer and full‑stack web developer. I turn ideas into digital products: landing pages, event platforms, REST APIs and tailored solutions. I work with React, Vue.js, Laravel and WordPress. Available for freelance projects and collaborations.',
+      tag: 'Clear digital solutions',
+      greeting: 'I build clear digital solutions',
+      description: 'I am an Information Systems Engineer with hands-on experience in academic projects and freelance work. I focus on solving problems, building functional solutions, and continuously learning with each delivery.',
       cta: {
         projects: 'View Projects',
         contact: 'Contact Me',
       },
     },
+    intro: {
+      message: 'From concept to digital product with a clear focus on outcomes.',
+      skip: 'Skip Intro',
+      status: {
+        loading: 'Preparing experience',
+        ready: 'Ready to enter',
+      },
+    },
     services: {
       title: 'Services',
-      subtitle: 'Professional web solutions from start to finish',
+      subtitle: 'Web solutions designed to stay clear and stable',
       webDev: {
         title: 'Web Development & Apps',
-        description: 'Modern websites and responsive applications with React, Vue.js, TypeScript, WordPress, and the latest technologies. From landing pages to e-commerce and complex dashboards.',
+        description: 'I create websites and applications that prioritize clarity, speed, and ease of maintenance. I can work from a simple landing page to a platform with several views and flows.',
       },
       backend: {
         title: 'Backend & APIs',
-        description: 'Development of robust RESTful APIs with Laravel, Node.js and PostgreSQL/MySQL databases. Integration with external services and scalable architectures.',
+        description: 'I build APIs and services that support the product and connect what needs to work behind the scenes. I also integrate external services when the project needs them.',
       },
       deployment: {
         title: 'Hosting & Deployment',
-        description: 'Complete hosting management on AWS and VPS servers. Domain purchase and configuration, SSL certificates, SEO optimization, and integration with Google Analytics and Search Console.',
+        description: 'I handle deployment and the basic setup needed to leave a project stable and ready to use. I also review domains, SSL, and technical tracking when needed.',
+      },
+    },
+    process: {
+      title: 'Work Process',
+      subtitle: 'A simple route to move from an idea to something usable.',
+      steps: {
+        discovery: {
+          title: 'Discovery',
+          description: 'I understand the goal, context, and priorities before starting.',
+        },
+        strategy: {
+          title: 'Visual & technical strategy',
+          description: 'I define structure and visual direction before building.',
+        },
+        build: {
+          title: 'Build & validation',
+          description: 'I develop, test, and adjust with short review cycles.',
+        },
+        optimize: {
+          title: 'Optimization & launch',
+          description: 'I fix details, improve accessibility, and prepare deployment.',
+        },
+      },
+    },
+
+    metrics: {
+      title: 'Results you can measure',
+      subtitle: 'Simple indicators to read how each project is moving.',
+      cards: {
+        projects: {
+          title: 'Published Deliveries',
+          detail: 'Published sites and products with a focus on clarity and easy maintenance.',
+        },
+        performance: {
+          title: 'Average Performance',
+          detail: 'Loading and structure adjustments to protect the user experience.',
+        },
+        response: {
+          title: 'Response Time',
+          detail: 'Quick replies during key moments so progress does not slow down.',
+        },
       },
     },
 
     about: {
       title: 'About Me',
-      description: "I'm Norman Martínez, an Information Systems Engineer with a strong foundation in programming, system design, and database management. I focus on turning ideas into clear, measurable digital products — from high-converting landing pages to platforms for events and management systems. I have led development efforts for conferences and local businesses, prioritizing performance, accessibility and SEO.",
+      description: "I'm Norman Martínez, an Information Systems Engineer. I have worked on academic and freelance projects where I had to build, fix, and maintain real solutions. I like solving concrete problems, learning what I need along the way, and leaving each delivery better than I found it.",
       stats: {
         projects: 'Completed Projects',
         experience: 'Years of Experience',
@@ -214,24 +332,28 @@ export const translations = {
 
     projects: {
       title: 'Projects',
-      subtitle: 'Some of the projects I have worked on',
+      subtitle: 'A sample of the projects I have worked on',
       systech: {
-        shortDescription: 'Development and management of the official web platform for the annual SYSTECH engineering congress of the Universidad Americana. I led the architecture design...',
-        fullDescription: 'Development and management of the official web platform for the annual SYSTECH engineering congress of the Universidad Americana. I led the architecture design, template customization and plugin configuration, implementing a scalable system with registration modules and interactive agenda that optimized the experience for speakers, sponsors and over 220 attendees.',
+        shortDescription: 'Web platform for the annual SYSTECH engineering congress at Universidad Americana. I handled the structure, the customization, and the registration flow...',
+        fullDescription: 'Web platform for the annual SYSTECH engineering congress at Universidad Americana. I handled the architecture, template customization, and plugin configuration to organize registrations and the agenda in a stable system that is easy to maintain.',
       },
       pantano: {
-        shortDescription: 'End-to-End development (0 to 100) of the website for Hotel-Restaurante El Pantano. Managed the complete project from initial consultation to Astro deployment...',
-        fullDescription: 'End-to-End development (0 to 100) of the website for Hotel-Restaurante El Pantano. Managed the complete project from initial consultation to launch, including UX/UI, development with Astro and Tailwind CSS, and infrastructure management (Vercel, Domain, and SSL). Features high performance, optimized SEO, and dynamic gallery.',
+        shortDescription: 'Website for Hotel-Restaurante El Pantano. I supported the project from the initial consultation through Astro deployment...',
+        fullDescription: 'Website for Hotel-Restaurante El Pantano. I supported the project from the initial consultation through launch, including UX/UI, development with Astro and Tailwind CSS, and the infrastructure setup on Vercel with domain and SSL.',
       },
       bolsa: {
         title: 'Bolsa de Trabajo UAM',
-        description: 'Android mobile application to connect employers and candidates. Features job search, applications, professional profile and real-time notifications. Awarded 2nd place in the Project Fair.',
+        description: 'Android app to connect employers and candidates. It includes job search, applications, a professional profile, and real-time notifications. It won 2nd place in the Project Fair.',
       },
       portfolio: {
         title: 'Personal Portfolio',
-        shortDescription: 'My personal website built with React 19, TypeScript and Tailwind CSS. Responsive design, dark mode, i18n, Framer Motion animations and optimized performance...',
-        fullDescription: 'My personal website built with React 19, TypeScript and Tailwind CSS. Features responsive design, dark/light mode with smooth transitions, internationalization (ES/EN), Framer Motion animations, EmailJS contact form, WebP-optimized images, full SEO with Open Graph, lazy loading and Atomic Design. Deployed on Vercel with Analytics and Speed Insights.',
+        shortDescription: 'My personal site made with React 19, TypeScript, and Tailwind CSS. I use it to show real work and keep refining details...',
+        fullDescription: 'My personal site made with React 19, TypeScript, and Tailwind CSS. It includes responsive design, light and dark modes, ES/EN internationalization, smooth animations, an EmailJS contact form, WebP images, basic SEO, and lazy loading. It is deployed on Vercel with Analytics and Speed Insights.',
       },
+      viewProject: 'View project',
+      mobileApp: 'Mobile app',
+      viewMore: 'View details',
+      close: 'Close',
     },
 
     skills: {
@@ -248,7 +370,8 @@ export const translations = {
     contact: {
       label: 'GET IN TOUCH',
       title: "Let's Work Together",
-      subtitle: "Write your message or question and I'll get back to you as soon as possible",
+      subtitle: 'If you have an idea, an improvement, or a question, send it over and I will review it.',
+      description: 'Here you will find a direct and clear way to contact me for new projects, collaborations, or consultations.',
       form: {
         fullName: 'Full Name',
         fullNamePlaceholder: 'Type here',
@@ -256,6 +379,12 @@ export const translations = {
         emailPlaceholder: 'your@email.com',
         reason: 'Reason for contact',
         selectHint: 'Select one or more reasons and describe the details in the message.',
+        errors: {
+          nameRequired: 'Name is required',
+          emailRequired: 'Email is required',
+          emailInvalid: 'Invalid email',
+          messageRequired: 'Message is required',
+        },
         reasons: {
           proposal: {
             title: 'Job proposal',
@@ -264,10 +393,6 @@ export const translations = {
           collaboration: {
             title: 'Collaboration',
             desc: 'Work together on a project',
-          },
-          recruitment: {
-            title: 'Recruitment',
-            desc: 'Hiring or talent search',
           },
           advisory: {
             title: 'Advisory',
@@ -279,7 +404,7 @@ export const translations = {
           },
         },
         message: 'Your Message',
-        messagePlaceholder: 'Write details: expectations, timelines, budget or relevant links...',
+        messagePlaceholder: 'Tell me what you need, timelines, or references...',
         submit: 'Send Message',
         sending: 'Sending...',
         successMessage: "Message sent successfully! I'll get back to you soon.",
@@ -291,6 +416,11 @@ export const translations = {
       rights: 'All rights reserved',
       madeWith: 'Made with',
       by: 'by',
+      branding: 'Information Systems Engineer with experience in academic and freelance projects. I focus on solving problems and building useful solutions.',
+      quickLinks: 'Quick Links',
+      connect: 'Connect With Me',
+      ariaNav: 'Footer navigation',
+      goToTop: 'Go to top',
     },
     educationSkills: {
       title: 'Education & Skills',

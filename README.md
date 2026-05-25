@@ -2,13 +2,13 @@
 
 Este repositorio contiene el código fuente de mi portafolio personal, diseñado y construido para mostrar mi experiencia, habilidades y proyectos como Ingeniero en Sistemas de Información y Desarrollador Full Stack.
 
-## � Sobre el Proyecto
+## Sobre el Proyecto
 
 Una plataforma web moderna, rápida y totalmente responsiva, desarrollada con el objetivo de ofrecer una experiencia de usuario premium y fluida. El diseño se centra en la claridad, la estética minimalista y la accesibilidad.
 
-📌 **Demo en vivo:** [portafolio-nsma-dev.vercel.app](https://portafolio-nsma-dev.vercel.app/)
+ **Demo en vivo:** [portafolio-nsma-dev.vercel.app](https://portafolio-nsma-dev.vercel.app/)
 
-## �️ Tecnologías
+## Tecnologías
 
 Este proyecto ha sido construido utilizando un stack moderno:
 
@@ -18,7 +18,7 @@ Este proyecto ha sido construido utilizando un stack moderno:
 ![Vite](https://img.shields.io/badge/Vite-B73BFE?style=for-the-badge&logo=vite&logoColor=FFD62E)
 ![Framer Motion](https://img.shields.io/badge/Framer_Motion-0055FF?style=for-the-badge&logo=framer&logoColor=white)
 
-## 👨‍💻 Sobre Mí
+## Sobre Mí
 
 **Norman Smith Martínez Acevedo**
 _Ingeniero en Sistemas de Información (5to Año)_

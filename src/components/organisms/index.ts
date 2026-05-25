@@ -1,6 +1,7 @@
 export { Hero } from './Hero';
 export { About } from './About';
 export { Services } from './Services';
+export { Process } from './Process';
 export { Projects } from './Projects';
 export { EducationSkills } from './EducationSkills';
 export { Contact } from './Contact';

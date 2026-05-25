@@ -2,12 +2,13 @@ import { useLanguage } from '../../hooks';
 import { Container } from '../atoms';
 import { typography } from '../../config/typography';
 import { technicalSkills } from '../../data/skills';
+import { IconCloud } from '../atoms';
 
 export function EducationSkills() {
   const { t } = useLanguage();
 
   return (
-    <section id="education-skills" className="py-16 md:py-24 bg-light-bg dark:bg-dark-bg relative overflow-hidden">
+    <section id="education-skills" aria-labelledby="education-skills-heading" className="py-16 md:py-24 lg:py-28 bg-light-bg dark:bg-dark-bg relative overflow-hidden">
       <Container>
         <div className="max-w-6xl mx-auto">
           {/* Header con decoración de puntos */}
@@ -36,7 +37,7 @@ export function EducationSkills() {
               />
             </svg>
             
-            <h2 className={`${typography.sectionTitle} text-light-text dark:text-dark-text mb-4 relative z-10`}>
+            <h2 id="education-skills-heading" className={`${typography.h2} text-light-text dark:text-dark-text mb-4 relative z-10`}>
               {t('educationSkills.title')}
             </h2>
             <p className={`${typography.sectionSubtitle} text-light-textSecondary dark:text-dark-textSecondary max-w-3xl mx-auto px-4`}>
@@ -92,7 +93,7 @@ export function EducationSkills() {
                   <p className={`${typography.secondary} text-light-textSecondary dark:text-dark-textSecondary`}>
                     {t('educationSkills.education.certifications.scrum')}
                   </p>
-                  <p className={`${typography.secondary} text-gray-600 dark:text-gray-400`}>
+                  <p className={`${typography.secondary} text-light-textSecondary dark:text-dark-textSecondary`}>
                     {t('educationSkills.education.certifications.rpa')}
                   </p>
                 </div>
@@ -115,48 +116,15 @@ export function EducationSkills() {
                     <span className="font-medium">{t('educationSkills.education.languages.spanish')}:</span>{' '}
                     {t('educationSkills.education.languages.native')}
                   </p>
-                  <p className={`${typography.secondary} text-gray-600 dark:text-gray-400`}>
+                  <p className={`${typography.secondary} text-light-textSecondary dark:text-dark-textSecondary`}>
                     <span className="font-medium">{t('educationSkills.education.languages.english')}:</span>{' '}
                     {t('educationSkills.education.languages.level')}
                   </p>
                 </div>
               </div>
-            </div>
 
-            {/* Separador visual para móvil/tablet */}
-            <div className="lg:hidden flex items-center gap-4 my-8">
-              <div className="flex-1 h-px bg-gradient-to-r from-transparent via-primary-300 dark:via-primary-600 to-transparent"></div>
-              <span className="text-sm font-medium text-primary-500 dark:text-primary-400 uppercase tracking-wider">
-                {t('educationSkills.skills.title')}
-              </span>
-              <div className="flex-1 h-px bg-gradient-to-r from-transparent via-primary-300 dark:via-primary-600 to-transparent"></div>
-            </div>
-
-            {/* Columna Derecha: Habilidades Técnicas */}
-            <div className="space-y-6 sm:px-8 lg:pl-12">
-
-              {/* Grid de tecnologías - 3 columnas para mejor distribución */}
-              <div className="grid grid-cols-3 gap-4">
-                {technicalSkills.map((skill, index) => {
-                  const Icon = skill.icon;
-                  return (
-                    <div
-                      key={index}
-                      className="flex flex-col items-center gap-2 p-3 rounded-xl bg-light-card dark:bg-dark-card hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-all duration-300 hover:-translate-y-1 group"
-                    >
-                      <div className="w-10 h-10 group-hover:scale-110 transition-transform duration-300">
-                        <Icon />
-                      </div>
-                      <span className={`${typography.small} text-light-textSecondary dark:text-dark-textSecondary text-center font-medium`}>
-                        {skill.name}
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
-
-              {/* Conceptos adicionales */}
-              <div className="pt-4 border-t border-light-border dark:border-dark-border">
+              {/* Conceptos clave */}
+              <div className="pt-4 border-t border-light-border dark:border-dark-border max-w-md mx-auto lg:mx-0">
                 <h4 className={`${typography.secondary} text-light-text dark:text-dark-text font-semibold mb-3`}>
                   {t('educationSkills.skills.concepts.title')}
                 </h4>
@@ -172,6 +140,29 @@ export function EducationSkills() {
                   </span>
                 </div>
               </div>
+            </div>
+
+            {/* Separador visual para móvil/tablet */}
+            <div className="lg:hidden flex items-center gap-4 my-8">
+              <div className="flex-1 h-px bg-gradient-to-r from-transparent via-primary-300 dark:via-primary-600 to-transparent"></div>
+              <span className="text-sm font-medium text-primary-500 dark:text-primary-400 uppercase tracking-wider">
+                {t('educationSkills.skills.title')}
+              </span>
+              <div className="flex-1 h-px bg-gradient-to-r from-transparent via-primary-300 dark:via-primary-600 to-transparent"></div>
+            </div>
+
+            {/* Columna Derecha: Habilidades Técnicas */}
+            <div aria-label={t('educationSkills.skills.title')} className="space-y-6 sm:px-8 lg:pl-12">
+              <div className="relative rounded-2xl border border-light-border/70 bg-gradient-to-br from-light-card to-white p-4 shadow-lg shadow-black/5 dark:border-dark-border/70 dark:from-dark-card dark:to-dark-bg/80 md:p-6">
+                <div className="mb-4 text-center">
+                  <h4 className={`${typography.cardSubtitle} text-light-text dark:text-dark-text mb-2`}>
+                    {t('educationSkills.skills.title')}
+                  </h4>
+                </div>
+
+                <IconCloud items={technicalSkills} className="max-w-[24rem] sm:max-w-[26rem] lg:max-w-[30rem]" />
+              </div>
+
             </div>
           </div>
         </div>
