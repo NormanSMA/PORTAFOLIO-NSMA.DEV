@@ -29,9 +29,9 @@ const getAttr = (distance: number, maxDist: number, minVal: number, maxVal: numb
   return Math.max(minVal, val + minVal);
 };
 
-const debounce = (func: (...args: any[]) => void, delay: number) => {
+const debounce = (func: (...args: unknown[]) => void, delay: number) => {
   let timeoutId: number | undefined;
-  return (...args: any[]) => {
+  return (...args: unknown[]) => {
     if (timeoutId) window.clearTimeout(timeoutId);
     timeoutId = window.setTimeout(() => func(...args), delay);
   };
@@ -80,7 +80,7 @@ export default function TextPressure({
     };
 
     window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('touchmove', handleTouchMove, { passive: true } as any);
+    window.addEventListener('touchmove', handleTouchMove, { passive: true });
 
     if (containerRef.current) {
       const { left, top, width, height } = containerRef.current.getBoundingClientRect();
@@ -92,7 +92,7 @@ export default function TextPressure({
 
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('touchmove', handleTouchMove as any);
+      window.removeEventListener('touchmove', handleTouchMove);
     };
   }, []);
 
@@ -157,11 +157,11 @@ export default function TextPressure({
 
           const newFontVariationSettings = `'wght' ${wght}, 'wdth' ${wdth}, 'ital' ${italVal}`;
 
-          if ((span.style as any).fontVariationSettings !== newFontVariationSettings) {
-            (span.style as any).fontVariationSettings = newFontVariationSettings;
+          if (span.style.getPropertyValue('font-variation-settings') !== newFontVariationSettings) {
+            span.style.setProperty('font-variation-settings', newFontVariationSettings);
           }
           if (alpha && span.style.opacity !== alphaVal) {
-            span.style.opacity = alphaVal as any;
+            span.style.opacity = alphaVal;
           }
         });
       }
@@ -231,7 +231,7 @@ export default function TextPressure({
               display: 'inline-block',
               color: stroke ? undefined : 'inherit',
               fontVariationSettings: "'wght' 400, 'wdth' 100, 'ital' 0",
-              fontWeight: 'inherit' as any,
+              fontWeight: 'inherit',
             }}
           >
             {char}

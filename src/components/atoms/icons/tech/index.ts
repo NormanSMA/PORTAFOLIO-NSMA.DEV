@@ -8,3 +8,5 @@ export { WordPressIcon } from './WordPressIcon.tsx';
 export { PostgresIcon } from './PostgresIcon';
 export { AwsIcon } from './AWSIcon';
 export { DockerIcon } from './DockerIcon';
+export { TypeScriptIcon } from './TypeScriptIcon';
+export { TailwindIcon } from './TailwindIcon';

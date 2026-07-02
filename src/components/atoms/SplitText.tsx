@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, type ElementType } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -12,8 +12,8 @@ type SplitTextProps = {
   duration?: number; // seconds
   ease?: string;
   splitType?: 'chars' | 'words';
-  from?: Record<string, any>;
-  to?: Record<string, any>;
+  from?: gsap.TweenVars;
+  to?: gsap.TweenVars;
   threshold?: number;
   rootMargin?: string;
   textAlign?: 'left' | 'center' | 'right';
@@ -49,7 +49,7 @@ export default function SplitText({
     const container = document.createElement('span');
     container.style.display = 'inline-block';
     container.style.whiteSpace = 'pre-wrap';
-    container.style.textAlign = textAlign as any;
+    container.style.textAlign = textAlign;
 
     const targets: HTMLElement[] = [];
 
@@ -127,6 +127,6 @@ export default function SplitText({
     };
   }, [text, delay, duration, ease, splitType, JSON.stringify(from), JSON.stringify(to), threshold, rootMargin, textAlign, animateOn, onLetterAnimationComplete]);
 
-  const Tag = tag as any;
+  const Tag = tag as ElementType;
   return <Tag ref={ref} className={`split-parent ${className}`} style={{ overflow: 'hidden', display: 'block', willChange: 'transform, opacity' }}>{text}</Tag>;
 }

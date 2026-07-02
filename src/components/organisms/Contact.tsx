@@ -2,7 +2,6 @@ import { useState } from 'react';
 import emailjs from '@emailjs/browser';
 import { useLanguage } from '../../hooks';
 import { Container } from '../atoms';
-// import { generateEmailTemplate } from '../../utils/email';
 import { typography } from '../../config/typography';
 import DecryptedText from '../atoms/DecryptedText';
 
@@ -95,12 +94,6 @@ export function Contact() {
       })
       .join(' ');
 
-    // Generate HTML content - REMOVED because template uses its own HTML
-    // const htmlContent = generateEmailTemplate({...});
-
-    // Generate HTML content - REMOVED because template uses its own HTML
-    // const htmlContent = generateEmailTemplate({...});
-
     // Helper to get metadata with fallback
     const getMetadata = async () => {
       try {
@@ -162,8 +155,6 @@ export function Contact() {
             console.error('EmailJS init error:', e);
           }
         }
-
-        console.log('Sending email with:', { SERVICE_ID, TEMPLATE_ID, params: templateParams });
 
         await emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams);
         setSubmitStatus('success');
@@ -323,15 +314,18 @@ export function Contact() {
                   <input
                     type="text"
                     id="fullName"
+                    autoComplete="name"
                     value={formData.fullName}
                     onChange={(e) => handleInputChange('fullName', e.target.value)}
                     placeholder={t('contact.form.fullNamePlaceholder')}
+                    aria-invalid={errors.fullName ? true : undefined}
+                    aria-describedby={errors.fullName ? 'fullName-error' : undefined}
                     className={`w-full px-4 py-3 rounded-xl bg-light-bg dark:bg-dark-bg border text-light-text dark:text-dark-text placeholder-light-textSecondary dark:placeholder-dark-textSecondary focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all
                       ${errors.fullName ? 'border-red-500 focus:ring-red-500' : 'border-light-border dark:border-dark-border'}
                     `}
                   />
                   {errors.fullName && (
-                    <p className="text-sm text-red-500 flex items-center gap-1">
+                    <p id="fullName-error" className="text-sm text-red-500 flex items-center gap-1">
                       <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                       </svg>
@@ -351,15 +345,18 @@ export function Contact() {
                   <input
                     type="email"
                     id="email"
+                    autoComplete="email"
                     value={formData.email}
                     onChange={(e) => handleInputChange('email', e.target.value)}
                     placeholder={t('contact.form.emailPlaceholder')}
+                    aria-invalid={errors.email ? true : undefined}
+                    aria-describedby={errors.email ? 'email-error' : undefined}
                     className={`w-full px-4 py-3 rounded-xl bg-light-bg dark:bg-dark-bg border text-light-text dark:text-dark-text placeholder-light-textSecondary dark:placeholder-dark-textSecondary focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all
                       ${errors.email ? 'border-red-500 focus:ring-red-500' : 'border-light-border dark:border-dark-border'}
                     `}
                   />
                   {errors.email && (
-                    <p className="text-sm text-red-500 flex items-center gap-1">
+                    <p id="email-error" className="text-sm text-red-500 flex items-center gap-1">
                       <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                       </svg>
@@ -382,6 +379,7 @@ export function Contact() {
                     <button
                       key={key}
                       type="button"
+                      aria-pressed={formData.contactReasons[key]}
                       onClick={() => toggleReason(key)}
                       className={`flex items-start justify-between gap-4 rounded-2xl border p-3 text-left transition-all duration-200 cursor-pointer
                         ${formData.contactReasons[key]
@@ -426,12 +424,14 @@ export function Contact() {
                   value={formData.message}
                   onChange={(e) => handleInputChange('message', e.target.value)}
                   placeholder={t('contact.form.messagePlaceholder')}
+                  aria-invalid={errors.message ? true : undefined}
+                  aria-describedby={errors.message ? 'message-error' : undefined}
                   className={`w-full px-4 py-3 rounded-xl bg-light-bg dark:bg-dark-bg border text-light-text dark:text-dark-text placeholder-light-textSecondary dark:placeholder-dark-textSecondary focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all resize-none
                     ${errors.message ? 'border-red-500 focus:ring-red-500' : 'border-light-border dark:border-dark-border'}
                   `}
                 />
                 {errors.message && (
-                  <p className="text-sm text-red-500 flex items-center gap-1">
+                  <p id="message-error" className="text-sm text-red-500 flex items-center gap-1">
                     <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                     </svg>
@@ -464,7 +464,7 @@ export function Contact() {
 
               {/* Status Messages */}
               {submitStatus === 'success' && (
-                <div className="p-4 rounded-2xl bg-green-500/10 border border-green-500/20">
+                <div role="status" className="p-4 rounded-2xl bg-green-500/10 border border-green-500/20">
                   <p className="text-center text-green-600 dark:text-green-400 font-medium flex items-center justify-center gap-2">
                     <svg className="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
@@ -474,7 +474,7 @@ export function Contact() {
                 </div>
               )}
               {submitStatus === 'error' && (
-                <div className="p-4 rounded-2xl bg-red-500/10 border border-red-500/20">
+                <div role="alert" className="p-4 rounded-2xl bg-red-500/10 border border-red-500/20">
                   <p className="text-center text-red-600 dark:text-red-400 font-medium flex items-center justify-center gap-2">
                     <svg className="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />

@@ -1,7 +1,6 @@
 import {
   ReactIcon,
   JavaIcon,
-  HtmlIcon,
   CssIcon,
   PhpIcon,
   SqlIcon,
@@ -9,12 +8,17 @@ import {
   DockerIcon,
   WordPressIcon,
   PostgresIcon,
+  TypeScriptIcon,
+  TailwindIcon,
 } from '../components/atoms/icons/tech';
+import { AstroIcon } from '../components/atoms/icons';
 
 export const technicalSkills = [
   { name: 'React', icon: ReactIcon },
+  { name: 'TypeScript', icon: TypeScriptIcon },
+  { name: 'Tailwind CSS', icon: TailwindIcon },
+  { name: 'Astro', icon: AstroIcon },
   { name: 'Java', icon: JavaIcon },
-  { name: 'HTML', icon: HtmlIcon },
   { name: 'CSS', icon: CssIcon },
   { name: 'PHP', icon: PhpIcon },
   { name: 'SQL Server', icon: SqlIcon },

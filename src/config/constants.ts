@@ -1,10 +1,10 @@
 // App Configuration
 export const APP_CONFIG = {
   name: 'nsma.dev',
-  title: 'Norman Martínez | Ingeniero en Sistemas',
-  description: 'Portafolio profesional de Norman Martínez - Ingeniero en Sistemas de Información',
+  title: 'Norman Martínez | Ingeniero en Sistemas & Desarrollador Web',
+  description: 'Portafolio de Norman Martínez — Ingeniero en Sistemas. Diseño soluciones digitales claras: sitios y aplicaciones web con React, TypeScript y Laravel.',
   author: 'Norman Martínez',
-  email: 'normanma8@gmail.com',
+  email: 'norman.martinez003@gmail.com',
   github: 'https://github.com/NormanSMA',
   linkedin: 'https://www.linkedin.com/in/norman-martinez',
 } as const;

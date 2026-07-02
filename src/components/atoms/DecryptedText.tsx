@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type ElementType, type Ref } from 'react';
 
 type DecryptedTextProps = {
   text: string;
@@ -177,10 +177,10 @@ export default function DecryptedText({
     setIsDecrypted(animateOn !== 'click');
   }, [text, animateOn]);
 
-  const Tag = tag as any;
+  const Tag = tag as ElementType;
   return (
     <Tag
-      ref={containerRef as any}
+      ref={containerRef as Ref<HTMLElement>}
       className={parentClassName}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}

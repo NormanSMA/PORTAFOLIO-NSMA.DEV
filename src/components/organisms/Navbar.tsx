@@ -100,9 +100,14 @@ export function Navbar() {
         <div className="flex items-center justify-between h-16 md:h-20">
           
           {/* Logo */}
-          <div className="cursor-pointer" onClick={() => handleNavClick('home')} role="button" aria-label={t('nav.logoAria')} tabIndex={0} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') handleNavClick('home'); }}>
+          <button
+            type="button"
+            onClick={() => handleNavClick('home')}
+            aria-label={t('nav.logoAria')}
+            className="cursor-pointer rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-dark-bg"
+          >
             <Logo size="lg" />
-          </div>
+          </button>
 
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center gap-8">

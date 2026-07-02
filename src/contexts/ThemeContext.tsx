@@ -23,6 +23,9 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
       const root = document.documentElement;
       root.classList.remove('light', 'dark');
       root.classList.add(theme);
+      document
+        .querySelector('meta[name="theme-color"]')
+        ?.setAttribute('content', theme === 'dark' ? '#0A0A0F' : '#FFFFFF');
       if (typeof window !== 'undefined') {
         localStorage.setItem(THEME_CONFIG.storageKey, theme);
       }

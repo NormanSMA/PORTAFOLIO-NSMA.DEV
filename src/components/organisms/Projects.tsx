@@ -99,7 +99,7 @@ export function Projects() {
                         </p>
                       ) : (
                         <p
-                          className={`text-sm sm:text-base md:text-sm lg:text-base text-light-textSecondary dark:text-dark-textSecondary leading-relaxed line-clamp-${maxLines}`}
+                          className="text-sm sm:text-base md:text-sm lg:text-base text-light-textSecondary dark:text-dark-textSecondary leading-relaxed"
                           style={{
                             display: '-webkit-box',
                             WebkitLineClamp: maxLines,

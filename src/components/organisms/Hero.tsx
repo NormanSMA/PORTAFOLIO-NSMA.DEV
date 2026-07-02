@@ -1,5 +1,5 @@
 import { useLanguage } from '../../hooks';
-import { Container, Button } from '../atoms';
+import { Container, Button, StarBorder } from '../atoms';
 import SplitText from '../atoms/SplitText';
 import { typography } from '../../config/typography';
 
@@ -34,7 +34,7 @@ export function Hero() {
                 <div className="relative bg-light-card dark:bg-dark-card rounded-2xl md:rounded-3xl p-1.5 md:p-2 shadow-2xl">
                   <img
                     src="/norman_sf.webp"
-                    alt="Norman Martínez - Full Stack Developer"
+                    alt="Norman Martínez — Ingeniero en Sistemas y Desarrollador Web"
                     loading="eager"
                     fetchPriority="high"
                     className="w-full h-auto rounded-xl md:rounded-2xl aspect-[4/5] object-cover"
@@ -81,14 +81,16 @@ export function Hero() {
 
             {/* Botones CTA */}
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-2 md:pt-4 sm:justify-center md:justify-start">
-              <Button
-                variant="primary"
-                size="md"
-                onClick={() => scrollToSection('projects')}
-                className="w-full sm:w-auto text-sm sm:text-base"
-              >
-                {t('hero.cta.projects')}
-              </Button>
+              <StarBorder color="#6366F1" speed="6s" thickness={1} className="w-full sm:w-auto">
+                <Button
+                  variant="primary"
+                  size="md"
+                  onClick={() => scrollToSection('projects')}
+                  className="w-full text-sm sm:text-base"
+                >
+                  {t('hero.cta.projects')}
+                </Button>
+              </StarBorder>
               <Button
                 variant="outline"
                 size="md"

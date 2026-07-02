@@ -48,7 +48,7 @@ export const getProjects = (t: (key: string) => string) => [
     image: '/portfolio-light.webp',
     imageDark: '/portfolio-dark.webp',
     url: 'https://portafolio-nsma-dev.vercel.app/',
-    technologies: ['React 19', 'TypeScript', 'Tailwind CSS', 'Framer Motion'],
+    technologies: ['React 19', 'TypeScript', 'Tailwind CSS', 'GSAP'],
     icon: ReactIcon,
   },
 ];
