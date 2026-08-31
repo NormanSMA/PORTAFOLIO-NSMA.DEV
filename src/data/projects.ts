@@ -24,7 +24,7 @@ export const getProjects = (t: (key: string) => string) => [
     shortDescription: t('projects.pantano.shortDescription'),
     fullDescription: t('projects.pantano.fullDescription'),
     image: '/hotel-ElPantano.webp',
-    url: 'https://www.hotel-el-pantano.org/',
+    url: 'https://hotel-el-pantano.vercel.app/',
     technologies: ['Astro', 'Tailwind CSS', 'TypeScript', 'Vercel', 'SEO'],
     icon: AstroIcon,
   },
