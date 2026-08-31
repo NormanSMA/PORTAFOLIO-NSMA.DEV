@@ -6,8 +6,8 @@ const t = (key: string) => key;
 describe('getProjects', () => {
   const projects = getProjects(t);
 
-  it('devuelve los 4 proyectos', () => {
-    expect(projects.map((p) => p.id)).toEqual(['systech', 'pantano', 'bolsa', 'portfolio']);
+  it('devuelve los 5 proyectos', () => {
+    expect(projects.map((p) => p.id)).toEqual(['iuris', 'systech', 'pantano', 'bolsa', 'portfolio']);
   });
 
   it('cada proyecto tiene los campos mínimos', () => {

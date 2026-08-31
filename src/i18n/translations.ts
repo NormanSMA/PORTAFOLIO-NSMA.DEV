@@ -100,6 +100,10 @@ export const translations = {
     projects: {
       title: 'Proyectos',
       subtitle: 'Una muestra de los proyectos en los que he trabajado',
+      iuris: {
+        shortDescription: 'Sitio web corporativo bilingüe para la firma legal Iuris Consultus Nicaragua. Desarrollado con Astro, TypeScript y React, optimizado para alto rendimiento y SEO...',
+        fullDescription: 'Sitio web corporativo bilingüe para la firma legal Iuris Consultus Nicaragua. Diseñado y desarrollado desde el análisis de requerimientos hasta su preparación para producción con Astro, React, TypeScript y Tailwind CSS. Incluye administración de hosting y dominio, optimización de velocidad de carga, accesibilidad y estrategias de SEO.',
+      },
       systech: {
         shortDescription: 'Plataforma web para el congreso anual de ingeniería SYSTECH de la Universidad Americana. Me encargué de la estructura, la personalización y el sistema de registro...',
         fullDescription: 'Plataforma web para el congreso anual de ingeniería SYSTECH de la Universidad Americana. Me encargué de la arquitectura, la personalización de plantillas y la configuración de plugins para organizar registros y agenda en un sistema estable y fácil de mantener.',
@@ -333,6 +337,10 @@ export const translations = {
     projects: {
       title: 'Projects',
       subtitle: 'A sample of the projects I have worked on',
+      iuris: {
+        shortDescription: 'Bilingual corporate website for law firm Iuris Consultus Nicaragua. Built with Astro, TypeScript, and React, optimized for high performance and SEO...',
+        fullDescription: 'Bilingual corporate website for law firm Iuris Consultus Nicaragua. Designed and developed from requirement analysis through production preparation using Astro, React, TypeScript, and Tailwind CSS. Includes hosting and domain management, loading speed optimization, accessibility, and SEO strategies.',
+      },
       systech: {
         shortDescription: 'Web platform for the annual SYSTECH engineering congress at Universidad Americana. I handled the structure, the customization, and the registration flow...',
         fullDescription: 'Web platform for the annual SYSTECH engineering congress at Universidad Americana. I handled the architecture, template customization, and plugin configuration to organize registrations and the agenda in a stable system that is easy to maintain.',

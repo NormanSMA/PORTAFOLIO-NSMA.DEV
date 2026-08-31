@@ -7,6 +7,17 @@ import {
 
 export const getProjects = (t: (key: string) => string) => [
   {
+    id: 'iuris',
+    title: 'Iuris Consultus',
+    category: 'Astro',
+    shortDescription: t('projects.iuris.shortDescription'),
+    fullDescription: t('projects.iuris.fullDescription'),
+    image: '/iuris-consultus.webp',
+    url: 'https://iurisnicaragua.com/',
+    technologies: ['Astro', 'React', 'TypeScript', 'Tailwind CSS', 'SEO'],
+    icon: AstroIcon,
+  },
+  {
     id: 'systech',
     title: 'SYSTECH UAM',
     category: 'WordPress',
