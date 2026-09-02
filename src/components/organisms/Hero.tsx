@@ -33,10 +33,15 @@ export function Hero() {
                 {/* Imagen */}
                 <div className="relative bg-light-card dark:bg-dark-card rounded-2xl md:rounded-3xl p-1.5 md:p-2 shadow-2xl">
                   <img
-                    src="/norman_sf.webp"
+                    src="/norman_sf-800w.webp"
+                    srcSet="/norman_sf-480w.webp 480w, /norman_sf-800w.webp 800w, /norman_sf-1200w.webp 1200w"
+                    sizes="(min-width: 1024px) 448px, (min-width: 640px) 320px, 280px"
                     alt="Norman Martínez — Ingeniero en Sistemas y Desarrollador Web"
+                    width={1600}
+                    height={2000}
                     loading="eager"
                     fetchPriority="high"
+                    decoding="async"
                     className="w-full h-auto rounded-xl md:rounded-2xl aspect-[4/5] object-cover"
                   />
                 </div>

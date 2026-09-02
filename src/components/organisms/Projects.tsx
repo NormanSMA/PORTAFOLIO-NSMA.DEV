@@ -4,6 +4,7 @@ import { Container } from '../atoms';
 import { typography } from '../../config/typography';
 import { ExternalLinkIcon } from '../atoms/icons';
 import { getProjects } from '../../data/projects';
+import { buildSrcSet } from '../../utils/helpers';
 
 export function Projects() {
   const { t } = useLanguage();
@@ -59,6 +60,8 @@ export function Projects() {
               const IconComponent = project.icon;
               const isExpanded = expandedProject === project.id;
               const isReference = project.id === 'bolsa'; // Android card es la referencia
+              const projectImage =
+                project.imageDark && theme === 'dark' ? project.imageDark : project.image;
               
               return (
                 <article
@@ -71,8 +74,12 @@ export function Projects() {
                     {/* Image Container */}
                     <div className="relative h-44 sm:h-48 md:h-44 lg:h-48 overflow-hidden bg-light-card dark:bg-dark-card rounded-t-2xl">
                       <img
-                        src={project.imageDark && theme === 'dark' ? project.imageDark : project.image}
+                        src={projectImage}
+                        srcSet={buildSrcSet(projectImage, [480, 800])}
+                        sizes="(min-width: 1024px) 400px, (min-width: 768px) 50vw, 100vw"
                         alt={project.title}
+                        loading="lazy"
+                        decoding="async"
                         className="w-full h-full object-cover motion-safe:group-hover:scale-105 transition-transform duration-500"
                       />
                       {/* Category Badge con icono */}

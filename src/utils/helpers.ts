@@ -79,3 +79,8 @@ export async function copyToClipboard(text: string): Promise<boolean> {
     return false;
   }
 }
+
+export function buildSrcSet(src: string, widths: number[]): string {
+  const base = src.replace(/\.webp$/, '');
+  return widths.map((w) => `${base}-${w}w.webp ${w}w`).join(', ');
+}

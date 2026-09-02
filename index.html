@@ -28,18 +28,31 @@
     <meta name="twitter:description" content="Diseño soluciones digitales claras: sitios y aplicaciones web con React, TypeScript y Laravel." />
     <meta name="twitter:image" content="https://portafolio-nsma-dev.vercel.app/og-image.webp" />
 
-    <!-- Font Optimization: Preconnect and load via link to avoid @import blocking -->
+    <!-- LCP: imagen del Hero -->
+    <link
+      rel="preload"
+      as="image"
+      href="/norman_sf-800w.webp"
+      imagesrcset="/norman_sf-480w.webp 480w, /norman_sf-800w.webp 800w, /norman_sf-1200w.webp 1200w"
+      imagesizes="(min-width: 1024px) 448px, (min-width: 640px) 320px, 280px"
+      fetchpriority="high"
+    />
+
+    <!-- Fuentes: no bloquean el render; el fallback del sistema pinta primero -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       rel="preload"
       as="style"
       href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=Sora:wght@400;500;600;700;800&display=swap"
+      onload="this.onload=null;this.rel='stylesheet'"
     />
-    <link
-      href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=Sora:wght@400;500;600;700;800&display=swap"
-      rel="stylesheet"
-    />
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=Sora:wght@400;500;600;700;800&display=swap"
+      />
+    </noscript>
 
     <meta name="referrer" content="no-referrer" />
   </head>
