@@ -37,3 +37,7 @@ tools
 .antigravity/
 .antigravity-ide/
 .gemini-agent/
+
+# Claude Code local
+.claude/worktrees/
+.claude/launch.json

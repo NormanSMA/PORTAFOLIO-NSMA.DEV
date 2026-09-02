@@ -6,8 +6,9 @@ const INTERACTIVE_SELECTOR = 'a, button, [role="button"], input, textarea, selec
 
 export function SmoothCursor() {
   const [isEnabled, setIsEnabled] = useState(false);
-  const [isInteractive, setIsInteractive] = useState(false);
   const cursorRef = useRef<HTMLDivElement>(null);
+  const ringRef = useRef<HTMLDivElement>(null);
+  const interactiveRef = useRef(false);
 
   useEffect(() => {
     const mediaQuery = window.matchMedia(DESKTOP_POINTER_QUERY);
@@ -33,9 +34,13 @@ export function SmoothCursor() {
       return;
     }
 
+    const ring = ringRef.current;
+
     gsap.set(el, { xPercent: -50, yPercent: -50, opacity: 0, scale: 1, force3D: true });
     const xTo = gsap.quickTo(el, 'x', { duration: 0.3, ease: 'power3.out' });
     const yTo = gsap.quickTo(el, 'y', { duration: 0.3, ease: 'power3.out' });
+    const scaleTo = gsap.quickTo(el, 'scale', { duration: 0.25, ease: 'power2.out' });
+    const opacityTo = gsap.quickTo(el, 'opacity', { duration: 0.25, ease: 'power2.out' });
 
     const handlePointerMove = (event: PointerEvent) => {
       if (event.pointerType === 'touch') {
@@ -44,23 +49,30 @@ export function SmoothCursor() {
 
       xTo(event.clientX);
       yTo(event.clientY);
+      opacityTo(1);
 
       const target = event.target as HTMLElement | null;
       const nextInteractive = Boolean(target?.closest(INTERACTIVE_SELECTOR));
-      setIsInteractive(nextInteractive);
 
-      gsap.to(el, {
-        scale: nextInteractive ? 1.25 : 1,
-        opacity: 1,
-        duration: 0.25,
-        ease: 'power2.out',
-        overwrite: 'auto',
-      });
+      if (nextInteractive !== interactiveRef.current) {
+        interactiveRef.current = nextInteractive;
+        scaleTo(nextInteractive ? 1.25 : 1);
+        if (ring) {
+          gsap.to(ring, {
+            opacity: nextInteractive ? 1 : 0,
+            duration: 0.25,
+            ease: 'power2.out',
+            overwrite: 'auto',
+          });
+        }
+      }
     };
 
     const handlePointerLeave = () => {
-      setIsInteractive(false);
-      gsap.to(el, { scale: 1, opacity: 0, duration: 0.25, ease: 'power2.out', overwrite: 'auto' });
+      interactiveRef.current = false;
+      scaleTo(1);
+      opacityTo(0);
+      if (ring) gsap.to(ring, { opacity: 0, duration: 0.25, overwrite: 'auto' });
     };
 
     document.body.style.cursor = 'none';
@@ -74,6 +86,7 @@ export function SmoothCursor() {
       document.removeEventListener('mouseleave', handlePointerLeave);
       document.body.style.cursor = '';
       gsap.killTweensOf(el);
+      if (ring) gsap.killTweensOf(ring);
     };
   }, [isEnabled]);
 
@@ -90,9 +103,10 @@ export function SmoothCursor() {
       <div className="relative flex items-center justify-center">
         <div className="absolute h-10 w-10 rounded-full border border-primary-500/35 bg-primary-500/10 blur-[1px]" />
         <div className="h-2.5 w-2.5 rounded-full bg-primary-500 shadow-[0_0_18px_rgba(99,102,241,0.5)]" />
-        {isInteractive && (
-          <div className="absolute h-14 w-14 rounded-full border border-primary-400/50" />
-        )}
+        <div
+          ref={ringRef}
+          className="absolute h-14 w-14 rounded-full border border-primary-400/50 opacity-0"
+        />
       </div>
     </div>
   );

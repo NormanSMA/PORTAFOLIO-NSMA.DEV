@@ -38,6 +38,8 @@ export default function SplitText({
   onLetterAnimationComplete,
 }: SplitTextProps) {
   const ref = useRef<HTMLElement | null>(null);
+  const fromKey = JSON.stringify(from);
+  const toKey = JSON.stringify(to);
 
   useEffect(() => {
     const el = ref.current;
@@ -125,7 +127,8 @@ export default function SplitText({
         });
       }
     };
-  }, [text, delay, duration, ease, splitType, JSON.stringify(from), JSON.stringify(to), threshold, rootMargin, textAlign, animateOn, onLetterAnimationComplete]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [text, delay, duration, ease, splitType, fromKey, toKey, threshold, rootMargin, textAlign, animateOn, onLetterAnimationComplete]);
 
   const Tag = tag as ElementType;
   return <Tag ref={ref} className={`split-parent ${className}`} style={{ overflow: 'hidden', display: 'block', willChange: 'transform, opacity' }}>{text}</Tag>;

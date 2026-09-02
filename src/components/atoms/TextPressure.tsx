@@ -194,7 +194,7 @@ export default function TextPressure({
         }
       `}</style>
     );
-  }, [fontFamily, fontUrl, flex, stroke, textColor, strokeColor]);
+  }, [fontFamily, fontUrl, flex, textColor, strokeColor]);
 
   const dynamicClassName = [className, flex ? 'tp-flex' : '', stroke ? 'tp-stroke' : ''].filter(Boolean).join(' ');
 

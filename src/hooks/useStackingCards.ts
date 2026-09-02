@@ -23,6 +23,20 @@ export function useStackingCards({
   const containerRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
   const leftColumnRef = useRef<HTMLDivElement>(null);
+  const motionOkRef = useRef(true);
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || !window.matchMedia) return;
+
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const sync = () => {
+      motionOkRef.current = !mq.matches;
+    };
+
+    sync();
+    mq.addEventListener('change', sync);
+    return () => mq.removeEventListener('change', sync);
+  }, []);
 
   // Sync isMobile flag
   useEffect(() => {
@@ -37,8 +51,7 @@ export function useStackingCards({
 
   // Main scroll handler
   const handleScroll = useCallback(() => {
-    const motionOk = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (!motionOk) return;
+    if (!motionOkRef.current) return;
 
     if (isMobile) {
       if (!containerRef.current) return;
@@ -92,16 +105,30 @@ export function useStackingCards({
         card.style.setProperty('--progress', Math.min(progress, 0.7).toString());
       });
     }
-  }, [isMobile, cardCount, mobileStickyTop, mobileIncrement, mobileDistance, desktopStickyTop, desktopIncrement, desktopDistance]);
+  }, [isMobile, mobileStickyTop, mobileIncrement, mobileDistance, desktopStickyTop, desktopIncrement, desktopDistance]);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
+    let frame = 0;
+    const onScroll = () => {
+      if (frame) return;
+      frame = window.requestAnimationFrame(() => {
+        frame = 0;
+        handleScroll();
+      });
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
     // Run initially to set starting values
     handleScroll();
 
-    return () => window.removeEventListener('scroll', handleScroll);
+    return () => {
+      if (frame) window.cancelAnimationFrame(frame);
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+    };
   }, [handleScroll]);
 
   // Adjust cardRefs size if cardCount changes

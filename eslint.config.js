@@ -7,7 +7,14 @@ import { defineConfig, globalIgnores } from 'eslint/config'
 
 export default defineConfig({
   // Migrated ignored paths from .eslintignore to the new `ignores` field
-  ignores: ['dist', 'public/_headers', 'public/protect-images.js'],
+  ignores: [
+    'dist',
+    '.claude/**',
+    'scripts/**',
+    'public/_headers',
+    'public/protect-images.js',
+    'public/theme-init.js',
+  ],
   files: ['**/*.{ts,tsx}'],
   extends: [
     js.configs.recommended,
