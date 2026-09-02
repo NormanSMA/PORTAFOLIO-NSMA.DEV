@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import emailjs from '@emailjs/browser';
 import { useLanguage } from '../../hooks';
 import { Container } from '../atoms';
@@ -26,6 +26,28 @@ interface FormErrors {
 // Fallback owner email if not in env
 const OWNER_EMAIL = import.meta.env.VITE_OWNER_EMAIL || 'norman.martinez003@gmail.com';
 
+const COOLDOWN_MS = 60_000;
+const MIN_FILL_MS = 3_000;
+const RATE_LIMIT_KEY = 'nsma-contact-last-sent';
+
+function readLastSentAt(): number | null {
+  try {
+    const raw = window.localStorage.getItem(RATE_LIMIT_KEY);
+    const parsed = raw ? Number(raw) : NaN;
+    return Number.isFinite(parsed) ? parsed : null;
+  } catch {
+    return null;
+  }
+}
+
+function writeLastSentAt(): void {
+  try {
+    window.localStorage.setItem(RATE_LIMIT_KEY, String(Date.now()));
+  } catch {
+    // localStorage no disponible (modo privado); el honeypot sigue activo
+  }
+}
+
 export function Contact() {
   const { t } = useLanguage();
   const [formData, setFormData] = useState<FormData>({
@@ -42,7 +64,9 @@ export function Contact() {
 
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error' | 'throttled'>('idle');
+  const [honeypot, setHoneypot] = useState('');
+  const mountedAtRef = useRef(Date.now());
 
   // Custom validation
   const validateForm = (): boolean => {
@@ -69,6 +93,15 @@ export function Contact() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (honeypot) return;
+    if (Date.now() - mountedAtRef.current < MIN_FILL_MS) return;
+
+    const lastSentAt = readLastSentAt();
+    if (lastSentAt && Date.now() - lastSentAt < COOLDOWN_MS) {
+      setSubmitStatus('throttled');
+      return;
+    }
+
     if (!validateForm()) return;
 
     setIsSubmitting(true);
@@ -94,41 +127,6 @@ export function Contact() {
       })
       .join(' ');
 
-    // Helper to get metadata with fallback
-    const getMetadata = async () => {
-      try {
-        // Try primary service
-        const response = await fetch('https://ipapi.co/json');
-        if (!response.ok) throw new Error('Primary IP service failed');
-        const data = await response.json();
-        return {
-          ip: data.ip || 'Unknown IP',
-          location: `${data.city}, ${data.region}, ${data.country_name}`,
-          device: navigator.userAgent || 'Unknown Device'
-        };
-      } catch {
-        try {
-          // Fallback service (db-ip.com free tier)
-          const response = await fetch('https://api.db-ip.com/v2/free/self');
-          const data = await response.json();
-          return {
-            ip: data.ipAddress || 'Unknown IP',
-            location: `${data.city}, ${data.countryName}`,
-            device: navigator.userAgent || 'Unknown Device'
-          };
-        } catch {
-          return {
-            ip: 'Not available',
-            location: 'Not available',
-            device: navigator.userAgent || 'Unknown Device'
-          };
-        }
-      }
-    };
-
-    // Fetch metadata
-    const metadata = await getMetadata();
-
     // Build template params matching the User's EmailJS Template
     const templateParams = {
       from_name: formData.fullName,
@@ -137,10 +135,6 @@ export function Contact() {
       reasons: selectedReasons || 'No especificado',
       received_at: new Date().toLocaleString(),
       owner_email: OWNER_EMAIL,
-      // Metadata params
-      ip: metadata.ip,
-      location: metadata.location,
-      device: metadata.device,
     };
 
     try {
@@ -158,6 +152,7 @@ export function Contact() {
 
         await emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams);
         setSubmitStatus('success');
+        writeLastSentAt();
       }
 
 
@@ -302,6 +297,20 @@ export function Contact() {
           {/* Right Panel: Form */}
           <div className="rounded-2xl border border-light-border/80 bg-light-card p-5 shadow-lg dark:border-dark-border/80 dark:bg-dark-card sm:p-6">
             <form onSubmit={handleSubmit} className="space-y-5" noValidate>
+              {/* Honeypot: invisible para personas, irresistible para bots */}
+              <div aria-hidden="true" className="absolute h-px w-px overflow-hidden opacity-0 -left-[9999px]">
+                <label htmlFor="company-website">No llenar este campo</label>
+                <input
+                  type="text"
+                  id="company-website"
+                  name="company-website"
+                  tabIndex={-1}
+                  autoComplete="off"
+                  value={honeypot}
+                  onChange={(e) => setHoneypot(e.target.value)}
+                />
+              </div>
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Full Name */}
                 <div className="space-y-2">
@@ -463,6 +472,14 @@ export function Contact() {
               </button>
 
               {/* Status Messages */}
+              {submitStatus === 'throttled' && (
+                <div role="status" className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/20">
+                  <p className="text-center text-amber-600 dark:text-amber-400 font-medium">
+                    {t('contact.form.throttledMessage')}
+                  </p>
+                </div>
+              )}
+
               {submitStatus === 'success' && (
                 <div role="status" className="p-4 rounded-2xl bg-green-500/10 border border-green-500/20">
                   <p className="text-center text-green-600 dark:text-green-400 font-medium flex items-center justify-center gap-2">

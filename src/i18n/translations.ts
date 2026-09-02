@@ -180,6 +180,7 @@ export const translations = {
         sending: 'Enviando...',
         successMessage: '¡Mensaje enviado con éxito! Te responderé pronto.',
         errorMessage: 'Hubo un error. Por favor intenta de nuevo.',
+        throttledMessage: 'Acabas de enviar un mensaje. Espera un minuto antes de enviar otro.',
       },
     },
 
@@ -417,6 +418,7 @@ export const translations = {
         sending: 'Sending...',
         successMessage: "Message sent successfully! I'll get back to you soon.",
         errorMessage: 'There was an error. Please try again.',
+        throttledMessage: 'You just sent a message. Please wait a minute before sending another.',
       },
     },
 
