@@ -1,18 +1,42 @@
-import { Suspense, lazy } from 'react';
+import { Suspense, lazy, useEffect } from 'react';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { LanguageProvider } from './contexts/LanguageContext';
-import { Navbar, Hero, About, Services, Process } from './components/organisms';
+import { Navbar, Hero } from './components/organisms';
 import { ScrollToTop } from './components/molecules';
-import { SmoothCursor } from './components/atoms';
 import { useLanguage, useLenis } from './hooks';
+import { ScrollTrigger } from './lib/gsap';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/react';
 
-// Lazy load below-the-fold components
-const Projects = lazy(() => import('./components/organisms/Projects').then(module => ({ default: module.Projects })));
-const EducationSkills = lazy(() => import('./components/organisms/EducationSkills').then(module => ({ default: module.EducationSkills })));
-const Contact = lazy(() => import('./components/organisms/Contact').then(module => ({ default: module.Contact })));
-const Footer = lazy(() => import('./components/organisms/Footer').then(module => ({ default: module.Footer })));
+const loadAbout = () => import('./components/organisms/About').then((m) => ({ default: m.About }));
+const loadProjects = () => import('./components/organisms/Projects').then((m) => ({ default: m.Projects }));
+const loadExperience = () => import('./components/organisms/Experience').then((m) => ({ default: m.Experience }));
+const loadApproach = () => import('./components/organisms/Approach').then((m) => ({ default: m.Approach }));
+const loadContact = () => import('./components/organisms/Contact').then((m) => ({ default: m.Contact }));
+const loadFooter = () => import('./components/organisms/Footer').then((m) => ({ default: m.Footer }));
+
+const About = lazy(loadAbout);
+const Projects = lazy(loadProjects);
+const Experience = lazy(loadExperience);
+const Approach = lazy(loadApproach);
+const Contact = lazy(loadContact);
+const Footer = lazy(loadFooter);
+
+const IDLE_PRELOAD_DELAY_MS = 2500;
+
+// Preloading after the first paint keeps anchor links and scroll triggers stable without weighing on the initial load.
+function usePreloadSections() {
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      const loaders = [loadAbout, loadProjects, loadExperience, loadApproach, loadContact, loadFooter];
+      Promise.all(loaders.map((load) => load())).then(() => {
+        requestAnimationFrame(() => ScrollTrigger.refresh());
+      });
+    }, IDLE_PRELOAD_DELAY_MS);
+
+    return () => window.clearTimeout(timer);
+  }, []);
+}
 
 function SkipLink() {
   const { t } = useLanguage();
@@ -26,38 +50,21 @@ function SkipLink() {
 
 function App() {
   useLenis();
+  usePreloadSections();
 
   return (
     <ThemeProvider>
       <LanguageProvider>
         <div className="min-h-screen">
           <SkipLink />
-          <SmoothCursor />
           <Navbar />
           <main id="main" tabIndex={-1} className="outline-none">
             <Hero />
-            <About />
-            <Services />
-            <Process />
-
-            {/* Lazy sections with skeleton fallback to prevent CLS */}
-            <Suspense fallback={
-              <div className="py-20 space-y-16 animate-pulse" aria-label="Loading content...">
-                {[...Array(4)].map((_, i) => (
-                  <div key={i} className="max-w-container mx-auto px-gutter space-y-6">
-                    <div className="h-10 bg-line rounded-control w-1/3 mx-auto" />
-                    <div className="h-4 bg-line rounded-control w-2/3 mx-auto" />
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {[...Array(3)].map((_, j) => (
-                        <div key={j} className="h-48 bg-line rounded-card" />
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            }>
+            <Suspense fallback={<div className="min-h-svh" aria-hidden="true" />}>
+              <About />
               <Projects />
-              <EducationSkills />
+              <Experience />
+              <Approach />
               <Contact />
             </Suspense>
           </main>

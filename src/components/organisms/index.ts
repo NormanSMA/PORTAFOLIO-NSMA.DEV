@@ -1,9 +1,3 @@
+// Only sections rendered on first paint belong here: re-exporting the lazy ones would pull them into the initial bundle.
 export { Hero } from './Hero';
-export { About } from './About';
-export { Services } from './Services';
-export { Process } from './Process';
-export { Projects } from './Projects';
-export { EducationSkills } from './EducationSkills';
-export { Contact } from './Contact';
-export { Footer } from './Footer';
 export { Navbar } from './Navbar';
