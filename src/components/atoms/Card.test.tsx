@@ -49,21 +49,30 @@ describe('Card', () => {
     expect(card.className).toContain('rounded-card');
   });
 
-  it('usa el borde degradado solo cuando es featured', () => {
+  it('usa relleno plano surface con borde line y sin degradados', () => {
+    render(<Card data-testid="card">A</Card>);
+    const className = screen.getByTestId('card').className.split(' ');
+    expect(className).toContain('bg-surface');
+    expect(className).toContain('border-line');
+    expect(className.filter((name) => name.includes('gradient') || name.includes('bg-brand'))).toEqual([]);
+    expect(className.filter((name) => name.startsWith('[background'))).toEqual([]);
+  });
+
+  it('usa el borde primary al 50 % solo cuando es featured', () => {
     const { rerender } = render(<Card data-testid="card">A</Card>);
-    expect(screen.getByTestId('card').className).toContain('[background:var(--card-fill)]');
+    expect(screen.getByTestId('card').className.split(' ')).not.toContain('border-primary/50');
 
     rerender(
       <Card featured data-testid="card">
         A
       </Card>,
     );
-    const className = screen.getByTestId('card').className;
-    expect(className).toContain('[background:var(--card-fill-featured)]');
-    expect(className).toContain('border-transparent');
+    const className = screen.getByTestId('card').className.split(' ');
+    expect(className).toContain('border-primary/50');
+    expect(className).not.toContain('border-line');
   });
 
-  it('agrega la elevacion solo cuando es interactive', () => {
+  it('agrega la elevacion y el borde primary solo cuando es interactive', () => {
     const { rerender } = render(<Card data-testid="card">A</Card>);
     expect(screen.getByTestId('card').className).not.toContain('pointer-fine:hover');
 
@@ -74,7 +83,19 @@ describe('Card', () => {
     );
     const className = screen.getByTestId('card').className;
     expect(className).toContain('motion-safe:pointer-fine:hover:-translate-y-1');
-    expect(className).toContain('pointer-fine:hover:after:opacity-100');
+    expect(className).toContain('pointer-fine:hover:border-primary/40');
+    expect(className).not.toContain('after:');
+  });
+
+  it('mantiene el borde destacado al pasar el puntero en una tarjeta featured interactive', () => {
+    render(
+      <Card featured interactive data-testid="card">
+        A
+      </Card>,
+    );
+    const className = screen.getByTestId('card').className;
+    expect(className).toContain('motion-safe:pointer-fine:hover:-translate-y-1');
+    expect(className).not.toContain('hover:border-primary/40');
   });
 
   it('combina className sin perder las clases base', () => {

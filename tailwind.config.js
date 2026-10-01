@@ -1,5 +1,12 @@
 const token = (name) => `rgb(var(--color-${name}) / <alpha-value>)`;
 
+const steps = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900];
+// DEFAULT is step 500 so bg-primary and border-primary/50 keep working next to bg-primary-600.
+const scale = (name) => ({
+  DEFAULT: token(`${name}-500`),
+  ...Object.fromEntries(steps.map((step) => [step, token(`${name}-${step}`)])),
+});
+
 /** @type {import('tailwindcss').Config} */
 export default {
   content: [
@@ -21,51 +28,17 @@ export default {
           muted: token('fg-muted'),
           subtle: token('fg-subtle'),
         },
-        bronze: {
-          DEFAULT: token('bronze'),
-          bright: token('bronze-bright'),
-          deep: token('bronze-deep'),
+        line: {
+          DEFAULT: token('line'),
+          strong: token('line-strong'),
+          control: token('line-control'),
         },
-        sapphire: {
-          DEFAULT: token('sapphire'),
-          soft: token('sapphire-soft'),
-        },
-        mint: token('mint'),
+        primary: scale('primary'),
+        secondary: scale('secondary'),
+        success: token('success'),
         danger: token('danger'),
         focus: 'rgb(var(--focus-ring-color) / <alpha-value>)',
-        // Fixed-alpha hairlines: opacity modifiers do not apply to them.
-        line: {
-          DEFAULT: 'var(--line)',
-          strong: 'var(--line-strong)',
-          control: 'var(--line-control)',
-        },
-        // Legacy palette (primary, secondary, accent, dark, light): removed when every section uses the tokens above.
-        primary: {
-          DEFAULT: '#6366F1',
-          50: '#F5F5FF',
-          100: '#EBEBFF',
-          200: '#D4D4FF',
-          300: '#B8B8FF',
-          400: '#9C9CFF',
-          500: '#6366F1',
-          600: '#4F46E5',
-          700: '#4338CA',
-          800: '#3730A3',
-          900: '#312E81',
-        },
-        secondary: {
-          DEFAULT: '#3B82F6',
-          50: '#EFF6FF',
-          100: '#DBEAFE',
-          200: '#BFDBFE',
-          300: '#93C5FD',
-          400: '#60A5FA',
-          500: '#3B82F6',
-          600: '#2563EB',
-          700: '#1D4ED8',
-          800: '#1E40AF',
-          900: '#1E3A8A',
-        },
+        // heredado, se elimina al final: sections not yet rewritten still use these keys.
         accent: {
           DEFAULT: '#F59E0B',
           50: '#FFFBEB',
@@ -140,10 +113,9 @@ export default {
         'in-out': 'var(--ease-in-out)',
         in: 'var(--ease-in)',
       },
+      // Hero aura and StarBorder only; never on text or cards.
       backgroundImage: {
-        metal: 'var(--gradient-metal)',
-        'bronze-sheen': 'var(--gradient-bronze)',
-        halo: 'var(--gradient-halo)',
+        brand: 'var(--gradient-brand)',
       },
       // Legacy animations: StarBorder keeps star-movement-*; the rest go with the old sections.
       animation: {
@@ -191,11 +163,8 @@ export default {
       boxShadow: {
         card: 'var(--shadow-card)',
         raised: 'var(--shadow-raised)',
-        'glow-bronze': 'var(--glow-bronze)',
-        'glow-sapphire': 'var(--glow-sapphire)',
-        // Legacy indigo glow.
-        'glow': '0 0 20px rgba(99, 102, 241, 0.5)',
-        'glow-lg': '0 0 30px rgba(99, 102, 241, 0.6)',
+        // Primary CTA only.
+        glow: 'var(--glow-primary)',
       },
     },
   },

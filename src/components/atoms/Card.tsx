@@ -24,15 +24,15 @@ const variantStyles: Record<CardVariant, string> = {
   timeline: 'gap-4 md:grid md:grid-cols-[minmax(0,11rem)_minmax(0,1fr)] md:gap-x-8 md:[&>*+*]:col-start-2',
 };
 
-// The glow sits on ::after so hover fades its opacity instead of repainting a box-shadow.
-// Duration and easing carry the motion-safe prefix so Tailwind emits them after the transition rule.
+// Lift is a transform; the border tint is the only color change. Duration and easing carry
+// the motion-safe prefix so Tailwind emits them after the transition rule.
 const interactiveStyles = [
-  'motion-safe:transition-transform motion-safe:duration-fast motion-safe:ease-out',
+  'motion-safe:transition-[transform,border-color] motion-safe:duration-fast motion-safe:ease-out',
   'motion-safe:pointer-fine:hover:-translate-y-1',
-  "after:pointer-events-none after:absolute after:inset-0 after:rounded-[inherit] after:content-['']",
-  'after:opacity-0 after:shadow-glow-bronze after:transition-opacity after:duration-fast after:ease-out',
-  'pointer-fine:hover:after:opacity-100 focus-within:after:opacity-100',
 ].join(' ');
+
+// A featured border is already primary, so a hover tint would dim it instead of highlighting it.
+const interactiveBorderStyles = 'pointer-fine:hover:border-primary/40 focus-within:border-primary/40';
 
 export function Card({
   variant = 'info',
@@ -48,12 +48,11 @@ export function Card({
       {...rest}
       data-variant={variant}
       className={cn(
-        'group/card relative flex flex-col rounded-card border p-card text-fg shadow-card',
-        featured
-          ? 'border-transparent [background:var(--card-fill-featured)]'
-          : 'border-line [background:var(--card-fill)]',
+        'group/card relative flex flex-col rounded-card border bg-surface p-card text-fg shadow-card',
+        featured ? 'border-primary/50' : 'border-line',
         variantStyles[variant],
         interactive && interactiveStyles,
+        interactive && !featured && interactiveBorderStyles,
         className,
       )}
     >

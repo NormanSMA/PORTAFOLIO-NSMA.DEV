@@ -1,27 +1,25 @@
 // Sizes are arbitrary length classes over the --text-* tokens, not custom fontSize keys,
 // because tailwind-merge reads an unknown text-* class as a color and drops it in cn().
+// Headings use Sora; every other role uses DM Sans. Color is never part of a role: add it with cn().
 
 const display =
-  'font-display font-extrabold text-balance text-[length:var(--text-display)] leading-[var(--leading-display)] tracking-[var(--tracking-display)]';
+  'font-display font-bold text-balance text-[length:var(--text-display)] leading-[var(--leading-display)] tracking-[var(--tracking-tight)]';
 const h1 =
-  'font-display font-extrabold text-balance text-[length:var(--text-h1)] leading-[var(--leading-heading)] tracking-[var(--tracking-heading)]';
+  'font-display font-bold text-balance text-[length:var(--text-h1)] leading-[var(--leading-display)] tracking-[var(--tracking-tight)]';
 const h2 =
-  'font-display font-bold text-balance text-[length:var(--text-h2)] leading-[var(--leading-heading)] tracking-[var(--tracking-heading)]';
+  'font-display font-bold text-balance text-[length:var(--text-h2)] leading-[var(--leading-heading)] tracking-[var(--tracking-tight)]';
 const h3 =
-  'font-display font-semibold text-balance text-[length:var(--text-h3)] leading-[var(--leading-title)] tracking-[var(--tracking-title)]';
-const h4 =
-  'font-display font-semibold text-[length:var(--text-h4)] leading-[var(--leading-title)] tracking-[var(--tracking-title)]';
-const h5 =
-  'font-display font-semibold text-[length:var(--text-h5)] leading-[var(--leading-title)] tracking-[var(--tracking-title)]';
-const bodyLarge = 'font-body text-[length:var(--text-lead)] leading-[var(--leading-body)]';
-const body = 'font-body text-[length:var(--text-body)] leading-[var(--leading-body)]';
-const bodySmall = 'font-body text-[length:var(--text-body-sm)] leading-[var(--leading-body)]';
-const caption = 'font-body text-[length:var(--text-caption)] leading-[var(--leading-meta)]';
-const eyebrow =
-  'font-mono font-medium uppercase text-[length:var(--text-eyebrow)] leading-[var(--leading-meta)] tracking-[var(--tracking-eyebrow)]';
-const meta = 'font-mono text-[length:var(--text-meta)] leading-[var(--leading-meta)]';
+  'font-display font-semibold text-balance text-[length:var(--text-h3)] leading-[var(--leading-title)]';
+const h4 = 'font-display font-semibold text-[length:var(--text-h4)] leading-[var(--leading-title)]';
+const h5 = 'font-display font-medium text-[length:var(--text-h5)] leading-[var(--leading-title)]';
+const bodyLarge = 'font-body font-normal text-[length:var(--text-lead)] leading-[var(--leading-body)]';
+const body = 'font-body font-normal text-[length:var(--text-body)] leading-[var(--leading-body)]';
+const bodySmall = 'font-body font-normal text-[length:var(--text-body-sm)] leading-[var(--leading-body)]';
+const caption = 'font-body font-normal text-[length:var(--text-caption)] leading-[var(--leading-meta)]';
+const eyebrow = 'font-display font-medium text-sm';
+const meta = 'font-body font-medium text-[length:var(--text-caption)] leading-[var(--leading-meta)]';
 const numeral =
-  'font-display font-extrabold tabular-nums text-[length:var(--text-numeral)] leading-[var(--leading-display)] tracking-[var(--tracking-display)]';
+  'font-display font-bold tabular-nums text-[length:var(--text-numeral)] leading-[var(--leading-display)] tracking-[var(--tracking-tight)]';
 
 export const typography = {
   display,
