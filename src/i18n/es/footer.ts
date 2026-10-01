@@ -1,10 +1,8 @@
 export const footer = {
-  rights: 'Todos los derechos reservados',
-  madeWith: 'Hecho con',
-  by: 'por',
-  branding: 'Ingeniero en Sistemas con experiencia en proyectos académicos y freelance. Me enfoco en resolver problemas y construir soluciones útiles.',
-  quickLinks: 'Enlaces Rápidos',
-  connect: 'Conecta Conmigo',
+  tagline: 'Ingeniero en Sistemas · Desarrollo web, bases de datos y cloud',
+  quickLinks: 'Enlaces rápidos',
+  contactTitle: 'Contacto',
   ariaNav: 'Navegación del pie de página',
-  goToTop: 'Volver arriba',
+  newTab: 'se abre en una pestaña nueva',
+  rights: 'Todos los derechos reservados',
 } as const;

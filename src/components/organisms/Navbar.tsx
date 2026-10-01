@@ -1,213 +1,93 @@
-import { useState, useEffect, useRef, useMemo } from 'react';
-import { useLanguage, useScrollPosition } from '../../hooks';
-import { Logo, Container, StarBorder, AnimatedThemeToggler } from '../atoms';
-import { cn, scrollToElement } from '../../utils/helpers';
+import { useState, type FocusEvent } from 'react';
+import { motion } from '../../config/motion';
+import { sectionIds } from '../../data/navigation';
+import { useLanguage } from '../../hooks/useLanguage';
+import { useMediaQuery } from '../../hooks/useMediaQuery';
+import { useActiveSection } from '../../hooks/useActiveSection';
+import { useHideOnScroll } from '../../hooks/useHideOnScroll';
+import { useScrollPast } from '../../hooks/useScrollPast';
+import { scrollToSection } from '../../lib/scroll';
+import { cn } from '../../utils/helpers';
+import { Button } from '../atoms/Button';
+import { Container } from '../atoms/Container';
+import { Logo } from '../atoms/Logo';
+import { MobileMenu } from './navbar/MobileMenu';
+import { NavLinks } from './navbar/NavLinks';
+import { useMobileMenu } from './navbar/useMobileMenu';
+
+const SOLID_AFTER = 24;
+
+// A mouse click leaves focus on the link; only keyboard focus should pin the bar on screen.
+function hasKeyboardFocus(target: EventTarget): boolean {
+  return target instanceof Element && target.matches(':focus-visible');
+}
+
+function LanguageSwitch() {
+  const { language, toggleLanguage, t } = useLanguage();
+
+  return (
+    <Button variant="outline" size="sm" onClick={toggleLanguage} aria-label={t('nav.langAria')}>
+      {language === 'es' ? 'EN' : 'ES'}
+    </Button>
+  );
+}
 
 export function Navbar() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isVisible, setIsVisible] = useState(true);
-  const lastScrollY = useRef(0);
-  
-  const { language, toggleLanguage, t } = useLanguage();
-  const scrollPosition = useScrollPosition();
+  const { t } = useLanguage();
+  const activeId = useActiveSection(sectionIds);
+  const isSolid = useScrollPast(SOLID_AFTER);
+  // With reduced motion the bar stays put instead of sliding away.
+  const allowsMotion = useMediaQuery(motion.media.noReducedMotion);
+  const isScrollingDown = useHideOnScroll(allowsMotion);
+  const [isKeyboardInside, setIsKeyboardInside] = useState(false);
+  const menu = useMobileMenu();
 
-  const isScrolled = scrollPosition > 50;
-  const [activeSection, setActiveSection] = useState<string>('home');
+  const isHidden = isScrollingDown && !isKeyboardInside && !menu.isOpen;
 
-  const navLinks = useMemo(() => [
-    { id: 'home', label: t('nav.home') },
-    { id: 'about', label: t('nav.about') },
-    { id: 'services', label: t('nav.services') },
-    { id: 'projects', label: t('nav.projects') },
-  { id: 'education-skills', label: t('nav.experience') },
-    { id: 'contact', label: t('nav.contact') },
-  ], [t]);
+  const handleFocus = (event: FocusEvent<HTMLElement>) => {
+    setIsKeyboardInside(hasKeyboardFocus(event.target));
+  };
 
-  // Auto-hide navbar al hacer scroll
-  useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-
-      if (currentScrollY < 100) {
-        // Siempre visible en el top
-        setIsVisible(true);
-      } else if (currentScrollY > lastScrollY.current) {
-        // Scrolling hacia abajo - ocultar
-        setIsVisible(false);
-        setIsMenuOpen(false);
-      } else {
-        // Scrolling hacia arriba - mostrar
-        setIsVisible(true);
-        // Cerrar menú móvil también al scroll significativo hacia arriba por UX
-        if (Math.abs(currentScrollY - lastScrollY.current) > 10) {
-          setIsMenuOpen(false);
-        }
-      }
-
-      lastScrollY.current = currentScrollY;
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth >= 768) {
-        setIsMenuOpen(false);
-      }
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  // Track active section based on scroll position
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-
-    const centerPoint = window.scrollY + window.innerHeight / 3;
-    let current = 'home';
-
-    for (const link of navLinks) {
-      const el = document.getElementById(link.id);
-      if (!el) continue;
-      const top = el.offsetTop;
-      if (top <= centerPoint) current = link.id;
-    }
-
-    setActiveSection(current);
-  }, [scrollPosition, navLinks]);
-
-  const handleNavClick = (id: string) => {
-    scrollToElement(id);
-    setIsMenuOpen(false);
+  const handleBlur = (event: FocusEvent<HTMLElement>) => {
+    if (!event.currentTarget.contains(event.relatedTarget)) setIsKeyboardInside(false);
   };
 
   return (
-    <nav
-  className={cn(
-    'fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b border-transparent',
-    // Navbar sólido cuando: 1) se hace scroll O 2) el menú móvil está abierto
-    isScrolled || isMenuOpen
-      ? 'bg-light-bg/95 dark:bg-dark-bg/95 md:bg-light-bg/85 md:dark:bg-dark-bg/85 backdrop-blur-lg shadow-lg border-light-border/40 dark:border-dark-border/40'
-      : 'bg-transparent',
-    isVisible ? 'translate-y-0' : '-translate-y-full'
-  )}
->
-
+    <header
+      onFocus={handleFocus}
+      onBlur={handleBlur}
+      className={cn(
+        'fixed inset-x-0 top-0 z-nav transition-transform duration-fast ease-out',
+        isHidden && '-translate-y-full',
+      )}
+    >
+      <div
+        aria-hidden="true"
+        className={cn(
+          'absolute inset-0 z-below border-b border-line bg-ink transition-opacity duration-fast ease-out',
+          isSolid ? 'opacity-100' : 'opacity-0',
+        )}
+      />
       <Container>
-        <div className="flex items-center justify-between h-16 md:h-20">
-          
-          {/* Logo */}
+        <div className="flex h-16 items-center justify-between gap-4 md:h-20">
           <button
             type="button"
-            onClick={() => handleNavClick('home')}
+            onClick={() => scrollToSection('home')}
             aria-label={t('nav.logoAria')}
-            className="cursor-pointer rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-dark-bg"
+            className="inline-flex min-h-target items-center rounded-control"
           >
             <Logo size="lg" />
           </button>
 
-          {/* Desktop Menu */}
-          <div className="hidden md:flex items-center gap-8">
-            {navLinks.map((link) => (
-              <button
-                key={link.id}
-                onClick={() => handleNavClick(link.id)}
-                className={cn(
-                  'transition-colors font-medium cursor-pointer rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-dark-bg',
-                  activeSection === link.id
-                    ? 'text-primary-500 dark:text-primary-400'
-                    : 'text-light-text dark:text-dark-text hover:text-primary-500 dark:hover:text-primary-400'
-                )}
-                aria-current={activeSection === link.id ? 'page' : undefined}
-              >
-                {link.label}
-              </button>
-            ))}
-          </div>
-
-          {/* Theme & Language Toggles with StarBorder */}
-          <div className="hidden md:flex items-center gap-4">
-            <StarBorder color="#3B82F6" speed="8s" thickness={1}>
-              <AnimatedThemeToggler
-                className="p-2 rounded-lg bg-light-card dark:bg-dark-card hover:bg-primary-500/10 transition-colors"
-                iconSize={20}
-              />
-            </StarBorder>
-
-            <StarBorder color="#6366F1" speed="8s" thickness={1}>
-              <button
-                onClick={toggleLanguage}
-                className="p-2 rounded-lg bg-light-card/80 dark:bg-dark-card/80 hover:bg-primary-500/10 transition-colors font-semibold text-sm flex items-center justify-center min-w-[56px]"
-                aria-label={t('nav.langAria')}
-              >
-                {/* clearer, slightly larger language label */}
-                <span className="inline-block w-8 text-center text-light-text dark:text-white">{language.toUpperCase()}</span>
-              </button>
-            </StarBorder>
-          </div>
-
-          {/* Mobile Menu Button */}
-          <div className="md:hidden">
-            <StarBorder color="#3B82F6" speed="6s" thickness={1}>
-              <button
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="p-2 rounded-lg bg-light-card dark:bg-dark-card"
-                aria-label={t('nav.menuAria')}
-                aria-expanded={isMenuOpen}
-              >
-                <div className="w-6 h-5 flex flex-col justify-between">
-                  <span className={cn('w-full h-0.5 bg-light-text dark:bg-dark-text transition-all', isMenuOpen && 'rotate-45 translate-y-2')} />
-                  <span className={cn('w-full h-0.5 bg-light-text dark:bg-dark-text transition-all', isMenuOpen && 'opacity-0')} />
-                  <span className={cn('w-full h-0.5 bg-light-text dark:bg-dark-text transition-all', isMenuOpen && '-rotate-45 -translate-y-2')} />
-                </div>
-              </button>
-            </StarBorder>
-          </div>
-        </div>
-
-        {/* Mobile Menu */}
-        <div className={cn('md:hidden overflow-hidden transition-all duration-300', isMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0')}>
-          <div className="py-4 space-y-2">
-            {navLinks.map((link) => (
-              <button
-                key={link.id}
-                onClick={() => handleNavClick(link.id)}
-                className={cn(
-                  'block w-full text-left px-4 py-2 rounded-lg transition-colors',
-                  activeSection === link.id
-                    ? 'text-primary-500 dark:text-primary-400'
-                    : 'text-light-text dark:text-dark-text hover:bg-light-card dark:hover:bg-dark-card'
-                )}
-                aria-current={activeSection === link.id ? 'page' : undefined}
-              >
-                {link.label}
-              </button>
-            ))}
-
-            <div className="flex gap-2 px-4 pt-2">
-              <StarBorder color="#3B82F6" speed="8s" thickness={1} className="flex-1">
-                <AnimatedThemeToggler
-                  className="w-full p-2 rounded-lg bg-light-card dark:bg-dark-card hover:bg-primary-500/10 transition-colors flex items-center justify-center gap-2"
-                  iconSize={18}
-                />
-              </StarBorder>
-              
-              <StarBorder color="#6366F1" speed="8s" thickness={1} className="flex-1">
-                <button
-                  onClick={toggleLanguage}
-                  className="w-full p-2 rounded-lg bg-light-card/80 dark:bg-dark-card/80 hover:bg-primary-500/10 transition-colors font-semibold text-sm flex items-center justify-center"
-                  aria-label={t('nav.langAria')}
-                >
-                  <span className="inline-block w-8 text-center text-light-text dark:text-white">{language.toUpperCase()}</span>
-                </button>
-              </StarBorder>
-            </div>
+          <div className="flex items-center gap-2 lg:gap-4">
+            <nav aria-label={t('nav.ariaLabel')} className="hidden lg:block">
+              <NavLinks variant="bar" activeId={activeId} />
+            </nav>
+            <LanguageSwitch />
+            <MobileMenu menu={menu} activeId={activeId} />
           </div>
         </div>
       </Container>
-    </nav>
+    </header>
   );
 }

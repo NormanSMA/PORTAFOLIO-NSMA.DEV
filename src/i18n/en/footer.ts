@@ -1,10 +1,8 @@
 export const footer = {
-  rights: 'All rights reserved',
-  madeWith: 'Made with',
-  by: 'by',
-  branding: 'Information Systems Engineer with experience in academic and freelance projects. I focus on solving problems and building useful solutions.',
-  quickLinks: 'Quick Links',
-  connect: 'Connect With Me',
+  tagline: 'Information Systems Engineer · Web development, databases and cloud',
+  quickLinks: 'Quick links',
+  contactTitle: 'Contact',
   ariaNav: 'Footer navigation',
-  goToTop: 'Go to top',
+  newTab: 'opens in a new tab',
+  rights: 'All rights reserved',
 } as const;
