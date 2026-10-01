@@ -160,6 +160,7 @@ async function captureOne({ browser, id, target, kind, url }) {
     reducedMotion: target.reducedMotion ?? 'no-preference',
     colorScheme: target.colorScheme ?? 'light',
     locale: 'es-NI',
+    bypassCSP: true, // strict CSP on some sites would block the injected overlay-hiding style
   });
   const page = await context.newPage();
   try {
