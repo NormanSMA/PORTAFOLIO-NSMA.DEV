@@ -15,26 +15,47 @@ export interface LanguageContextType {
   t: (key: string) => string;
 }
 
-// Component Props
-export interface ButtonProps {
-  children: React.ReactNode;
-  variant?: 'primary' | 'secondary' | 'outline';
-  size?: 'sm' | 'md' | 'lg';
-  onClick?: () => void;
-  className?: string;
-  disabled?: boolean;
+// Project Types
+export type ProjectId = 'ecopulse' | 'turno' | 'iuris' | 'claudehub' | 'systech' | 'pantano' | 'portfolio';
+
+export type ProjectTier = 'featured' | 'secondary';
+
+export type ProjectStatus = 'production' | 'paused' | 'delivered' | 'active';
+
+export interface ProjectMetric {
+  labelKey: string;
+  value: number;
+  // Only 'percent' needs a suffix; plain counts carry no unit.
+  unit?: 'percent';
+  // ISO date (YYYY-MM-DD) of the measurement.
+  asOf: string;
 }
 
-// Project Types
+// Language-independent data. Copy lives in src/i18n and is resolved by getProjects(t).
 export interface Project {
-  id: string;
-  title: string;
-  description: string;
-  image: string;
+  id: ProjectId;
+  tier: ProjectTier;
+  category: string;
+  year: number;
+  status: ProjectStatus;
   technologies: string[];
-  liveUrl?: string;
-  githubUrl?: string;
-  featured: boolean;
+  links: { live?: string; repo?: string };
+  metrics: ProjectMetric[];
+  hasMobileImage: boolean;
+}
+
+export interface LocalizedProjectMetric extends ProjectMetric {
+  label: string;
+}
+
+export interface LocalizedProject extends Project {
+  title: string;
+  caption: string;
+  description: string;
+  statusLabel: string;
+  altDesktop: string;
+  altMobile?: string;
+  metrics: LocalizedProjectMetric[];
 }
 
 // Skill Types

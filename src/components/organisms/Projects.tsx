@@ -1,231 +1,61 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
-import { useLanguage, useTheme } from '../../hooks';
-import { Container } from '../atoms';
+import { useMemo, useState } from 'react';
+import { useLanguage } from '../../hooks/useLanguage';
+import { Container } from '../atoms/Container';
 import { typography } from '../../config/typography';
-import { ExternalLinkIcon } from '../atoms/icons';
 import { getProjects } from '../../data/projects';
-import { buildSrcSet } from '../../utils/helpers';
+import { cn } from '../../utils/helpers';
+import { MirrorHall, type MirrorHallItem } from './projects/MirrorHall';
+import { ProjectCardFace } from './projects/ProjectCardFace';
+import { ProjectFicha } from './projects/ProjectFicha';
 
 export function Projects() {
   const { t } = useLanguage();
-  const { theme } = useTheme();
-  const [expandedProject, setExpandedProject] = useState<string | null>(null);
-  const [maxLines, setMaxLines] = useState(3);
-  const referenceTextRef = useRef<HTMLParagraphElement>(null);
-  const closeButtonRefs = useRef<Record<string, HTMLButtonElement | null>>({});
-  const toggleButtonRefs = useRef<Record<string, HTMLButtonElement | null>>({});
+  const [activeIndex, setActiveIndex] = useState(0);
 
-  const projects = getProjects(t);
-
-  // Calculate max lines based on reference text (Android card)
-  useEffect(() => {
-    if (referenceTextRef.current) {
-      const lineHeight = parseFloat(getComputedStyle(referenceTextRef.current).lineHeight);
-      const height = referenceTextRef.current.scrollHeight;
-      const lines = Math.floor(height / lineHeight);
-      setMaxLines(lines > 0 ? lines : 3);
-    }
-  }, [t]);
-
-  const toggleExpanded = useCallback((projectId: string) => {
-    setExpandedProject(prev => {
-      if (prev === projectId) {
-        // Closing — return focus to toggle button
-        setTimeout(() => toggleButtonRefs.current[projectId]?.focus(), 50);
-        return null;
-      }
-      // Opening — focus close button after animation
-      setTimeout(() => closeButtonRefs.current[projectId]?.focus(), 350);
-      return projectId;
-    });
-  }, []);
+  // The provider recreates t on each of its renders, which today only happen on a language change.
+  const projects = useMemo(() => getProjects(t), [t]);
+  const items = useMemo<MirrorHallItem[]>(
+    () =>
+      projects.map((project) => ({
+        id: project.id,
+        label: project.statusLabel,
+        title: project.title,
+        caption: project.caption,
+        image: (
+          <ProjectCardFace
+            id={project.id}
+            altDesktop={project.altDesktop}
+            altMobile={project.altMobile}
+            hasMobileImage={project.hasMobileImage}
+          />
+        ),
+      })),
+    [projects],
+  );
 
   return (
-    <section id="projects" aria-labelledby="projects-heading" className="py-16 md:py-24 lg:py-28 bg-light-bg dark:bg-dark-bg relative overflow-hidden">
+    <section id="projects" aria-labelledby="projects-heading" className="relative overflow-x-clip bg-ink py-section">
       <Container>
-        <div className="max-w-7xl mx-auto">
-          {/* Header */}
-          <div className="text-center mb-12 md:mb-16">
-            <h2 id="projects-heading" className={`${typography.h2} text-light-text dark:text-dark-text mb-4`}>
-              {t('projects.title')}
-            </h2>
-            <p className={`${typography.sectionSubtitle} text-light-textSecondary dark:text-dark-textSecondary max-w-3xl mx-auto px-4`}>
-              {t('projects.subtitle')}
-            </p>
-          </div>
-
-          {/* Projects Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-            {projects.map((project) => {
-              const IconComponent = project.icon;
-              const isExpanded = expandedProject === project.id;
-              const isReference = project.id === 'bolsa'; // Android card es la referencia
-              const projectImage =
-                project.imageDark && theme === 'dark' ? project.imageDark : project.image;
-              
-              return (
-                <article
-                  key={project.id}
-                  aria-label={project.title}
-                  className="group relative bg-light-card dark:bg-dark-card rounded-2xl overflow-visible border border-light-border dark:border-dark-border motion-safe:hover:-translate-y-2 transition-all duration-300"
-                >
-                  {/* Main Card */}
-                  <div className="relative">
-                    {/* Image Container */}
-                    <div className="relative h-44 sm:h-48 md:h-44 lg:h-48 overflow-hidden bg-light-card dark:bg-dark-card rounded-t-2xl">
-                      <img
-                        src={projectImage}
-                        srcSet={buildSrcSet(projectImage, [480, 800])}
-                        sizes="(min-width: 1024px) 400px, (min-width: 768px) 50vw, 100vw"
-                        alt={project.title}
-                        loading="lazy"
-                        decoding="async"
-                        className="w-full h-full object-cover motion-safe:group-hover:scale-105 transition-transform duration-500"
-                      />
-                      {/* Category Badge con icono */}
-                      <div className="absolute top-3 left-3 sm:top-4 sm:left-4 bg-primary-600 dark:bg-primary-500 text-white px-3 py-1.5 sm:px-4 rounded-full text-xs sm:text-sm font-semibold flex items-center gap-1.5 sm:gap-2">
-                        <IconComponent className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
-                        <span>{project.category}</span>
-                      </div>
-                    </div>
-
-                    {/* Content */}
-                    <div className="p-5 sm:p-6 space-y-4 bg-light-card dark:bg-dark-card rounded-b-2xl">
-                      {/* Title */}
-                      <h3 className="text-xl sm:text-2xl md:text-xl lg:text-2xl text-light-text dark:text-dark-text font-bold line-clamp-1">
-                        {project.title}
-                      </h3>
-
-                      {/* Description - Reference text (Android) sin line-clamp */}
-                      {isReference ? (
-                        <p
-                          ref={referenceTextRef}
-                          className="text-sm sm:text-base md:text-sm lg:text-base text-light-textSecondary dark:text-dark-textSecondary leading-relaxed"
-                        >
-                          {project.shortDescription}
-                        </p>
-                      ) : (
-                        <p
-                          className="text-sm sm:text-base md:text-sm lg:text-base text-light-textSecondary dark:text-dark-textSecondary leading-relaxed"
-                          style={{
-                            display: '-webkit-box',
-                            WebkitLineClamp: maxLines,
-                            WebkitBoxOrient: 'vertical',
-                            overflow: 'hidden'
-                          }}
-                        >
-                          {project.shortDescription}
-                        </p>
-                      )}
-
-                      {/* Technologies - Centradas */}
-                      <div className="flex flex-wrap gap-2 min-h-[2.5rem]">
-                        {project.technologies.map((tech, techIndex) => (
-                          <span
-                            key={techIndex}
-                            className="inline-flex items-center justify-center px-2.5 py-1 sm:px-3 sm:py-1.5 bg-light-border dark:bg-dark-card text-light-text dark:text-dark-textSecondary rounded-full text-xs sm:text-xs font-medium border border-transparent text-center"
-                          >
-                            {tech}
-                          </span>
-                        ))}
-                      </div>
-
-                      {/* Actions */}
-                      <div className="flex items-center justify-between pt-2">
-                        {project.url ? (
-                          <a
-                            href={project.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1.5 sm:gap-2 text-sm sm:text-base text-primary-600 dark:text-primary-400 hover:text-primary-500 dark:hover:text-primary-300 font-semibold transition-colors group/link"
-                          >
-                            <span>{t('projects.viewProject')}</span>
-                            <ExternalLinkIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4 group-hover/link:translate-x-1 group-hover/link:-translate-y-1 transition-transform" />
-                          </a>
-                        ) : (
-                          <span className="inline-flex items-center gap-2 text-light-textSecondary dark:text-dark-textSecondary font-semibold text-xs sm:text-sm">
-                            {t('projects.mobileApp')}
-                          </span>
-                        )}
-
-                        {/* Ver más button con "..." */}
-                        {project.fullDescription && (
-                          <button
-                            ref={(el) => { toggleButtonRefs.current[project.id] = el; }}
-                            onClick={() => toggleExpanded(project.id)}
-                            className="flex items-center justify-center gap-1 px-3 py-1.5 rounded-full backdrop-blur-lg bg-light-border/50 dark:bg-dark-card/50 hover:bg-primary-600/20 dark:hover:bg-primary-500/20 transition-all duration-300 cursor-pointer group/btn"
-                            aria-label={`${t('projects.viewMore')} - ${project.title}`}
-                          >
-                            <span className="text-xs sm:text-sm text-light-text dark:text-dark-text font-medium">
-                              ...
-                            </span>
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              viewBox="0 0 12 12"
-                              className={`w-3 h-3 sm:w-3.5 sm:h-3.5 text-light-text dark:text-dark-text transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`}
-                            >
-                              <path
-                                d="M4.646 2.146a.5.5 0 0 0 0 .708L7.793 6L4.646 9.146a.5.5 0 1 0 .708.708l3.5-3.5a.5.5 0 0 0 0-.708l-3.5-3.5a.5.5 0 0 0-.708 0z"
-                                fill="currentColor"
-                              />
-                            </svg>
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Expanded Panel */}
-                  {project.fullDescription && (
-                    <div
-                      className={`absolute top-0 right-0 w-full h-full transition-all duration-500 ease-in-out z-10 ${
-                        isExpanded 
-                          ? 'translate-x-0 opacity-100 pointer-events-auto' 
-                          : 'translate-x-full opacity-0 pointer-events-none'
-                      }`}
-                    >
-                      <div className="w-full h-full p-5 sm:p-6 rounded-2xl backdrop-blur-xl bg-light-card/95 dark:bg-dark-card/95 border border-light-border dark:border-dark-border shadow-2xl">
-                        <div className="flex flex-col h-full">
-                          {/* Close button */}
-                          <button
-                            ref={(el) => { closeButtonRefs.current[project.id] = el; }}
-                            onClick={() => setExpandedProject(null)}
-                            className="self-end mb-3 sm:mb-4 w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-full bg-light-border dark:bg-dark-card hover:bg-primary-600/20 dark:hover:bg-primary-500/20 transition-colors flex-shrink-0"
-                            aria-label={`${t('projects.close')} - ${project.title}`}
-                          >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-light-text dark:text-dark-text"
-                            >
-                              <line x1="18" y1="6" x2="6" y2="18" />
-                              <line x1="6" y1="6" x2="18" y2="18" />
-                            </svg>
-                          </button>
-
-                          {/* Full content */}
-                          <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
-                            <h4 className="text-lg sm:text-xl md:text-lg lg:text-xl text-light-text dark:text-dark-text font-bold mb-3 sm:mb-4">
-                              {project.title}
-                            </h4>
-                            <p className="text-sm sm:text-base md:text-sm lg:text-base text-light-textSecondary dark:text-dark-textSecondary leading-relaxed">
-                              {project.fullDescription}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </article>
-              );
-            })}
-          </div>
+        <div className="mx-auto flex max-w-3xl flex-col items-center gap-4 text-center">
+          <h2 id="projects-heading" className={cn(typography.h2, 'text-fg')}>
+            {t('projects.title')}
+          </h2>
+          <p className={cn(typography.bodyLarge, 'text-fg-muted')}>{t('projects.subtitle')}</p>
         </div>
+      </Container>
+
+      <div className="mt-12 md:mt-16">
+        <MirrorHall
+          items={items}
+          ariaLabel={t('projects.ui.ringLabel')}
+          previousLabel={t('projects.ui.previous')}
+          nextLabel={t('projects.ui.next')}
+          onActiveChange={setActiveIndex}
+        />
+      </div>
+
+      <Container className="mt-12 md:mt-16">
+        <ProjectFicha projects={projects} activeIndex={activeIndex} />
       </Container>
     </section>
   );

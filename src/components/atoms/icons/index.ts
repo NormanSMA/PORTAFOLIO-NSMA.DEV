@@ -5,7 +5,6 @@ export { DatabaseIcon } from './DatabaseIcon';
 export { ConsultingIcon } from './ConsultingIcon';
 export { MobileIcon } from './MobileIcon';
 export { ExternalLinkIcon } from './ExternalLinkIcon';
-export { AndroidIcon } from './AndroidIcon';
 export { WordPressIcon } from './WordPressIcon';
 export { ReactIcon } from './ReactIcon';
 export { AstroIcon } from './AstroIcon';
