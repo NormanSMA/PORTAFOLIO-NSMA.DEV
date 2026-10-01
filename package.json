@@ -7,6 +7,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "capture": "node scripts/capture-projects.mjs",
     "images": "node scripts/optimize-images.mjs",
     "lint": "eslint .",
     "preview": "vite preview",
