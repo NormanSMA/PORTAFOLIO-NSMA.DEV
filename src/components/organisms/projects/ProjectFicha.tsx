@@ -13,10 +13,17 @@ interface ProjectFichaProps {
 }
 
 // Every project renders invisibly in the same grid cell, so the cell is as tall as the tallest
-// ficha and the page does not jump when the active project changes.
+// ficha and the page does not jump when the active project changes. On narrow screens the
+// tallest ficha is about twice the average, so the reserve is dropped there: the ficha sits
+// below the ring and the content under it is off screen while the ring moves.
 const HeightReserve = memo(function HeightReserve({ projects }: { projects: LocalizedProject[] }) {
   return projects.map((project) => (
-    <div key={project.id} aria-hidden="true" inert className="pointer-events-none invisible col-start-1 row-start-1">
+    <div
+      key={project.id}
+      aria-hidden="true"
+      inert
+      className="pointer-events-none invisible col-start-1 row-start-1 max-md:hidden"
+    >
       <ProjectDetails project={project} />
     </div>
   ));
