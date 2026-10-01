@@ -1,9 +1,10 @@
 import { typography } from '../../config/typography';
 import { navItems } from '../../data/navigation';
 import { socialLinks, type SocialLink } from '../../data/social';
-import { useLanguage } from '../../hooks';
+import { useLanguage } from '../../hooks/useLanguage';
 import { cn } from '../../utils/helpers';
-import { Container, Logo } from '../atoms';
+import { Container } from '../atoms/Container';
+import { Logo } from '../atoms/Logo';
 import { SectionLink } from '../atoms/SectionLink';
 
 const linkStyles =

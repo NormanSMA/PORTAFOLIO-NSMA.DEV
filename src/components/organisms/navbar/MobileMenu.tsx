@@ -1,8 +1,8 @@
 import { useId } from 'react';
 import { typography } from '../../../config/typography';
-import { useLanguage } from '../../../hooks';
+import { useLanguage } from '../../../hooks/useLanguage';
 import { cn } from '../../../utils/helpers';
-import { Button } from '../../atoms';
+import { Button } from '../../atoms/Button';
 import { NavLinks } from './NavLinks';
 import type { MobileMenuState } from './useMobileMenu';
 

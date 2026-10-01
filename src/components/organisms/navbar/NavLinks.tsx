@@ -1,6 +1,6 @@
 import { typography } from '../../../config/typography';
 import { navItems } from '../../../data/navigation';
-import { useLanguage } from '../../../hooks';
+import { useLanguage } from '../../../hooks/useLanguage';
 import { cn } from '../../../utils/helpers';
 import { SectionLink } from '../../atoms/SectionLink';
 

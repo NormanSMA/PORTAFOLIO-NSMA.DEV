@@ -1,4 +1,4 @@
-import { useLanguage } from '../../hooks';
+import { useLanguage } from '../../hooks/useLanguage';
 import { useScrollPast } from '../../hooks/useScrollPast';
 import { scrollToSection } from '../../lib/scroll';
 import { cn } from '../../utils/helpers';

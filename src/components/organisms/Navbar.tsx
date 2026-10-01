@@ -1,13 +1,16 @@
 import { useState, type FocusEvent } from 'react';
 import { motion } from '../../config/motion';
 import { sectionIds } from '../../data/navigation';
-import { useLanguage, useMediaQuery } from '../../hooks';
+import { useLanguage } from '../../hooks/useLanguage';
+import { useMediaQuery } from '../../hooks/useMediaQuery';
 import { useActiveSection } from '../../hooks/useActiveSection';
 import { useHideOnScroll } from '../../hooks/useHideOnScroll';
 import { useScrollPast } from '../../hooks/useScrollPast';
 import { scrollToSection } from '../../lib/scroll';
 import { cn } from '../../utils/helpers';
-import { Button, Container, Logo } from '../atoms';
+import { Button } from '../atoms/Button';
+import { Container } from '../atoms/Container';
+import { Logo } from '../atoms/Logo';
 import { MobileMenu } from './navbar/MobileMenu';
 import { NavLinks } from './navbar/NavLinks';
 import { useMobileMenu } from './navbar/useMobileMenu';
