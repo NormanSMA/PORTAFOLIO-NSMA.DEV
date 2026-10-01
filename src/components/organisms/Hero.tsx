@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type MouseEvent } from 'react';
+import { useEffect, useRef, useState, type CSSProperties, type MouseEvent } from 'react';
 import { motion } from '../../config/motion';
 import { typography } from '../../config/typography';
 import { useLanguage, useMediaQuery, useMotion } from '../../hooks';
@@ -11,6 +11,7 @@ import { HeroBackground } from '../webgl/HeroBackground';
 
 const NAME = 'Norman Martínez';
 const REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)';
+const TEXT_WIDTH_VARIABLE = { '--hero-text-width': '30rem' } as CSSProperties;
 
 // The letters start hidden inside SplitText's own effect; the heading stays invisible until that effect has run,
 // so the plain text never flashes before the reveal. Child effects run before this one.
@@ -74,14 +75,17 @@ export function Hero() {
   };
 
   return (
+    // The filament sits below the text until lg and beside it from lg up: the bottom padding is the room reserved for it.
+    // HeroPoster reads --hero-text-width to start its stage where the text column ends.
     <section
       id="home"
       aria-labelledby="home-heading"
-      className="relative isolate flex min-h-svh items-start overflow-hidden bg-ink pb-16 pt-28 md:items-center md:pb-20 md:pt-20"
+      style={TEXT_WIDTH_VARIABLE}
+      className="relative isolate flex min-h-svh items-center overflow-hidden bg-ink pb-40 pt-24 md:pb-60 lg:pb-20 lg:pt-20"
     >
       <HeroBackground />
       <Container className="relative">
-        <div ref={contentRef} className="max-w-xl">
+        <div ref={contentRef} className="max-w-[var(--hero-text-width)]">
           <HeroTitle />
           <p data-hero-reveal className={cn(typography.h4, 'mt-6 text-fg')}>
             {t('hero.role')}

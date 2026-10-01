@@ -1,4 +1,4 @@
-import type { Ref } from 'react';
+import type { CSSProperties, Ref } from 'react';
 import { WORLD_HEIGHT, WORLD_WIDTH, curvePath } from '../../lib/webgl/heroCurve';
 
 interface HeroPosterProps {
@@ -9,10 +9,16 @@ interface HeroPosterProps {
 const PATH = curvePath();
 const VIEW_BOX = `${-WORLD_WIDTH / 2} ${-WORLD_HEIGHT / 2} ${WORLD_WIDTH} ${WORLD_HEIGHT}`;
 
-// The glow floor and ramp length repeat MIN_GLOW and RAMP_SHARE from heroStage.ts. The ramp keeps text off the brightest light.
-const STAGE_BELOW_TEXT = 'left-0 top-[56%] h-[44%] w-full [mask-image:linear-gradient(to_bottom,rgb(0_0_0/0.12),black_35%)]';
+// The glow floor and the 30% ramp repeat MIN_GLOW and RAMP_SHARE from heroStage.ts. The ramp keeps text off the brightest light.
+// Below the text the stage has a fixed height and the hero reserves room for it with its bottom padding.
+const STAGE_BELOW_TEXT =
+  'bottom-0 left-0 h-52 w-full md:h-72 [mask-image:linear-gradient(to_bottom,rgb(0_0_0/0.12),black_30%)]';
+// From lg up the stage starts where the text column ends; --hero-text-width is set by Hero.
 const STAGE_BESIDE_TEXT =
-  'md:left-[40%] md:top-0 md:h-full md:w-[60%] md:[mask-image:linear-gradient(to_right,rgb(0_0_0/0.12),black_35%)]';
+  'lg:bottom-auto lg:left-[var(--hero-stage-left)] lg:right-gutter lg:top-0 lg:h-full lg:w-auto lg:[mask-image:linear-gradient(to_right,rgb(0_0_0/0.12),black_30%)]';
+
+const STAGE_LEFT =
+  'calc((100% - min(100%, var(--container-max))) / 2 + var(--gutter) + var(--hero-text-width, 30rem) + 2rem)';
 
 function blur(id: string, deviation: number) {
   return (
@@ -25,7 +31,11 @@ function blur(id: string, deviation: number) {
 // First paint: the same filament as still SVG. It is also the whole hero when WebGL is off.
 export function HeroPoster({ stageRef }: HeroPosterProps) {
   return (
-    <div ref={stageRef} className={`absolute ${STAGE_BELOW_TEXT} ${STAGE_BESIDE_TEXT}`}>
+    <div
+      ref={stageRef}
+      className={`absolute ${STAGE_BELOW_TEXT} ${STAGE_BESIDE_TEXT}`}
+      style={{ '--hero-stage-left': STAGE_LEFT } as CSSProperties}
+    >
       <svg
         viewBox={VIEW_BOX}
         preserveAspectRatio="xMidYMid meet"
@@ -41,9 +51,9 @@ export function HeroPoster({ stageRef }: HeroPosterProps) {
         </defs>
         <g fill="none" strokeLinecap="round" strokeLinejoin="round">
           <path d={PATH} className="stroke-primary-500" strokeWidth="0.55" strokeOpacity="0.2" filter="url(#hero-poster-haze)" />
-          <path d={PATH} className="stroke-primary-500" strokeWidth="0.22" strokeOpacity="0.45" filter="url(#hero-poster-halo)" />
-          <path d={PATH} className="stroke-secondary-400" strokeWidth="0.05" strokeOpacity="0.7" filter="url(#hero-poster-inner)" />
-          <path d={PATH} className="stroke-fg" strokeWidth="0.016" strokeOpacity="0.95" filter="url(#hero-poster-core)" />
+          <path d={PATH} className="stroke-primary-500" strokeWidth="0.22" strokeOpacity="0.4" filter="url(#hero-poster-halo)" />
+          <path d={PATH} className="stroke-secondary-400" strokeWidth="0.04" strokeOpacity="0.5" filter="url(#hero-poster-inner)" />
+          <path d={PATH} className="stroke-fg" strokeWidth="0.014" strokeOpacity="0.9" filter="url(#hero-poster-core)" />
         </g>
       </svg>
     </div>

@@ -20,7 +20,7 @@ export interface Stage {
 
 // Glow floor and ramp length. The poster mask in HeroPoster repeats these two numbers.
 export const MIN_GLOW = 0.12;
-export const RAMP_SHARE = 0.35;
+export const RAMP_SHARE = 0.3;
 
 const BESIDE_TEXT_MAX_SHARE = 0.9;
 
