@@ -135,9 +135,6 @@
   /* The only glow in the system: primary CTA. */
   --glow-primary: 0 0 20px rgb(var(--color-primary-500) / 0.5);
 
-  /* Hero aura and StarBorder only: never on text or cards. */
-  --gradient-brand: linear-gradient(135deg, rgb(var(--color-primary-500)) 0%, rgb(var(--color-secondary-500)) 100%);
-
   --focus-ring-color: var(--color-primary-400);
   --focus-ring-width: 2px;
   --focus-ring-offset: 2px;

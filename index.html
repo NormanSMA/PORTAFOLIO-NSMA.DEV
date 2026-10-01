@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="es" class="dark">
+<html lang="es">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/png" href="/favicon.png" />
@@ -29,12 +29,19 @@
     <meta name="twitter:description" content="Aplicaciones web con TypeScript, React y Next.js, bases de datos y despliegue en la nube." />
     <meta name="twitter:image" content="https://portafolio-nsma-dev.vercel.app/og-image.webp" />
 
-    <!-- Sora pinta el titulo del hero; DM Sans carga con swap sin precarga. Vite reescribe esta ruta al archivo con hash del CSS. -->
+    <!-- Sora pinta el titulo del hero y DM Sans el resumen, que es el LCP. Vite reescribe estas rutas al archivo con hash del CSS. -->
     <link
       rel="preload"
       as="font"
       type="font/woff2"
       href="/node_modules/@fontsource-variable/sora/files/sora-latin-wght-normal.woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      as="font"
+      type="font/woff2"
+      href="/node_modules/@fontsource-variable/dm-sans/files/dm-sans-latin-wght-normal.woff2"
       crossorigin
     />
 

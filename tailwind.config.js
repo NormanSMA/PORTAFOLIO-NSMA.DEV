@@ -13,8 +13,6 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
-  // Legacy: removed with the light theme.
-  darkMode: 'class',
   theme: {
     extend: {
       colors: {
@@ -38,34 +36,6 @@ export default {
         success: token('success'),
         danger: token('danger'),
         focus: 'rgb(var(--focus-ring-color) / <alpha-value>)',
-        // heredado, se elimina al final: sections not yet rewritten still use these keys.
-        accent: {
-          DEFAULT: '#F59E0B',
-          50: '#FFFBEB',
-          100: '#FEF3C7',
-          200: '#FDE68A',
-          300: '#FCD34D',
-          400: '#FBBF24',
-          500: '#F59E0B',
-          600: '#D97706',
-          700: '#B45309',
-          800: '#92400E',
-          900: '#78350F',
-        },
-        dark: {
-          bg: '#0A0A0F',
-          card: '#1A1A24',
-          border: '#2A2A34',
-          text: '#FFFFFF',
-          textSecondary: '#B4B4B8',
-        },
-        light: {
-          bg: '#FFFFFF',
-          card: '#F9FAFB',
-          border: '#E5E7EB',
-          text: '#1F2937',
-          textSecondary: '#6B7280',
-        },
       },
       // sans stays as an alias of body because Preflight reads it for <html>.
       fontFamily: {
@@ -112,53 +82,6 @@ export default {
         expo: 'var(--ease-expo)',
         'in-out': 'var(--ease-in-out)',
         in: 'var(--ease-in)',
-      },
-      // Hero aura and StarBorder only; never on text or cards.
-      backgroundImage: {
-        brand: 'var(--gradient-brand)',
-      },
-      // Legacy animations: StarBorder keeps star-movement-*; the rest go with the old sections.
-      animation: {
-        'fade-in': 'fadeIn 0.6s ease-in-out',
-        'fadeIn': 'fadeIn 0.4s ease-in-out',
-        'slide-up': 'slideUp 0.5s ease-out',
-        'slide-down': 'slideDown 0.5s ease-out',
-        'slide-left': 'slideLeft 0.5s ease-out',
-        'slide-right': 'slideRight 0.5s ease-out',
-        'bounce-slow': 'bounce 3s infinite',
-        'pulse-slow': 'pulse 3s infinite',
-        'star-movement-bottom': 'star-movement-bottom linear infinite alternate',
-        'star-movement-top': 'star-movement-top linear infinite alternate',
-      },
-      keyframes: {
-        fadeIn: {
-          '0%': { opacity: '0', transform: 'translateY(20px)' },
-          '100%': { opacity: '1', transform: 'translateY(0)' },
-        },
-        slideUp: {
-          '0%': { transform: 'translateY(20px)', opacity: '0' },
-          '100%': { transform: 'translateY(0)', opacity: '1' },
-        },
-        slideDown: {
-          '0%': { transform: 'translateY(-20px)', opacity: '0' },
-          '100%': { transform: 'translateY(0)', opacity: '1' },
-        },
-        slideLeft: {
-          '0%': { transform: 'translateX(20px)', opacity: '0' },
-          '100%': { transform: 'translateX(0)', opacity: '1' },
-        },
-        slideRight: {
-          '0%': { transform: 'translateX(-20px)', opacity: '0' },
-          '100%': { transform: 'translateX(0)', opacity: '1' },
-        },
-        'star-movement-bottom': {
-          '0%': { transform: 'translate(0%, 0%)', opacity: '1' },
-          '100%': { transform: 'translate(-100%, 0%)', opacity: '0' },
-        },
-        'star-movement-top': {
-          '0%': { transform: 'translate(0%, 0%)', opacity: '1' },
-          '100%': { transform: 'translate(100%, 0%)', opacity: '0' },
-        },
       },
       boxShadow: {
         card: 'var(--shadow-card)',
