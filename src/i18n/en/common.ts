@@ -4,4 +4,5 @@ export const common = {
   retry: 'Retry',
   close: 'Close',
   skipToContent: 'Skip to content',
+  backToTop: 'Back to top',
 } as const;
