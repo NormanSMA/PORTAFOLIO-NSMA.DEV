@@ -1,100 +1,90 @@
+import { typography } from '../../config/typography';
+import { navItems } from '../../data/navigation';
+import { socialLinks, type SocialLink } from '../../data/social';
 import { useLanguage } from '../../hooks';
+import { cn } from '../../utils/helpers';
 import { Container, Logo } from '../atoms';
-import { socialLinks } from '../../data/social';
+import { SectionLink } from '../atoms/SectionLink';
+
+const linkStyles =
+  'inline-flex min-h-target items-center gap-3 rounded-control text-fg-muted pointer-fine:hover:text-fg pointer-fine:hover:underline underline-offset-4';
+
+function SocialIcon({ iconPath, stroke }: Pick<SocialLink, 'iconPath' | 'stroke'>) {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 24 24"
+      className="h-5 w-5 shrink-0"
+      fill={stroke ? 'none' : 'currentColor'}
+      stroke={stroke ? 'currentColor' : 'none'}
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d={iconPath} />
+    </svg>
+  );
+}
 
 export function Footer() {
   const { t } = useLanguage();
   const currentYear = new Date().getFullYear();
 
-  const footerLinks = [
-    { label: t('nav.home'), id: 'home' },
-    { label: t('nav.about'), id: 'about' },
-    { label: t('nav.projects'), id: 'projects' },
-    { label: t('nav.experience'), id: 'education-skills' },
-    { label: t('nav.contact'), id: 'contact' },
-  ];
-
   return (
-    <footer className="bg-light-card dark:bg-dark-card border-t border-light-border dark:border-dark-border">
-      <Container>
-        <div className="py-12 md:py-16">
-          {/* Top Section */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 mb-8">
-            
-            {/* Branding con Logo */}
-            <div className="space-y-4 px-4">
-              {/* Logo Component - link to top for semantics */}
-              <div className="mb-4">
-                <a href="#home" aria-label={t('footer.goToTop')} onClick={(e) => { e.preventDefault(); const el = document.getElementById('home'); el?.scrollIntoView({ behavior: 'smooth' }); }}>
-                  <Logo size="lg" />
-                </a>
-              </div>
-              
-              <p className="text-light-textSecondary dark:text-dark-textSecondary">
-                {t('footer.branding')}
-              </p>
-            </div>
+    <footer className="border-t border-line bg-ink">
+      <Container className="py-12 md:py-16">
+        <div className="grid gap-12 md:grid-cols-[1.5fr_1fr_1fr] md:gap-8">
+          <div className="space-y-4">
+            <SectionLink
+              sectionId="home"
+              aria-label={t('nav.logoAria')}
+              className="inline-flex min-h-target items-center rounded-control"
+            >
+              <Logo size="lg" />
+            </SectionLink>
+            <p className={cn(typography.bodySmall, 'max-w-xs text-fg-muted')}>{t('footer.tagline')}</p>
+          </div>
 
-            {/* Quick Links */}
-            <nav aria-label={t('footer.ariaNav')} className="space-y-4 px-4">
-              <h4 className="text-lg font-semibold text-light-text dark:text-dark-text">
-                {t('footer.quickLinks')}
-              </h4>
-              <ul className="space-y-2">
-                {footerLinks.map((link) => (
-                  <li key={link.id}>
+          <nav aria-label={t('footer.ariaNav')}>
+            <h2 className={cn(typography.h5, 'mb-2 text-fg')}>{t('footer.quickLinks')}</h2>
+            <ul>
+              {navItems.map(({ id, labelKey }) => (
+                <li key={id}>
+                  <SectionLink sectionId={id} className={cn(typography.bodySmall, linkStyles)}>
+                    {t(labelKey)}
+                  </SectionLink>
+                </li>
+              ))}
+            </ul>
+          </nav>
+
+          <div>
+            <h2 className={cn(typography.h5, 'mb-2 text-fg')}>{t('footer.contactTitle')}</h2>
+            <ul>
+              {socialLinks.map((social) => {
+                const isExternal = social.url.startsWith('http');
+                return (
+                  <li key={social.name}>
                     <a
-                      href={`#${link.id}`}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        const el = document.getElementById(link.id);
-                        el?.scrollIntoView({ behavior: 'smooth' });
-                      }}
-                      className="text-light-textSecondary dark:text-dark-textSecondary hover:text-primary-500 dark:hover:text-primary-400 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 rounded-sm px-1"
+                      href={social.url}
+                      target={isExternal ? '_blank' : undefined}
+                      rel={isExternal ? 'noopener noreferrer' : undefined}
+                      className={cn(typography.bodySmall, linkStyles)}
                     >
-                      {link.label}
+                      <SocialIcon iconPath={social.iconPath} stroke={social.stroke} />
+                      <span>{social.label}</span>
+                      {isExternal && <span className="sr-only">({t('footer.newTab')})</span>}
                     </a>
                   </li>
-                ))}
-              </ul>
-            </nav>
-
-            {/* Social Links */}
-            <div className="space-y-4 px-4">
-              <h4 className="text-lg font-semibold text-light-text dark:text-dark-text">
-                {t('footer.connect')}
-              </h4>
-              <div className="flex gap-4">
-                {socialLinks.map((social) => (
-                  <a
-                    key={social.name}
-                    href={social.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="p-3 rounded-lg bg-light-bg dark:bg-dark-bg text-light-text dark:text-dark-text hover:text-primary-500 dark:hover:text-primary-400 hover:bg-primary-500/10 transition-all transform motion-safe:hover:scale-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
-                    aria-label={`${t('footer.connect')} - ${social.name}`}
-                  >
-                    <svg className="w-6 h-6" fill={social.stroke ? "none" : "currentColor"} stroke={social.stroke ? "currentColor" : "none"} viewBox="0 0 24 24">
-                      {social.stroke ? (
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={social.iconPath} />
-                      ) : (
-                        <path d={social.iconPath} />
-                      )}
-                    </svg>
-                  </a>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          <div className="pt-8 border-t border-light-border dark:border-dark-border">
-            <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-light-textSecondary dark:text-dark-textSecondary">
-              <p>
-                © {currentYear} Norman Martínez. {t('footer.rights')}.
-              </p>
-            </div>
+                );
+              })}
+            </ul>
           </div>
         </div>
+
+        <p className={cn(typography.caption, 'mt-12 border-t border-line pt-8 text-fg-muted')}>
+          © {currentYear} Norman Martínez. {t('footer.rights')}.
+        </p>
       </Container>
     </footer>
   );

@@ -1,75 +1,30 @@
-import { useState, useEffect } from 'react';
 import { useLanguage } from '../../hooks';
+import { useScrollPast } from '../../hooks/useScrollPast';
+import { scrollToSection } from '../../lib/scroll';
 import { cn } from '../../utils/helpers';
 
+const SHOW_AFTER = 600;
+
 export function ScrollToTop() {
-  const [isVisible, setIsVisible] = useState(false);
-  const { language } = useLanguage();
-
-  useEffect(() => {
-    const toggleVisibility = () => {
-      const scrolled = window.scrollY;
-      setIsVisible(scrolled > 500);
-    };
-
-    window.addEventListener('scroll', toggleVisibility);
-    return () => window.removeEventListener('scroll', toggleVisibility);
-  }, []);
-
-  const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth',
-    });
-  };
-
-  const tooltipText = language === 'es' ? 'Ir arriba' : 'Go to top';
+  const { t } = useLanguage();
+  const isVisible = useScrollPast(SHOW_AFTER);
 
   return (
-    <div
+    <button
+      type="button"
+      onClick={() => scrollToSection('home')}
+      aria-label={t('common.backToTop')}
+      // inert keeps the hidden button out of the tab order and the accessibility tree.
+      inert={!isVisible}
       className={cn(
-        'fixed bottom-6 right-6 md:bottom-8 md:right-8 z-40 transition-all duration-500 ease-out',
-        isVisible
-          ? 'opacity-100 translate-y-0 scale-100'
-          : 'opacity-0 translate-y-20 scale-75 pointer-events-none'
+        'fixed bottom-6 right-gutter z-nav inline-flex h-12 w-12 items-center justify-center rounded-pill border border-line-control bg-surface text-fg shadow-card',
+        'transition-[opacity,transform] duration-fast ease-out motion-reduce:transition-none pointer-fine:hover:bg-surface-raised',
+        isVisible ? 'translate-y-0 opacity-100' : 'pointer-events-none translate-y-4 opacity-0',
       )}
     >
-      <div className="relative">
-        <button
-          onClick={scrollToTop}
-          className={cn(
-            'relative w-14 h-14 flex items-center justify-center text-white shadow-md transition-all duration-300',
-            'bg-transparent hover:-translate-y-1 hover:shadow-lg active:translate-y-0 active:scale-95',
-            'focus:outline-none focus:ring-4 focus:ring-primary-400/40'
-          )}
-          aria-label={tooltipText}
-          style={{ filter: 'drop-shadow(0 8px 18px rgba(79, 70, 229, 0.18))' }}
-        >
-          <svg
-            className="w-14 h-14"
-            viewBox="0 0 64 64"
-            fill="none"
-            aria-hidden
-          >
-            <defs>
-              <linearGradient id="scroll-top-triangle" x1="16" y1="6" x2="48" y2="56" gradientUnits="userSpaceOnUse">
-                <stop offset="0%" stopColor="rgb(79,70,229)" />
-                <stop offset="100%" stopColor="rgb(99,102,241)" />
-              </linearGradient>
-            </defs>
-            <path
-              d="M32 8L56 52H8L32 8Z"
-              fill="url(#scroll-top-triangle)"
-              stroke="rgba(255,255,255,0.18)"
-              strokeWidth="1.25"
-              strokeLinejoin="round"
-              vectorEffect="non-scaling-stroke"
-            />
-          </svg>
-        </button>
-      </div>
-    </div>
+      <svg aria-hidden="true" viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 19V5M5 12l7-7 7 7" />
+      </svg>
+    </button>
   );
 }
-
-// static minimal button — no extra injected styles
