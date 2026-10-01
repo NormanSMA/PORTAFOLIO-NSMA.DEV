@@ -4,6 +4,9 @@ import { readHeroEnvironment, shouldEnableWebGL } from '../../lib/webgl/heroGate
 import type { HeroScene } from '../../lib/webgl/heroScene';
 import { HeroPoster } from './HeroPoster';
 
+// Creating the GPU context and linking the shader is one 60 ms task on desktop and several times that on a phone.
+// Waiting out the entrance animation and the load work keeps that task from landing on top of them.
+const SETTLE_MS = 3000;
 // Upper bound so a busy main thread cannot hold the canvas back for good.
 const IDLE_TIMEOUT_MS = 1500;
 const FALLBACK_DELAY_MS = 300;
@@ -16,6 +19,17 @@ function whenIdle(task: () => void): () => void {
   }
   const id = window.setTimeout(task, FALLBACK_DELAY_MS);
   return () => window.clearTimeout(id);
+}
+
+function whenSettled(task: () => void): () => void {
+  let cancelIdle = () => {};
+  const settle = window.setTimeout(() => {
+    cancelIdle = whenIdle(task);
+  }, SETTLE_MS);
+  return () => {
+    window.clearTimeout(settle);
+    cancelIdle();
+  };
 }
 
 // The poster paints with the page; the canvas is created later, only where WebGL pays off, and fades in over it.
@@ -32,7 +46,7 @@ export function HeroBackground() {
     let cancelled = false;
     let scene: HeroScene | null = null;
 
-    const cancelIdle = whenIdle(() => {
+    const cancelScheduled = whenSettled(() => {
       import('../../lib/webgl/heroScene')
         .then(({ mountHeroScene }) => {
           if (!cancelled) scene = mountHeroScene({ host, stage });
@@ -44,7 +58,7 @@ export function HeroBackground() {
 
     return () => {
       cancelled = true;
-      cancelIdle();
+      cancelScheduled();
       scene?.dispose();
     };
   }, [reducedMotion]);

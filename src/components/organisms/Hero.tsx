@@ -56,13 +56,14 @@ export function Hero() {
   const { t } = useLanguage();
   const contentRef = useRef<HTMLDivElement>(null);
 
-  // Everything but the name comes in after the first letters, so the type leads.
+  // The name leads and the lines around it follow two beats later. The summary is the largest text block, so it is
+  // the LCP element: it stays out of the reveal and paints with the page instead of waiting for a fade.
   useMotion(contentRef, ({ noReducedMotion }) => {
     if (!noReducedMotion) return;
     gsap.from('[data-hero-reveal]', {
       y: motion.offset.reveal,
       opacity: 0,
-      delay: motion.duration.base,
+      delay: motion.stagger.base * 2,
       duration: motion.duration.base,
       ease: motion.ease.out.gsap,
       stagger: motion.stagger.base,
@@ -90,7 +91,7 @@ export function Hero() {
           <p data-hero-reveal className={cn(typography.h4, 'mt-6 text-fg')}>
             {t('hero.role')}
           </p>
-          <p data-hero-reveal className={cn(typography.bodyLarge, 'mt-6 text-fg-muted')}>
+          <p className={cn(typography.bodyLarge, 'mt-6 text-fg-muted')}>
             {t('hero.summary')}
           </p>
           <p data-hero-reveal className={cn(typography.body, 'mt-4 font-medium text-fg')}>
