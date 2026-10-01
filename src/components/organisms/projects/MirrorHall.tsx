@@ -11,6 +11,8 @@ export interface MirrorHallItem {
 export interface MirrorHallProps {
   items: MirrorHallItem[];
   ariaLabel: string;
+  previousLabel: string;
+  nextLabel: string;
   onActiveChange: (index: number) => void;
 }
 
