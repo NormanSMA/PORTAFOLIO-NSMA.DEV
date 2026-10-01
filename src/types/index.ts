@@ -34,6 +34,8 @@ export interface Project {
   links: { live?: string; repo?: string };
   metrics: ProjectMetric[];
   hasMobileImage: boolean;
+  // CSS object-position that frames the desktop capture inside a portrait card.
+  imagePosition: string;
 }
 
 export interface LocalizedProjectMetric extends ProjectMetric {

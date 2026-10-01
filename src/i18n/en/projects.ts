@@ -72,6 +72,7 @@ export const projects = {
     code: 'View code',
     newTab: '(opens in a new tab)',
     ringLabel: 'Project carousel',
+    cardOf: 'of',
     previous: 'Previous project',
     next: 'Next project',
     detailsTitle: 'Project details',

@@ -26,6 +26,7 @@ export const projectDefinitions: readonly Project[] = [
     },
     metrics: [{ labelKey: 'projects.metrics.tests', value: 132, asOf: '2026-10-01' }],
     hasMobileImage: true,
+    imagePosition: '57% 0%',
   },
   {
     id: 'turno',
@@ -58,6 +59,7 @@ export const projectDefinitions: readonly Project[] = [
       { labelKey: 'projects.metrics.lighthousePerformance', value: 100, asOf: '2026-08-31' },
     ],
     hasMobileImage: true,
+    imagePosition: '0% 0%',
   },
   {
     id: 'iuris',
@@ -69,6 +71,7 @@ export const projectDefinitions: readonly Project[] = [
     links: { live: 'https://iurisnicaragua.com/' },
     metrics: [],
     hasMobileImage: true,
+    imagePosition: '0% 0%',
   },
   {
     id: 'claudehub',
@@ -80,6 +83,7 @@ export const projectDefinitions: readonly Project[] = [
     links: { repo: 'https://github.com/NormanSMA/ClaudeHub' },
     metrics: [{ labelKey: 'projects.metrics.tests', value: 27, asOf: '2026-09-30' }],
     hasMobileImage: false,
+    imagePosition: '50% 0%',
   },
   {
     id: 'systech',
@@ -91,6 +95,7 @@ export const projectDefinitions: readonly Project[] = [
     links: { live: 'https://systech.uam.edu.ni/' },
     metrics: [],
     hasMobileImage: false,
+    imagePosition: '0% 0%',
   },
   {
     id: 'pantano',
@@ -102,6 +107,7 @@ export const projectDefinitions: readonly Project[] = [
     links: { live: 'https://hotel-el-pantano.vercel.app/' },
     metrics: [],
     hasMobileImage: true,
+    imagePosition: '0% 0%',
   },
   {
     id: 'portfolio',
@@ -114,6 +120,7 @@ export const projectDefinitions: readonly Project[] = [
     links: { live: 'https://portafolio-nsma-dev.vercel.app/' },
     metrics: [],
     hasMobileImage: false,
+    imagePosition: '0% 0%',
   },
 ];
 

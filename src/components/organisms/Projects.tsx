@@ -27,6 +27,7 @@ export function Projects() {
             altDesktop={project.altDesktop}
             altMobile={project.altMobile}
             hasMobileImage={project.hasMobileImage}
+            imagePosition={project.imagePosition}
           />
         ),
       })),
@@ -50,6 +51,7 @@ export function Projects() {
           ariaLabel={t('projects.ui.ringLabel')}
           previousLabel={t('projects.ui.previous')}
           nextLabel={t('projects.ui.next')}
+          getCardLabel={(position, total, title) => `${position} ${t('projects.ui.cardOf')} ${total}: ${title}`}
           onActiveChange={setActiveIndex}
         />
       </div>

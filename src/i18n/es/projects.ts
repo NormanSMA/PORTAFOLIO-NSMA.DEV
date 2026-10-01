@@ -72,6 +72,7 @@ export const projects = {
     code: 'Ver código',
     newTab: '(abre en una pestaña nueva)',
     ringLabel: 'Carrusel de proyectos',
+    cardOf: 'de',
     previous: 'Proyecto anterior',
     next: 'Proyecto siguiente',
     detailsTitle: 'Ficha del proyecto',

@@ -2,10 +2,13 @@ import { useState } from 'react';
 import { ProjectImage } from '../../atoms/ProjectImage';
 import type { LocalizedProject } from '../../../types';
 
-type ProjectCardFaceProps = Pick<LocalizedProject, 'id' | 'altDesktop' | 'altMobile' | 'hasMobileImage'>;
+type ProjectCardFaceProps = Pick<
+  LocalizedProject,
+  'id' | 'altDesktop' | 'altMobile' | 'hasMobileImage' | 'imagePosition'
+>;
 
 // A missing image hides itself so the card keeps its surface fill instead of showing a broken-image icon.
-export function ProjectCardFace({ id, altDesktop, altMobile, hasMobileImage }: ProjectCardFaceProps) {
+export function ProjectCardFace({ id, altDesktop, altMobile, hasMobileImage, imagePosition }: ProjectCardFaceProps) {
   const [desktopFailed, setDesktopFailed] = useState(false);
   const [mobileFailed, setMobileFailed] = useState(false);
   const showMobile = hasMobileImage && altMobile && !mobileFailed;
@@ -22,7 +25,8 @@ export function ProjectCardFace({ id, altDesktop, altMobile, hasMobileImage }: P
             kind="desktop"
             alt={altDesktop}
             sizes="(min-width: 768px) 720px, 560px"
-            className="h-full w-full object-cover object-left-top"
+            className="h-full w-full object-cover"
+            style={{ objectPosition: imagePosition }}
           />
         </div>
       )}

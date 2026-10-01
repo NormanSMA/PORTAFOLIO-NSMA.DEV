@@ -1,3 +1,5 @@
+import type { CSSProperties } from 'react';
+
 type ProjectImageKind = 'desktop' | 'mobile';
 
 interface ProjectImageProps {
@@ -7,6 +9,7 @@ interface ProjectImageProps {
   sizes: string;
   priority?: boolean;
   className?: string;
+  style?: CSSProperties;
 }
 
 // Widths and intrinsic size must match scripts/capture-projects.mjs; the intrinsic size reserves space and avoids layout shift.
@@ -15,7 +18,7 @@ const projectImageSpecs = {
   mobile: { widths: [240, 360, 480, 720], width: 720, height: 1558 },
 } as const;
 
-export function ProjectImage({ projectId, kind, alt, sizes, priority = false, className }: ProjectImageProps) {
+export function ProjectImage({ projectId, kind, alt, sizes, priority = false, className, style }: ProjectImageProps) {
   const { widths, width, height } = projectImageSpecs[kind];
   const basePath = `/projects/${projectId}/${kind}`;
   const buildSrcSet = (format: 'avif' | 'webp') =>
@@ -35,6 +38,7 @@ export function ProjectImage({ projectId, kind, alt, sizes, priority = false, cl
         fetchPriority={priority ? 'high' : undefined}
         decoding="async"
         className={className}
+        style={style}
       />
     </picture>
   );
