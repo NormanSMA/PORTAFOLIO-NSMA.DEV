@@ -1,9 +1,9 @@
 export const hero = {
-  tag: 'Soluciones digitales claras',
-  greeting: 'Diseño soluciones digitales claras',
-  description: 'Soy ingeniero en Sistemas con experiencia en proyectos académicos y trabajos freelance. Me enfoco en resolver problemas, construir soluciones funcionales y seguir aprendiendo en cada entrega.',
+  role: 'Ingeniero en Sistemas · Desarrollo web, bases de datos y cloud',
+  summary:
+    'Estudio quinto año de Ingeniería en Sistemas de Información en la UAM. Construyo aplicaciones web con TypeScript, React y Next.js, diseño bases de datos y despliego en la nube.',
+  availability: 'Busco pasantía o empleo · Managua o remoto',
   cta: {
-    projects: 'Ver Proyectos',
-    contact: 'Contáctame',
+    projects: 'Ver proyectos',
   },
 } as const;

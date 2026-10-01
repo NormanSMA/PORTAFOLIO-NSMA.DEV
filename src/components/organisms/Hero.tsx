@@ -1,114 +1,112 @@
-import { useLanguage } from '../../hooks';
-import { Container, Button, StarBorder } from '../atoms';
-import SplitText from '../atoms/SplitText';
+import { useEffect, useRef, useState, type CSSProperties, type MouseEvent } from 'react';
+import { motion } from '../../config/motion';
 import { typography } from '../../config/typography';
+import { useLanguage, useMediaQuery, useMotion } from '../../hooks';
+import { gsap } from '../../lib/gsap';
+import { scrollToSection } from '../../lib/scroll';
+import { cn } from '../../utils/helpers';
+import { Container } from '../atoms';
+import SplitText from '../atoms/SplitText';
+import { HeroBackground } from '../webgl/HeroBackground';
+
+const NAME = 'Norman Martínez';
+const REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)';
+const TEXT_WIDTH_VARIABLE = { '--hero-text-width': '30rem' } as CSSProperties;
+
+// The letters start hidden inside SplitText's own effect; the heading stays invisible until that effect has run,
+// so the plain text never flashes before the reveal. Child effects run before this one.
+function HeroTitle() {
+  const reducedMotion = useMediaQuery(REDUCED_MOTION_QUERY);
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    setReady(true);
+  }, []);
+
+  if (reducedMotion) {
+    return (
+      <h1 id="home-heading" className={cn(typography.display, 'text-fg')}>
+        {NAME}
+      </h1>
+    );
+  }
+
+  // SplitText turns every letter into its own span, so the label keeps screen readers on the whole name.
+  return (
+    <h1 id="home-heading" aria-label={NAME} className={cn(typography.display, 'text-fg', !ready && 'invisible')}>
+      <span aria-hidden="true" className="block">
+        <SplitText
+          tag="span"
+          text={NAME}
+          splitType="words"
+          delay={motion.stagger.tight * 1000}
+          duration={motion.duration.slow}
+          ease={motion.ease.expo.gsap}
+          from={{ opacity: 0, y: motion.offset.hero }}
+          to={{ opacity: 1, y: 0 }}
+          textAlign="left"
+          animateOn="mount"
+        />
+      </span>
+    </h1>
+  );
+}
 
 export function Hero() {
   const { t } = useLanguage();
+  const contentRef = useRef<HTMLDivElement>(null);
 
-  const scrollToSection = (id: string) => {
-    const element = document.getElementById(id);
-    element?.scrollIntoView({ behavior: 'smooth' });
+  // The name leads and the lines around it follow two beats later. The summary is the largest text block, so it is
+  // the LCP element: it stays out of the reveal and paints with the page instead of waiting for a fade.
+  useMotion(contentRef, ({ noReducedMotion }) => {
+    if (!noReducedMotion) return;
+    gsap.from('[data-hero-reveal]', {
+      y: motion.offset.reveal,
+      opacity: 0,
+      delay: motion.stagger.base * 2,
+      duration: motion.duration.base,
+      ease: motion.ease.out.gsap,
+      stagger: motion.stagger.base,
+    });
+  });
+
+  const handleProjectsClick = (event: MouseEvent<HTMLAnchorElement>) => {
+    event.preventDefault();
+    scrollToSection('projects');
   };
 
   return (
+    // The filament sits below the text until lg and beside it from lg up: the bottom padding is the room reserved for it.
+    // HeroPoster reads --hero-text-width to start its stage where the text column ends.
     <section
       id="home"
-      className="relative min-h-screen flex items-center overflow-hidden bg-light-bg dark:bg-dark-bg pt-20 md:pt-24"
+      aria-labelledby="home-heading"
+      style={TEXT_WIDTH_VARIABLE}
+      className="relative isolate flex min-h-svh items-center overflow-hidden bg-ink pb-40 pt-24 md:pb-60 lg:pb-20 lg:pt-20"
     >
-      <Container>
-        <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-12 lg:gap-16 xl:gap-20 items-center py-8 sm:py-12 md:py-16 lg:py-20">
-          
-          {/* Foto — Primero en móvil, segundo en desktop */}
-          <div className="relative motion-safe:animate-slide-left order-first md:order-last">
-            {/* Círculo decorativo de fondo */}
-            <div className="absolute inset-0 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-full blur-3xl opacity-20 motion-safe:animate-pulse-slow"></div>
-            
-            {/* Contenedor de la imagen */}
-            <div className="relative z-10">
-              <div className="relative w-full max-w-[280px] sm:max-w-xs md:max-w-sm lg:max-w-md mx-auto">
-                {/* Borde animado (aro de luz) */}
-                <div className="absolute inset-0 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-2xl md:rounded-3xl blur-xl opacity-50"></div>
-                
-                {/* Imagen */}
-                <div className="relative bg-light-card dark:bg-dark-card rounded-2xl md:rounded-3xl p-1.5 md:p-2 shadow-2xl">
-                  <img
-                    src="/norman_sf-800w.webp"
-                    srcSet="/norman_sf-480w.webp 480w, /norman_sf-800w.webp 800w, /norman_sf-1200w.webp 1200w"
-                    sizes="(min-width: 1024px) 448px, (min-width: 640px) 320px, 280px"
-                    alt="Norman Martínez — Ingeniero en Sistemas y Desarrollador Web"
-                    width={1600}
-                    height={2000}
-                    loading="eager"
-                    fetchPriority="high"
-                    decoding="async"
-                    className="w-full h-auto rounded-xl md:rounded-2xl aspect-[4/5] object-cover"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Contenido — Segundo en móvil, primero en desktop */}
-          <div className="space-y-5 md:space-y-6 lg:space-y-8 motion-safe:animate-slide-right order-last md:order-first text-center md:text-left">
-            {/* Tag + Nombre */}
-            <div className="space-y-3 md:space-y-4">
-              <SplitText
-                tag="p"
-                text={t('hero.tag')}
-                className={`${typography.tag} text-primary-600 dark:text-primary-400`}
-                delay={40}
-                duration={0.6}
-                splitType="chars"
-                from={{ opacity: 0, y: 24 }}
-                to={{ opacity: 1, y: 0 }}
-                textAlign="left"
-                animateOn="mount"
-              />
-              <SplitText
-                tag="h1"
-                text="Norman Martínez"
-                className={`${typography.sectionTitle} text-light-text dark:text-dark-text`}
-                delay={30}
-                duration={0.6}
-                splitType="chars"
-                from={{ opacity: 0, y: 28 }}
-                to={{ opacity: 1, y: 0 }}
-                textAlign="left"
-                animateOn="mount"
-              />
-            </div>
-
-            {/* Descripción */}
-            <p className={`${typography.body} text-light-textSecondary dark:text-dark-textSecondary max-w-xl lg:max-w-2xl leading-relaxed mx-auto md:mx-0`}>
-              {t('hero.description')}
-            </p>
-
-            {/* Botones CTA */}
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-2 md:pt-4 sm:justify-center md:justify-start">
-              <StarBorder color="#6366F1" speed="6s" thickness={1} className="w-full sm:w-auto">
-                <Button
-                  variant="primary"
-                  size="md"
-                  onClick={() => scrollToSection('projects')}
-                  className="w-full text-sm sm:text-base"
-                >
-                  {t('hero.cta.projects')}
-                </Button>
-              </StarBorder>
-              <Button
-                variant="outline"
-                size="md"
-                onClick={() => scrollToSection('contact')}
-                className="w-full sm:w-auto text-sm sm:text-base"
-              >
-                {t('hero.cta.contact')}
-              </Button>
-            </div>
-          </div>
+      <HeroBackground />
+      <Container className="relative">
+        <div ref={contentRef} className="max-w-[var(--hero-text-width)]">
+          <HeroTitle />
+          <p data-hero-reveal className={cn(typography.h4, 'mt-6 text-fg')}>
+            {t('hero.role')}
+          </p>
+          <p className={cn(typography.bodyLarge, 'mt-6 text-fg-muted')}>
+            {t('hero.summary')}
+          </p>
+          <p data-hero-reveal className={cn(typography.body, 'mt-4 font-medium text-fg')}>
+            {t('hero.availability')}
+          </p>
+          <a
+            data-hero-reveal
+            href="#projects"
+            onClick={handleProjectsClick}
+            className="mt-10 inline-flex min-h-target items-center justify-center rounded-control bg-fg px-8 font-body font-semibold text-ink motion-safe:transition-colors motion-safe:duration-fast motion-safe:ease-out pointer-fine:hover:bg-fg/85"
+          >
+            {t('hero.cta.projects')}
+          </a>
         </div>
       </Container>
     </section>
   );
 }
-
