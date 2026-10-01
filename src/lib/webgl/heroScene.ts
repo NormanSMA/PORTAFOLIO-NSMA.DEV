@@ -1,6 +1,6 @@
 import { Mesh, Program, Renderer, Triangle } from 'ogl';
 import { readHeroPalette } from './heroColors';
-import { getRenderDpr, getRenderProfile, isTouchDevice } from './heroGate';
+import { getRenderDpr, getRenderProfile, isTouchDevice, type RenderProfile } from './heroGate';
 import { FRAGMENT, VERTEX } from './heroShader';
 import { MIN_GLOW, computeStage, type Point } from './heroStage';
 import { createFrameMeter, decideQuality, nodeProgress } from './heroTiming';
@@ -14,6 +14,13 @@ interface HeroSceneTargets {
   host: HTMLElement;
   // Box that places the filament; defined in CSS by the poster.
   stage: HTMLElement;
+}
+
+interface GpuParts {
+  canvas: HTMLCanvasElement;
+  renderer: Renderer;
+  mesh: Mesh;
+  uniforms: Record<string, { value: number | number[] }>;
 }
 
 const CHROMA_OFFSET = 0.0004;
@@ -40,28 +47,9 @@ function createCanvas(): HTMLCanvasElement {
   return canvas;
 }
 
-function toGl(point: Point, scaleX: number, scaleY: number, bufferHeight: number): [number, number] {
-  return [point[0] * scaleX, bufferHeight - point[1] * scaleY];
-}
-
-export function mountHeroScene({ host, stage }: HeroSceneTargets): HeroScene | null {
-  const canvas = createCanvas();
-  if (!createContext(canvas)) return null;
-
-  let renderer: Renderer;
-  try {
-    renderer = new Renderer({ canvas, alpha: false, depth: false, autoClear: false, webgl: 2 });
-  } catch {
-    return null;
-  }
-  if (!renderer.isWebgl2) return null;
-
-  const touch = isTouchDevice();
-  const profile = getRenderProfile(touch);
+function createUniforms(): GpuParts['uniforms'] {
   const palette = readHeroPalette();
-  const gl = renderer.gl;
-
-  const uniforms = {
+  return {
     uResolution: { value: [1, 1] },
     uTime: { value: 0 },
     uNode: { value: 0 },
@@ -77,7 +65,23 @@ export function mountHeroScene({ host, stage }: HeroSceneTargets): HeroScene | n
     uInner: { value: palette.inner },
     uHalo: { value: palette.halo },
   };
-  const program = new Program(gl, {
+}
+
+// Returns null where WebGL2 is missing, refused or only available in software.
+function createGpuParts(): GpuParts | null {
+  const canvas = createCanvas();
+  if (!createContext(canvas)) return null;
+
+  let renderer: Renderer;
+  try {
+    renderer = new Renderer({ canvas, alpha: false, depth: false, autoClear: false, webgl: 2 });
+  } catch {
+    return null;
+  }
+  if (!renderer.isWebgl2) return null;
+
+  const uniforms = createUniforms();
+  const program = new Program(renderer.gl, {
     vertex: VERTEX,
     fragment: FRAGMENT,
     uniforms,
@@ -85,31 +89,67 @@ export function mountHeroScene({ host, stage }: HeroSceneTargets): HeroScene | n
     depthWrite: false,
     cullFace: false,
   });
-  const mesh = new Mesh(gl, { geometry: new Triangle(gl), program, frustumCulled: false });
+  const geometry = new Triangle(renderer.gl);
+  return { canvas, renderer, mesh: new Mesh(renderer.gl, { geometry, program, frustumCulled: false }), uniforms };
+}
 
-  const meter = createFrameMeter();
-  const minFrameMs = profile.maxFps ? 1000 / profile.maxFps - 2 : 0;
+function toGl(point: Point, scaleX: number, scaleY: number, bufferHeight: number): [number, number] {
+  return [point[0] * scaleX, bufferHeight - point[1] * scaleY];
+}
 
-  let qualityStep: 0 | 1 = 0;
-  let monitoring = true;
-  let inView = true;
-  let frozen = false;
-  let disposed = false;
-  let shown = false;
-  let rafId = 0;
-  let clockStart = -1;
-  let pausedAt = 0;
-  let pausedTotal = 0;
-  let lastFrame = 0;
-  let lastRender = 0;
-  let seconds = 0;
+// Owns the render loop. The loop exists only while the hero is on screen, the tab is visible and the frame budget holds.
+class HeroSceneRuntime implements HeroScene {
+  private readonly gpu: GpuParts;
+  private readonly targets: HeroSceneTargets;
+  private readonly touch = isTouchDevice();
+  private readonly profile: RenderProfile = getRenderProfile(this.touch);
+  private readonly meter = createFrameMeter();
+  private readonly minFrameMs = this.profile.maxFps ? 1000 / this.profile.maxFps - 2 : 0;
+  private readonly resizeObserver = new ResizeObserver(() => this.resize());
+  private readonly visibility = new IntersectionObserver(([entry]) => {
+    this.inView = entry.isIntersecting;
+    this.syncLoop();
+  });
 
-  function render() {
-    uniforms.uTime.value = seconds;
-    uniforms.uNode.value = nodeProgress(seconds);
+  private qualityStep: 0 | 1 = 0;
+  private monitoring = true;
+  private inView = true;
+  private frozen = false;
+  private disposed = false;
+  private shown = false;
+  private rafId = 0;
+  private clockStart = -1;
+  private pausedAt = 0;
+  private pausedTotal = 0;
+  private lastFrame = 0;
+  private lastRender = 0;
+  private seconds = 0;
+
+  constructor(gpu: GpuParts, targets: HeroSceneTargets) {
+    this.gpu = gpu;
+    this.targets = targets;
+  }
+
+  start() {
+    const { host, stage } = this.targets;
+    host.appendChild(this.gpu.canvas);
+    this.resize();
+    this.resizeObserver.observe(host);
+    this.resizeObserver.observe(stage);
+    this.visibility.observe(host);
+    document.addEventListener('visibilitychange', this.syncLoop);
+    // Falling back to the poster beats restoring a context that just failed.
+    this.gpu.canvas.addEventListener('webglcontextlost', this.dispose);
+    this.syncLoop();
+  }
+
+  private render() {
+    const { canvas, renderer, mesh, uniforms } = this.gpu;
+    uniforms.uTime.value = this.seconds;
+    uniforms.uNode.value = nodeProgress(this.seconds);
     renderer.render({ scene: mesh });
-    if (shown) return;
-    shown = true;
+    if (this.shown) return;
+    this.shown = true;
     // Two frames after the canvas exists, so the opacity transition has a computed start style to leave.
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
@@ -119,112 +159,103 @@ export function mountHeroScene({ host, stage }: HeroSceneTargets): HeroScene | n
   }
 
   // Resizing clears the drawing buffer, so every call ends with a render.
-  function resize() {
+  private resize() {
+    const { host, stage } = this.targets;
+    const { canvas, renderer, uniforms } = this.gpu;
     const hostRect = host.getBoundingClientRect();
-    const stageRect = stage.getBoundingClientRect();
     if (hostRect.width === 0 || hostRect.height === 0) return;
 
-    renderer.dpr = getRenderDpr(window.devicePixelRatio, profile, qualityStep);
+    renderer.dpr = getRenderDpr(window.devicePixelRatio, this.profile, this.qualityStep);
     renderer.setSize(hostRect.width, hostRect.height);
     // OGL writes pixel sizes into the style; CSS keeps ownership of the display size.
     canvas.style.width = '100%';
     canvas.style.height = '100%';
 
-    const bufferWidth = canvas.width;
     const bufferHeight = canvas.height;
-    const scaleX = bufferWidth / hostRect.width;
+    const scaleX = canvas.width / hostRect.width;
     const scaleY = bufferHeight / hostRect.height;
-    const layout = computeStage(hostRect, stageRect);
+    const layout = computeStage(hostRect, stage.getBoundingClientRect());
     const from = toGl(layout.ramp.from, scaleX, scaleY, bufferHeight);
     const to = toGl(layout.ramp.to, scaleX, scaleY, bufferHeight);
     const deltaX = to[0] - from[0];
     const deltaY = to[1] - from[1];
     const lengthSquared = deltaX * deltaX + deltaY * deltaY || 1;
 
-    uniforms.uResolution.value = [bufferWidth, bufferHeight];
+    uniforms.uResolution.value = [canvas.width, bufferHeight];
     uniforms.uCenter.value = toGl(layout.center, scaleX, scaleY, bufferHeight);
     uniforms.uUnit.value = layout.unit * scaleX;
     uniforms.uRampFrom.value = from;
     uniforms.uRampVec.value = [deltaX / lengthSquared, deltaY / lengthSquared];
-    uniforms.uChroma.value = touch ? 0 : CHROMA_OFFSET * bufferWidth;
-    render();
+    uniforms.uChroma.value = this.touch ? 0 : CHROMA_OFFSET * canvas.width;
+    this.render();
   }
 
-  function applyQuality(frameAverage: number) {
-    const action = decideQuality(frameAverage, qualityStep === 0);
+  private applyQuality(frameAverage: number) {
+    const action = decideQuality(frameAverage, this.qualityStep === 0);
     if (action === 'keep') {
-      monitoring = false;
+      this.monitoring = false;
     } else if (action === 'lower') {
-      qualityStep = 1;
-      meter.reset();
-      resize();
+      this.qualityStep = 1;
+      this.meter.reset();
+      this.resize();
     } else {
-      monitoring = false;
-      frozen = true;
-      render();
-      syncLoop();
+      this.monitoring = false;
+      this.frozen = true;
+      this.render();
+      this.syncLoop();
     }
   }
 
-  function frame(now: number) {
-    rafId = requestAnimationFrame(frame);
-    if (clockStart < 0) clockStart = now;
+  private frame = (now: number) => {
+    this.rafId = requestAnimationFrame(this.frame);
+    if (this.clockStart < 0) this.clockStart = now;
 
-    if (monitoring && lastFrame > 0) {
-      const average = meter.push(now - lastFrame);
-      if (average !== null) applyQuality(average);
+    if (this.monitoring && this.lastFrame > 0) {
+      const average = this.meter.push(now - this.lastFrame);
+      if (average !== null) this.applyQuality(average);
     }
-    lastFrame = now;
-    if (frozen || now - lastRender < minFrameMs) return;
+    this.lastFrame = now;
+    if (this.frozen || now - this.lastRender < this.minFrameMs) return;
 
-    lastRender = now;
-    seconds = (now - clockStart - pausedTotal) / 1000;
-    render();
-  }
+    this.lastRender = now;
+    this.seconds = (now - this.clockStart - this.pausedTotal) / 1000;
+    this.render();
+  };
 
-  // The loop exists only while the hero is on screen, the tab is visible and the frame budget holds.
-  function syncLoop() {
-    const shouldRun = !disposed && !frozen && inView && !document.hidden;
-    if (shouldRun && rafId === 0) {
-      if (pausedAt > 0 && clockStart >= 0) pausedTotal += performance.now() - pausedAt;
-      pausedAt = 0;
-      lastFrame = 0;
-      rafId = requestAnimationFrame(frame);
-    } else if (!shouldRun && rafId !== 0) {
-      cancelAnimationFrame(rafId);
-      rafId = 0;
-      pausedAt = performance.now();
+  private syncLoop = () => {
+    const shouldRun = !this.disposed && !this.frozen && this.inView && !document.hidden;
+    if (shouldRun && this.rafId === 0) {
+      // Time spent paused does not count, so the motion resumes where it stopped.
+      if (this.pausedAt > 0 && this.clockStart >= 0) this.pausedTotal += performance.now() - this.pausedAt;
+      this.pausedAt = 0;
+      this.lastFrame = 0;
+      this.rafId = requestAnimationFrame(this.frame);
+    } else if (!shouldRun && this.rafId !== 0) {
+      cancelAnimationFrame(this.rafId);
+      this.rafId = 0;
+      this.pausedAt = performance.now();
     }
-  }
+  };
 
-  function dispose() {
-    if (disposed) return;
-    disposed = true;
-    syncLoop();
-    resizeObserver.disconnect();
-    visibility.disconnect();
-    document.removeEventListener('visibilitychange', syncLoop);
-    canvas.removeEventListener('webglcontextlost', dispose);
-    canvas.remove();
+  dispose = () => {
+    if (this.disposed) return;
+    this.disposed = true;
+    this.syncLoop();
+    this.resizeObserver.disconnect();
+    this.visibility.disconnect();
+    document.removeEventListener('visibilitychange', this.syncLoop);
+    this.gpu.canvas.removeEventListener('webglcontextlost', this.dispose);
+    this.gpu.canvas.remove();
     // Releases the GPU memory now instead of waiting for the canvas to be collected.
-    gl.getExtension('WEBGL_lose_context')?.loseContext();
-  }
+    this.gpu.renderer.gl.getExtension('WEBGL_lose_context')?.loseContext();
+  };
+}
 
-  const resizeObserver = new ResizeObserver(resize);
-  const visibility = new IntersectionObserver(([entry]) => {
-    inView = entry.isIntersecting;
-    syncLoop();
-  });
+export function mountHeroScene(targets: HeroSceneTargets): HeroScene | null {
+  const gpu = createGpuParts();
+  if (!gpu) return null;
 
-  host.appendChild(canvas);
-  resize();
-  resizeObserver.observe(host);
-  resizeObserver.observe(stage);
-  visibility.observe(host);
-  document.addEventListener('visibilitychange', syncLoop);
-  // Falling back to the poster beats restoring a context that just failed.
-  canvas.addEventListener('webglcontextlost', dispose);
-  syncLoop();
-
-  return { dispose };
+  const runtime = new HeroSceneRuntime(gpu, targets);
+  runtime.start();
+  return runtime;
 }
