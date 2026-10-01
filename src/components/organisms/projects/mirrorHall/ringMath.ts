@@ -87,11 +87,15 @@ export interface RingLayout {
   degreesPerPixel: number;
 }
 
+// The original piece (330 px cards under a 1400 px perspective) is the reference shape; smaller cards scale it.
 const REFERENCE_CARD_WIDTH = 330;
 const REFERENCE_PERSPECTIVE = 1400;
 const CARD_RATIO = 4 / 3;
-const MIN_CARD_WIDTH = 200;
-const CARD_WIDTH_SHARE = 0.6;
+// The projected front card is about 1.5 times its size, so 330 px would make the section taller than the viewport.
+const MAX_CARD_WIDTH = 270;
+// On a phone the front card fills the width at 200 px and the ring stops reading as a ring; 170 leaves a sliver of each neighbor.
+const MIN_CARD_WIDTH = 170;
+const CARD_WIDTH_SHARE = 0.5;
 const MIN_GEOMETRY_COUNT = 3;
 // Chord between neighbor centers, in card widths. The original ring (12 cards, R 640, 330 wide) was 1.0.
 const NEIGHBOR_SPACING = 1.3;
@@ -99,8 +103,8 @@ const NEIGHBOR_SPACING = 1.3;
 const MAX_RADIUS_SHARE = 0.36;
 // Card width over polygon side: under 1 so neighbors never intersect.
 const POLYGON_FILL = 0.92;
-const REFLECTION_REACH = 0.5;
-const STAGE_PADDING = 24;
+const REFLECTION_REACH = 0.3;
+const STAGE_PADDING = 16;
 const FLOOR_MARGIN = 0.9;
 const DRAG_GAIN = 1.6;
 
@@ -118,7 +122,7 @@ function projectY(y: number, z: number, { perspective }: Projection): number {
 
 export function computeLayout(containerWidth: number, count: number): RingLayout {
   const half = Math.PI / Math.max(count, MIN_GEOMETRY_COUNT);
-  const baseWidth = clamp(containerWidth * CARD_WIDTH_SHARE, MIN_CARD_WIDTH, REFERENCE_CARD_WIDTH);
+  const baseWidth = clamp(containerWidth * CARD_WIDTH_SHARE, MIN_CARD_WIDTH, MAX_CARD_WIDTH);
   const perspective = REFERENCE_PERSPECTIVE * (baseWidth / REFERENCE_CARD_WIDTH);
   const radius = Math.min(
     (NEIGHBOR_SPACING * baseWidth) / (2 * Math.sin(half)),

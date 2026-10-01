@@ -240,7 +240,11 @@ function createRingEngine(getOptions: () => EngineOptions) {
       onPointerMove,
       onPointerUp: (event: StagePointerEvent) => endDrag(event, true),
       onPointerCancel: (event: StagePointerEvent) => endDrag(event, false),
-      onLostPointerCapture: (event: StagePointerEvent) => endDrag(event, false),
+      // Touch pointers are implicitly captured by the card under the finger; the capture handoff to the
+      // stage fires this event on that card and it bubbles up, so only the stage's own event counts.
+      onLostPointerCapture: (event: StagePointerEvent) => {
+        if (event.target === event.currentTarget) endDrag(event, false);
+      },
     },
   };
 }

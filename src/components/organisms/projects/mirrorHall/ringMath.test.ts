@@ -87,10 +87,10 @@ describe('profundidad', () => {
 describe('computeLayout', () => {
   const widths = [375, 768, 1024, 1440];
 
-  it('limita el ancho de tarjeta a 200-330 px y mantiene 3:4', () => {
-    expect(computeLayout(1200, 7).cardWidth).toBe(330);
-    expect(computeLayout(343, 7).cardWidth).toBeCloseTo(205.8);
-    expect(computeLayout(200, 7).cardWidth).toBe(200);
+  it('limita el ancho de tarjeta a 170-270 px y mantiene 3:4', () => {
+    expect(computeLayout(1200, 7).cardWidth).toBe(270);
+    expect(computeLayout(343, 7).cardWidth).toBeCloseTo(171.5);
+    expect(computeLayout(200, 7).cardWidth).toBe(170);
     const layout = computeLayout(1200, 7);
     expect(layout.cardHeight / layout.cardWidth).toBeCloseTo(4 / 3);
   });
@@ -105,11 +105,11 @@ describe('computeLayout', () => {
     }
   });
 
-  it('con 7 tarjetas el radio queda en el rango del original', () => {
-    const { radius, perspective } = computeLayout(1440, 7);
-    expect(radius).toBeGreaterThan(400);
-    expect(radius).toBeLessThan(640);
-    expect(perspective).toBe(1400);
+  it('con 7 tarjetas conserva la forma del original: radio y perspectiva en proporcion', () => {
+    const { radius, perspective, cardWidth } = computeLayout(1440, 7);
+    expect(radius / cardWidth).toBeGreaterThan(1.2);
+    expect(radius / cardWidth).toBeLessThan(1.94);
+    expect(perspective / cardWidth).toBeCloseTo(1400 / 330);
   });
 
   it('el anillo se reduce en proporcion en movil', () => {

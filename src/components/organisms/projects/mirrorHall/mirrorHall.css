@@ -22,12 +22,12 @@
   cursor: grab;
   /* Cards on the far left and right dissolve into the page instead of being cut by the box. */
   -webkit-mask-image:
-    linear-gradient(to right, transparent, black 8%, black 92%, transparent),
-    linear-gradient(to bottom, black 78%, transparent);
+    linear-gradient(to right, transparent, black 5%, black 95%, transparent),
+    linear-gradient(to bottom, transparent, black 6%, black 90%, transparent);
   -webkit-mask-composite: source-in;
   mask-image:
-    linear-gradient(to right, transparent, black 8%, black 92%, transparent),
-    linear-gradient(to bottom, black 78%, transparent);
+    linear-gradient(to right, transparent, black 5%, black 95%, transparent),
+    linear-gradient(to bottom, transparent, black 6%, black 90%, transparent);
   mask-composite: intersect;
 }
 
@@ -96,7 +96,7 @@
   border-radius: var(--radius-card);
   background: rgb(var(--color-surface));
   /* The only glow in the section: a faint primary tint, brighter on cards that face the viewer. */
-  box-shadow: 0 0 72px 4px rgb(var(--color-primary-500) / calc(var(--mh-depth, 1) * 0.2));
+  box-shadow: 0 0 72px 4px rgb(var(--color-primary-500) / calc(var(--mh-depth, 1) * 0.14));
 }
 
 .mh-face picture,
@@ -124,11 +124,11 @@
 
 .mh-veil-top {
   top: 0;
-  height: 24%;
+  height: 30%;
   background: linear-gradient(
     to bottom,
-    rgb(var(--color-ink) / 0.85),
-    rgb(var(--color-ink) / 0.85) 40%,
+    rgb(var(--color-ink) / 0.75),
+    rgb(var(--color-ink) / 0.75) 60%,
     rgb(var(--color-ink) / 0)
   );
 }
@@ -139,7 +139,7 @@
   background: linear-gradient(
     to top,
     rgb(var(--color-ink)),
-    rgb(var(--color-ink) / 0.92) 60%,
+    rgb(var(--color-ink) / 0.85) 55%,
     rgb(var(--color-ink) / 0)
   );
 }
@@ -196,7 +196,7 @@
   transform: rotateX(90deg);
   background: radial-gradient(
     closest-side,
-    rgb(var(--color-primary-500) / calc(var(--mh-depth, 1) * 0.22)),
+    rgb(var(--color-primary-500) / calc(var(--mh-depth, 1) * 0.18)),
     rgb(var(--color-primary-500) / 0)
   );
 }
