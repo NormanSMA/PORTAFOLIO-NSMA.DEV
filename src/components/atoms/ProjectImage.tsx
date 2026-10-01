@@ -10,7 +10,7 @@ interface ProjectImageProps {
 }
 
 // Widths and intrinsic size must match scripts/capture-projects.mjs; the intrinsic size reserves space and avoids layout shift.
-export const projectImageSpecs = {
+const projectImageSpecs = {
   desktop: { widths: [480, 800, 1200, 1600], width: 1600, height: 1000 },
   mobile: { widths: [240, 360, 480, 720], width: 720, height: 1558 },
 } as const;
