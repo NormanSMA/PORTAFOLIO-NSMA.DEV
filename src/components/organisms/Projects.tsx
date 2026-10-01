@@ -40,7 +40,7 @@ export function Projects() {
           <h2 id="projects-heading" className={cn(typography.h2, 'text-fg')}>
             {t('projects.title')}
           </h2>
-          <p className={cn(typography.bodyLarge, 'text-fg-muted')}>{t('projects.subtitle')}</p>
+          <p className={cn(typography.bodyLarge, 'text-balance text-fg-muted')}>{t('projects.subtitle')}</p>
         </div>
       </Container>
 
