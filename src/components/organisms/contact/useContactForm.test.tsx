@@ -284,19 +284,12 @@ describe('useContactForm: envio', () => {
     expect(send).toHaveBeenCalledTimes(1);
     expect(hook.result.current.status).toBe('success');
   });
-});
 
-describe('useContactForm: motivos', () => {
   it('alterna cada motivo de forma independiente', () => {
     const hook = setup();
 
     act(() => hook.result.current.toggleReason('collaboration'));
-    expect(hook.result.current.fields.contactReasons).toEqual({
-      proposal: false,
-      collaboration: true,
-      advisory: false,
-      others: false,
-    });
+    expect(hook.result.current.fields.contactReasons).toEqual({ proposal: false, collaboration: true, advisory: false, others: false });
 
     act(() => hook.result.current.toggleReason('collaboration'));
     expect(hook.result.current.fields.contactReasons.collaboration).toBe(false);
