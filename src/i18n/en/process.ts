@@ -1,22 +1,22 @@
 export const process = {
-  title: 'Work Process',
-  subtitle: 'A simple route to move from an idea to something usable.',
+  title: 'Work process',
+  subtitle: 'Four steps to go from an idea to a published site.',
   steps: {
     discovery: {
       title: 'Discovery',
-      description: 'I understand the goal, context, and priorities before starting.',
+      description: 'I define the goal, the content, and the timeline before writing code.',
     },
     strategy: {
-      title: 'Visual & technical strategy',
-      description: 'I define structure and visual direction before building.',
+      title: 'Visual and technical strategy',
+      description: 'I pick the technology and plan the page structure and design.',
     },
     build: {
-      title: 'Build & validation',
-      description: 'I develop, test, and adjust with short review cycles.',
+      title: 'Build and validation',
+      description: 'I build in stages, test, and adjust through short reviews.',
     },
     optimize: {
-      title: 'Optimization & launch',
-      description: 'I fix details, improve accessibility, and prepare deployment.',
+      title: 'Optimization and launch',
+      description: 'I improve performance and accessibility, then publish with a domain and SSL.',
     },
   },
 } as const;

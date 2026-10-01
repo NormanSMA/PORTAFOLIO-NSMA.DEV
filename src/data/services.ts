@@ -1,18 +1,28 @@
-import { CodeIcon, DatabaseIcon, MobileIcon } from '../components/atoms/icons';
+import { Cloud, Code2, Server, type LucideIcon } from 'lucide-react';
 
-export const getServices = (t: (key: string) => string) => [
+export interface ServiceItem {
+  id: 'webDev' | 'backend' | 'deployment';
+  icon: LucideIcon;
+  title: string;
+  description: string;
+}
+
+export const getServices = (t: (key: string) => string): ServiceItem[] => [
   {
-    icon: CodeIcon, // Passing component reference, not element
+    id: 'webDev',
+    icon: Code2,
     title: t('services.webDev.title'),
     description: t('services.webDev.description'),
   },
   {
-    icon: DatabaseIcon,
+    id: 'backend',
+    icon: Server,
     title: t('services.backend.title'),
     description: t('services.backend.description'),
   },
   {
-    icon: MobileIcon,
+    id: 'deployment',
+    icon: Cloud,
     title: t('services.deployment.title'),
     description: t('services.deployment.description'),
   },

@@ -1,16 +1,17 @@
 export const services = {
+  heading: 'What I do and how I work',
   title: 'Services',
-  subtitle: 'Web solutions designed to stay clear and stable',
+  subtitle: 'I work project by project, from requirements to a published site.',
   webDev: {
-    title: 'Web Development & Apps',
-    description: 'I create websites and applications that prioritize clarity, speed, and ease of maintenance. I can work from a simple landing page to a platform with several views and flows.',
+    title: 'Web development and apps',
+    description: 'I build sites with Astro and React, and WordPress sites. When the project needs it, I add a bilingual version, performance work, and basic SEO.',
   },
   backend: {
-    title: 'Backend & APIs',
-    description: 'I build APIs and services that support the product and connect what needs to work behind the scenes. I also integrate external services when the project needs them.',
+    title: 'Backend and APIs',
+    description: 'I build APIs with Node.js and PHP (Laravel) on PostgreSQL or MySQL. I integrate external services and validate the data each endpoint receives.',
   },
   deployment: {
-    title: 'Hosting & Deployment',
-    description: 'I handle deployment and the basic setup needed to leave a project stable and ready to use. I also review domains, SSL, and technical tracking when needed.',
+    title: 'Hosting and deployment',
+    description: 'I deploy to Vercel and set up the domain and SSL certificate. After launch I check the site and handle maintenance fixes.',
   },
 } as const;
