@@ -1,18 +1,15 @@
-(function(){
+(function () {
+  var root = document.documentElement;
+  root.classList.remove('light');
+  root.classList.add('dark');
+
+  // The site is dark only. A light value saved by the old toggle would be read back by ThemeProvider.
   try {
-    const key = 'nsma-theme';
-    const saved = localStorage.getItem(key);
-    const isDark = saved === 'dark' || (!saved && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
-    if (isDark) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-    const themeColor = document.querySelector('meta[name="theme-color"]');
-    if (themeColor) {
-      themeColor.setAttribute('content', isDark ? '#0A0A0F' : '#FFFFFF');
+    var key = 'nsma-theme';
+    if (localStorage.getItem(key) !== 'dark') {
+      localStorage.setItem(key, 'dark');
     }
   } catch (e) {
-    // ignore (localStorage may be unavailable)
+    // localStorage may be unavailable
   }
 })();

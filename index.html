@@ -1,10 +1,11 @@
 <!doctype html>
-<html lang="es">
+<html lang="es" class="dark">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/png" href="/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#0A0A0F" />
+    <meta name="color-scheme" content="dark" />
 
     <!-- SEO Meta Tags -->
     <title>Norman Martínez | Ingeniero en Sistemas & Desarrollador Web</title>
@@ -38,21 +39,14 @@
       fetchpriority="high"
     />
 
-    <!-- Fuentes: no bloquean el render; el fallback del sistema pinta primero -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Sora pinta el titulo del hero; DM Sans carga con swap sin precarga. Vite reescribe esta ruta al archivo con hash del CSS. -->
     <link
       rel="preload"
-      as="style"
-      href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=Sora:wght@400;500;600;700;800&display=swap"
-      onload="this.onload=null;this.rel='stylesheet'"
+      as="font"
+      type="font/woff2"
+      href="/node_modules/@fontsource-variable/sora/files/sora-latin-wght-normal.woff2"
+      crossorigin
     />
-    <noscript>
-      <link
-        rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=Sora:wght@400;500;600;700;800&display=swap"
-      />
-    </noscript>
 
     <meta name="referrer" content="no-referrer" />
   </head>

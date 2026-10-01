@@ -1,37 +1,61 @@
-/* Importar fuentes de Google - DEBE IR PRIMERO */
-/* Fonts loaded in index.html for better performance */
+/* tokens.css feeds the primary-* and secondary-* colors in tailwind.config.js; without it they resolve to nothing. */
+@import '@fontsource-variable/sora/wght.css';
+@import '@fontsource-variable/dm-sans/wght.css';
+@import './styles/tokens.css';
+@import 'lenis/dist/lenis.css';
 
-/* Directivas de Tailwind */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* View Transitions para animación de cambio de tema */
+/* Kept while AnimatedThemeToggler exists: it drives its own reveal animation. */
 ::view-transition-old(root),
 ::view-transition-new(root) {
   animation: none;
   mix-blend-mode: normal;
 }
 
-
-/* Estilos base personalizados */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
+/* Matches the fixed navbar height (h-20) so anchors and scrollTo do not land under it. */
+html {
+  scroll-padding-top: 5rem;
+}
+
 body {
-  font-family: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  @apply bg-ink font-body text-fg antialiased;
 }
 
 code {
-  font-family: "Roboto Mono", monospace;
+  font-family: var(--font-mono);
 }
 
-/* Scroll suave (solo si el usuario no pide reducir movimiento) */
+/* In the base layer so a utility such as outline-none still wins on a specific element. */
+@layer base {
+  :focus-visible {
+    outline: var(--focus-ring-width) solid rgb(var(--focus-ring-color));
+    outline-offset: var(--focus-ring-offset);
+  }
+}
+
+@layer components {
+  /* Parked off-screen until it takes keyboard focus. */
+  .skip-link {
+    @apply fixed left-gutter top-2 z-skip inline-flex min-h-target items-center rounded-control bg-primary-600 px-4 font-medium text-fg;
+    transform: translateY(-200%);
+    transition: transform var(--duration-fast) var(--ease-out);
+  }
+
+  .skip-link:focus-visible {
+    transform: translateY(0);
+  }
+}
+
+/* Native smooth scrolling only for users who allow motion; Lenis bypasses it with instant jumps. */
 @media (prefers-reduced-motion: no-preference) {
   html {
     scroll-behavior: smooth;

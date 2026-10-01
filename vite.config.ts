@@ -62,11 +62,16 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks(id) {
+          // Translations change on their own schedule, so they get a chunk the browser can keep cached.
+          if (id.includes('/src/i18n/')) return 'i18n';
           if (!id.includes('node_modules')) return;
+          // pnpm nests packages under node_modules/.pnpm/<pkg>@<version>/node_modules/, so keep only the last segment.
           const mod = id.split('node_modules/').pop() || '';
           if (/^(react|react-dom|scheduler)\//.test(mod)) return 'vendor';
-          if (/^(gsap|@gsap|lucide-react)\//.test(mod)) return 'ui';
-          if (/^(i18next|react-i18next)/.test(mod)) return 'i18n';
+          if (/^(gsap|@gsap|lenis|lucide-react)\//.test(mod)) return 'ui';
+          if (/^(i18next|react-i18next)\//.test(mod)) return 'i18n';
+          // Only ever imported dynamically, so it stays out of the initial bundle.
+          if (/^ogl\//.test(mod)) return 'webgl';
         },
       },
     },
