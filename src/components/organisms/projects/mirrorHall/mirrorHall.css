@@ -1,0 +1,208 @@
+/*
+  Mirror Hall: CSS 3D ring. Sizes arrive as variables from layout (ringMath.computeLayout):
+  --mh-card-w, --mh-card-h, --mh-radius, --mh-perspective, --mh-pool-depth.
+*/
+
+.mh-root {
+  /*
+    The floor is darker than ink (10 10 15) on purpose: ink is the page, and the plane has to read
+    as a surface under the ring. The tokens have nothing below ink, so this stays local.
+  */
+  --mh-floor: 4 4 6;
+  position: relative;
+  /* Horizontal swipes belong to the ring; they must not trigger browser back/forward. */
+  overscroll-behavior-x: contain;
+}
+
+.mh-stage {
+  position: relative;
+  overflow: hidden;
+  touch-action: pan-y;
+  user-select: none;
+  cursor: grab;
+  /* Cards on the far left and right dissolve into the page instead of being cut by the box. */
+  -webkit-mask-image:
+    linear-gradient(to right, transparent, black 5%, black 95%, transparent),
+    linear-gradient(to bottom, transparent, black 6%, black 90%, transparent);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(to right, transparent, black 5%, black 95%, transparent),
+    linear-gradient(to bottom, transparent, black 6%, black 90%, transparent);
+  mask-composite: intersect;
+}
+
+.mh-root[data-phase='dragging'] .mh-stage {
+  cursor: grabbing;
+}
+
+.mh-scene {
+  position: absolute;
+  inset: 0;
+  perspective: var(--mh-perspective);
+}
+
+.mh-floor {
+  position: absolute;
+  left: 50%;
+  border-radius: 50%;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(closest-side, rgb(var(--mh-floor)) 55%, rgb(var(--mh-floor) / 0));
+}
+
+.mh-tilt {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transform: rotateX(-8deg);
+}
+
+.mh-ring {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  transform-style: preserve-3d;
+}
+
+.mh-root:not([data-phase='idle']) .mh-ring {
+  will-change: transform;
+}
+
+.mh-card {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: var(--mh-card-w);
+  height: var(--mh-card-h);
+  margin: calc(var(--mh-card-h) / -2) 0 0 calc(var(--mh-card-w) / -2);
+  border-radius: var(--radius-card);
+  list-style: none;
+  transform-style: preserve-3d;
+  transform: rotateY(var(--mh-angle)) translateZ(var(--mh-radius));
+}
+
+/* Opacity and blur by depth live here, not on the card: the card must stay preserve-3d for its pool. */
+.mh-card-body {
+  position: absolute;
+  inset: 0;
+}
+
+.mh-face {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: var(--radius-card);
+  background: rgb(var(--color-surface));
+  /* The only glow in the section: a faint primary tint, brighter on cards that face the viewer. */
+  box-shadow: 0 0 72px 4px rgb(var(--color-primary-500) / calc(var(--mh-depth, 1) * 0.14));
+}
+
+.mh-face picture,
+.mh-ripple picture {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.mh-face img,
+.mh-ripple img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Functional veils: they keep the label and the caption above 4.5:1 over any screenshot. */
+.mh-veil-top,
+.mh-veil-bottom {
+  position: absolute;
+  inset-inline: 0;
+  pointer-events: none;
+}
+
+.mh-veil-top {
+  top: 0;
+  height: 30%;
+  background: linear-gradient(
+    to bottom,
+    rgb(var(--color-ink) / 0.75),
+    rgb(var(--color-ink) / 0.75) 60%,
+    rgb(var(--color-ink) / 0)
+  );
+}
+
+.mh-veil-bottom {
+  bottom: 0;
+  height: 65%;
+  background: linear-gradient(
+    to top,
+    rgb(var(--color-ink)),
+    rgb(var(--color-ink) / 0.85) 55%,
+    rgb(var(--color-ink) / 0)
+  );
+}
+
+/* The reflection is a flipped copy under the floor line, faded by the mask. */
+.mh-reflection {
+  position: absolute;
+  left: 0;
+  top: 100%;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: var(--radius-card);
+  opacity: 0.35;
+  filter: blur(8px);
+  pointer-events: none;
+  transform: scaleY(-1);
+  -webkit-mask-image: linear-gradient(to top, black, transparent 60%);
+  mask-image: linear-gradient(to top, black, transparent 60%);
+}
+
+/*
+  The ripple moves the picture under a fixed mask, which looks like the mask sliding over the picture
+  but animates only transform (the compositor), unlike an animated mask-position.
+*/
+.mh-ripple {
+  position: absolute;
+  inset: -10px 0;
+  animation: mh-ripple 8s ease-in-out infinite alternate;
+  animation-delay: calc(var(--mh-i) * -0.3s);
+}
+
+.mh-root[data-offscreen='true'] .mh-ripple {
+  animation-play-state: paused;
+}
+
+@keyframes mh-ripple {
+  from {
+    transform: translateY(-6px) skewX(-1.5deg);
+  }
+  to {
+    transform: translateY(6px) skewX(1.5deg);
+  }
+}
+
+/* Light on the floor under each card: lies flat at the foot of the card and travels with it. */
+.mh-pool {
+  position: absolute;
+  left: -25%;
+  top: calc(100% - var(--mh-pool-depth) / 2);
+  width: 150%;
+  height: var(--mh-pool-depth);
+  pointer-events: none;
+  transform: rotateX(90deg);
+  background: radial-gradient(
+    closest-side,
+    rgb(var(--color-primary-500) / calc(var(--mh-depth, 1) * 0.18)),
+    rgb(var(--color-primary-500) / 0)
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mh-ripple {
+    animation: none;
+  }
+}
