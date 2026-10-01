@@ -1,13 +1,45 @@
+const token = (name) => `rgb(var(--color-${name}) / <alpha-value>)`;
+
 /** @type {import('tailwindcss').Config} */
 export default {
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
+  // Legacy: removed with the light theme.
   darkMode: 'class',
   theme: {
     extend: {
       colors: {
+        ink: token('ink'),
+        surface: {
+          DEFAULT: token('surface'),
+          raised: token('surface-raised'),
+        },
+        fg: {
+          DEFAULT: token('fg'),
+          muted: token('fg-muted'),
+          subtle: token('fg-subtle'),
+        },
+        bronze: {
+          DEFAULT: token('bronze'),
+          bright: token('bronze-bright'),
+          deep: token('bronze-deep'),
+        },
+        sapphire: {
+          DEFAULT: token('sapphire'),
+          soft: token('sapphire-soft'),
+        },
+        mint: token('mint'),
+        danger: token('danger'),
+        focus: 'rgb(var(--focus-ring-color) / <alpha-value>)',
+        // Fixed-alpha hairlines: opacity modifiers do not apply to them.
+        line: {
+          DEFAULT: 'var(--line)',
+          strong: 'var(--line-strong)',
+          control: 'var(--line-control)',
+        },
+        // Legacy palette (primary, secondary, accent, dark, light): removed when every section uses the tokens above.
         primary: {
           DEFAULT: '#6366F1',
           50: '#F5F5FF',
@@ -62,11 +94,58 @@ export default {
           textSecondary: '#6B7280',
         },
       },
+      // sans stays as an alias of body because Preflight reads it for <html>.
       fontFamily: {
-        sans: ['DM Sans', 'system-ui', 'sans-serif'],
-        display: ['Sora', 'system-ui', 'sans-serif'],
-        mono: ['Fira Code', 'Monaco', 'Courier New', 'monospace'],
+        display: ['var(--font-display)'],
+        body: ['var(--font-body)'],
+        sans: ['var(--font-body)'],
+        mono: ['var(--font-mono)'],
       },
+      spacing: {
+        section: 'var(--section-padding)',
+        gutter: 'var(--gutter)',
+        card: 'var(--card-padding)',
+      },
+      maxWidth: {
+        container: 'var(--container-max)',
+      },
+      minWidth: {
+        target: 'var(--target-min)',
+      },
+      minHeight: {
+        target: 'var(--target-min)',
+      },
+      borderRadius: {
+        card: 'var(--radius-card)',
+        control: 'var(--radius-control)',
+        pill: 'var(--radius-pill)',
+      },
+      zIndex: {
+        below: 'var(--z-below)',
+        raised: 'var(--z-raised)',
+        nav: 'var(--z-nav)',
+        overlay: 'var(--z-overlay)',
+        toast: 'var(--z-toast)',
+        skip: 'var(--z-skip)',
+      },
+      transitionDuration: {
+        fast: 'var(--duration-fast)',
+        base: 'var(--duration-base)',
+        slow: 'var(--duration-slow)',
+      },
+      // Same intent as the Tailwind defaults with the GSAP curves from src/config/motion.ts.
+      transitionTimingFunction: {
+        out: 'var(--ease-out)',
+        expo: 'var(--ease-expo)',
+        'in-out': 'var(--ease-in-out)',
+        in: 'var(--ease-in)',
+      },
+      backgroundImage: {
+        metal: 'var(--gradient-metal)',
+        'bronze-sheen': 'var(--gradient-bronze)',
+        halo: 'var(--gradient-halo)',
+      },
+      // Legacy animations: StarBorder keeps star-movement-*; the rest go with the old sections.
       animation: {
         'fade-in': 'fadeIn 0.6s ease-in-out',
         'fadeIn': 'fadeIn 0.4s ease-in-out',
@@ -110,10 +189,20 @@ export default {
         },
       },
       boxShadow: {
+        card: 'var(--shadow-card)',
+        raised: 'var(--shadow-raised)',
+        'glow-bronze': 'var(--glow-bronze)',
+        'glow-sapphire': 'var(--glow-sapphire)',
+        // Legacy indigo glow.
         'glow': '0 0 20px rgba(99, 102, 241, 0.5)',
         'glow-lg': '0 0 30px rgba(99, 102, 241, 0.6)',
       },
     },
   },
-  plugins: [],
+  plugins: [
+    // Hover effects only for real pointers; touch screens keep a sticky :hover otherwise.
+    function ({ addVariant }) {
+      addVariant('pointer-fine', '@media (hover: hover) and (pointer: fine)');
+    },
+  ],
 }
