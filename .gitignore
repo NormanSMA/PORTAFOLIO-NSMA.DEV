@@ -41,3 +41,6 @@ tools
 # Claude Code local
 .claude/worktrees/
 .claude/launch.json
+
+# Raw screenshots from scripts/capture-projects.mjs
+.captures/
