@@ -1,5 +1,5 @@
 export const footer = {
-  tagline: 'Systems Engineer · Web development, databases and cloud',
+  tagline: 'Information Systems Engineer · Web development, databases and cloud',
   quickLinks: 'Quick links',
   contactTitle: 'Contact',
   ariaNav: 'Footer navigation',

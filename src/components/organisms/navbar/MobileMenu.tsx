@@ -37,7 +37,7 @@ export function MobileMenu({ menu, activeId }: MobileMenuProps) {
       <Button
         variant="outline"
         size="sm"
-        className="px-3 md:hidden"
+        className="px-3 lg:hidden"
         aria-label={t('nav.menuAria')}
         aria-expanded={menu.isOpen}
         aria-controls={dialogId}
@@ -61,9 +61,9 @@ export function MobileMenu({ menu, activeId }: MobileMenuProps) {
           event.preventDefault();
           menu.close();
         }}
-        className="m-0 h-dvh max-h-none w-full max-w-none overflow-y-auto overscroll-contain border-0 bg-ink p-0 text-fg md:hidden"
+        className="m-0 h-dvh max-h-none w-full max-w-none overflow-y-auto overscroll-contain border-0 bg-ink p-0 text-fg lg:hidden"
       >
-        <div className="flex h-16 items-center justify-between px-gutter">
+        <div className="flex h-16 items-center justify-between px-gutter md:h-20">
           <p id={titleId} className={cn(typography.eyebrow, 'text-fg-muted')}>
             {t('nav.menuTitle')}
           </p>

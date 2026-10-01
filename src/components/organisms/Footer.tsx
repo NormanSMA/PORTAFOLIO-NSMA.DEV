@@ -35,7 +35,7 @@ export function Footer() {
     <footer className="border-t border-line bg-ink">
       <Container className="py-12 md:py-16">
         <div className="grid gap-12 md:grid-cols-[1.5fr_1fr_1fr] md:gap-8">
-          <div className="space-y-4">
+          <div className="flex flex-col items-start gap-4">
             <SectionLink
               sectionId="home"
               aria-label={t('nav.logoAria')}
@@ -83,7 +83,8 @@ export function Footer() {
           </div>
         </div>
 
-        <p className={cn(typography.caption, 'mt-12 border-t border-line pt-8 text-fg-muted')}>
+        {/* The right padding keeps the text clear of the fixed back-to-top button. */}
+        <p className={cn(typography.caption, 'mt-12 border-t border-line pr-16 pt-8 text-fg-muted')}>
           © {currentYear} Norman Martínez. {t('footer.rights')}.
         </p>
       </Container>

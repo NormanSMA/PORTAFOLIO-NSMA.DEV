@@ -1,8 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { motion } from '../../../config/motion';
 
-const DESKTOP_QUERY = '(min-width: 768px)';
-
 // Reserving the gutter keeps the fixed header from shifting when the scrollbar disappears.
 function lockPageScroll(): () => void {
   const root = document.documentElement;
@@ -62,7 +60,8 @@ export function useMobileMenu() {
   useEffect(() => {
     if (typeof window.matchMedia !== 'function') return;
 
-    const desktop = window.matchMedia(DESKTOP_QUERY);
+    // Matches the lg breakpoint where the navbar swaps the menu button for the inline links.
+    const desktop = window.matchMedia(motion.media.desktop);
     const closeOnDesktop = (event: MediaQueryListEvent) => {
       if (event.matches) close();
     };

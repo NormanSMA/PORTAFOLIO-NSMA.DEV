@@ -79,8 +79,8 @@ export function Navbar() {
             <Logo size="lg" />
           </button>
 
-          <div className="flex items-center gap-2 md:gap-4">
-            <nav aria-label={t('nav.ariaLabel')} className="hidden md:block">
+          <div className="flex items-center gap-2 lg:gap-4">
+            <nav aria-label={t('nav.ariaLabel')} className="hidden lg:block">
               <NavLinks variant="bar" activeId={activeId} />
             </nav>
             <LanguageSwitch />

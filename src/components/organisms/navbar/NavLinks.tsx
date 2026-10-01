@@ -13,7 +13,7 @@ interface NavLinksProps {
 const layouts = {
   bar: {
     list: 'flex items-center gap-1',
-    link: cn(typography.bodySmall, 'inline-flex min-h-target items-center rounded-control px-3 font-medium'),
+    link: cn(typography.bodySmall, 'inline-flex min-h-target items-center whitespace-nowrap rounded-control px-3 font-medium'),
   },
   menu: {
     list: 'flex flex-col',
