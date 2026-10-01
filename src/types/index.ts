@@ -1,11 +1,3 @@
-// Theme Types
-export type Theme = 'light' | 'dark';
-
-export interface ThemeContextType {
-  theme: Theme;
-  toggleTheme: () => void;
-}
-
 // Language Types
 export type Language = 'es' | 'en';
 
@@ -56,23 +48,4 @@ export interface LocalizedProject extends Project {
   altDesktop: string;
   altMobile?: string;
   metrics: LocalizedProjectMetric[];
-}
-
-// Skill Types
-export interface Skill {
-  name: string;
-  level: number;
-  icon: string;
-  category: 'frontend' | 'backend' | 'tools' | 'other';
-}
-
-// Experience Types
-export interface Experience {
-  id: string;
-  company: string;
-  position: string;
-  startDate: string;
-  endDate: string | null;
-  description: string;
-  technologies: string[];
 }

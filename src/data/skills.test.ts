@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { translations } from '../i18n/translations';
-import { skillGroups, technicalSkills } from './skills';
+import { skillGroups } from './skills';
 
 describe('skillGroups', () => {
   it('usa las seis categorias acordadas en orden', () => {
@@ -34,12 +34,5 @@ describe('skillGroups', () => {
   it('no incluye tecnologias fuera del CV', () => {
     const names = skillGroups.flatMap((group) => group.skills.map((skill) => skill.name));
     expect(names).not.toContain('Java');
-  });
-});
-
-describe('technicalSkills', () => {
-  it('lista solo las habilidades con icono', () => {
-    const withIcon = skillGroups.flatMap((group) => group.skills).filter((skill) => skill.icon);
-    expect(technicalSkills.map((skill) => skill.name)).toEqual(withIcon.map((skill) => skill.name));
   });
 });

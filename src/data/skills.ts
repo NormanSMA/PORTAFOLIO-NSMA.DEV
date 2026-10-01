@@ -81,8 +81,3 @@ export const skillGroups: SkillGroup[] = [
     skills: [{ name: 'Git' }, { name: 'GitHub' }, { name: 'WordPress', icon: WordPressIcon }],
   },
 ];
-
-// Kept for IconCloud in EducationSkills until that section is removed.
-export const technicalSkills = skillGroups
-  .flatMap((group) => group.skills)
-  .flatMap(({ name, icon }) => (icon ? [{ name, icon }] : []));

@@ -4,6 +4,3 @@ export { Container } from './Container';
 export { Logo } from './Logo';
 export { ProjectImage } from './ProjectImage';
 export { StarBorder } from './StarBorder';
-export { AnimatedThemeToggler } from './AnimatedThemeToggler';
-export { SmoothCursor } from './SmoothCursor';
-export { IconCloud } from './IconCloud';

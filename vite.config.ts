@@ -69,7 +69,6 @@ export default defineConfig({
           const mod = id.split('node_modules/').pop() || '';
           if (/^(react|react-dom|scheduler)\//.test(mod)) return 'vendor';
           if (/^(gsap|@gsap|lenis|lucide-react)\//.test(mod)) return 'ui';
-          if (/^(i18next|react-i18next)\//.test(mod)) return 'i18n';
           // Only ever imported dynamically, so it stays out of the initial bundle.
           if (/^ogl\//.test(mod)) return 'webgl';
         },

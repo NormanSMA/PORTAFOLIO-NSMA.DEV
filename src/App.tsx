@@ -1,5 +1,4 @@
 import { Suspense, lazy, useEffect } from 'react';
-import { ThemeProvider } from './contexts/ThemeContext';
 import { LanguageProvider } from './contexts/LanguageContext';
 import { Navbar, Hero } from './components/organisms';
 import { ScrollToTop } from './components/molecules';
@@ -53,32 +52,30 @@ function App() {
   usePreloadSections();
 
   return (
-    <ThemeProvider>
-      <LanguageProvider>
-        <div className="min-h-screen">
-          <SkipLink />
-          <Navbar />
-          <main id="main" tabIndex={-1} className="outline-none">
-            <Hero />
-            <Suspense fallback={<div className="min-h-svh" aria-hidden="true" />}>
-              <About />
-              <Projects />
-              <Experience />
-              <Approach />
-              <Contact />
-            </Suspense>
-          </main>
-
-          <Suspense fallback={null}>
-            <Footer />
+    <LanguageProvider>
+      <div className="min-h-screen">
+        <SkipLink />
+        <Navbar />
+        <main id="main" tabIndex={-1} className="outline-none">
+          <Hero />
+          <Suspense fallback={<div className="min-h-svh" aria-hidden="true" />}>
+            <About />
+            <Projects />
+            <Experience />
+            <Approach />
+            <Contact />
           </Suspense>
+        </main>
 
-          <ScrollToTop />
-          <Analytics />
-          <SpeedInsights />
-        </div>
-      </LanguageProvider>
-    </ThemeProvider>
+        <Suspense fallback={null}>
+          <Footer />
+        </Suspense>
+
+        <ScrollToTop />
+        <Analytics />
+        <SpeedInsights />
+      </div>
+    </LanguageProvider>
   );
 }
 

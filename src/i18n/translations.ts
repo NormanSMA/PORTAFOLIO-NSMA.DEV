@@ -11,7 +11,6 @@ import { experience as esExperience } from './es/experience';
 import { contact as esContact } from './es/contact';
 import { footer as esFooter } from './es/footer';
 import { common as esCommon } from './es/common';
-import { educationSkills as esEducationSkills } from './es/educationSkills';
 import { nav as enNav } from './en/nav';
 import { hero as enHero } from './en/hero';
 import { intro as enIntro } from './en/intro';
@@ -25,7 +24,6 @@ import { experience as enExperience } from './en/experience';
 import { contact as enContact } from './en/contact';
 import { footer as enFooter } from './en/footer';
 import { common as enCommon } from './en/common';
-import { educationSkills as enEducationSkills } from './en/educationSkills';
 
 export const translations = {
   es: {
@@ -42,7 +40,6 @@ export const translations = {
     contact: esContact,
     footer: esFooter,
     common: esCommon,
-    educationSkills: esEducationSkills,
   },
   en: {
     nav: enNav,
@@ -58,6 +55,5 @@ export const translations = {
     contact: enContact,
     footer: enFooter,
     common: enCommon,
-    educationSkills: enEducationSkills,
   },
 } as const;

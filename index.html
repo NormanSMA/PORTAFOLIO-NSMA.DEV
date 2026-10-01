@@ -8,8 +8,8 @@
     <meta name="color-scheme" content="dark" />
 
     <!-- SEO Meta Tags -->
-    <title>Norman Martínez | Ingeniero en Sistemas & Desarrollador Web</title>
-    <meta name="description" content="Portafolio de Norman Martínez — Ingeniero en Sistemas. Diseño soluciones digitales claras: sitios y aplicaciones web con React, TypeScript y Laravel, del concepto al producto." />
+    <title>Norman Martínez | Ingeniero en Sistemas · Desarrollo web, bases de datos y cloud</title>
+    <meta name="description" content="Portafolio de Norman Martínez, ingeniero en Sistemas. Aplicaciones web con TypeScript, React y Next.js, bases de datos y despliegue en la nube." />
     <link rel="canonical" href="https://portafolio-nsma-dev.vercel.app/" />
 
     <!-- Open Graph / Social Media -->
@@ -18,26 +18,16 @@
     <meta property="og:site_name" content="nsma.dev" />
     <meta property="og:locale" content="es_ES" />
     <meta property="og:locale:alternate" content="en_US" />
-    <meta property="og:title" content="Norman Martínez | Ingeniero en Sistemas & Desarrollador Web" />
-    <meta property="og:description" content="Diseño soluciones digitales claras: sitios y aplicaciones web con React, TypeScript y Laravel, del concepto al producto." />
+    <meta property="og:title" content="Norman Martínez | Ingeniero en Sistemas · Desarrollo web, bases de datos y cloud" />
+    <meta property="og:description" content="Aplicaciones web con TypeScript, React y Next.js, bases de datos y despliegue en la nube." />
     <meta property="og:image" content="https://portafolio-nsma-dev.vercel.app/og-image.webp" />
     <meta property="og:image:alt" content="Portafolio de Norman Martínez — nsma.dev" />
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Norman Martínez | Ingeniero en Sistemas & Desarrollador Web" />
-    <meta name="twitter:description" content="Diseño soluciones digitales claras: sitios y aplicaciones web con React, TypeScript y Laravel." />
+    <meta name="twitter:title" content="Norman Martínez | Ingeniero en Sistemas · Desarrollo web, bases de datos y cloud" />
+    <meta name="twitter:description" content="Aplicaciones web con TypeScript, React y Next.js, bases de datos y despliegue en la nube." />
     <meta name="twitter:image" content="https://portafolio-nsma-dev.vercel.app/og-image.webp" />
-
-    <!-- LCP: imagen del Hero -->
-    <link
-      rel="preload"
-      as="image"
-      href="/norman_sf-800w.webp"
-      imagesrcset="/norman_sf-480w.webp 480w, /norman_sf-800w.webp 800w, /norman_sf-1200w.webp 1200w"
-      imagesizes="(min-width: 1024px) 448px, (min-width: 640px) 320px, 280px"
-      fetchpriority="high"
-    />
 
     <!-- Sora pinta el titulo del hero; DM Sans carga con swap sin precarga. Vite reescribe esta ruta al archivo con hash del CSS. -->
     <link
@@ -51,11 +41,7 @@
     <meta name="referrer" content="no-referrer" />
   </head>
   <body>
-    <!-- small early script moved to public/theme-init.js to be allowed by CSP 'self' -->
-    <script src="/theme-init.js"></script>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
-    <!-- helper to make image downloads slightly harder (client-side only) -->
-    <script src="/protect-images.js" defer></script>
   </body>
 </html>
