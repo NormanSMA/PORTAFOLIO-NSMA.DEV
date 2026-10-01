@@ -16,7 +16,7 @@ interface HeroSceneTargets {
   stage: HTMLElement;
 }
 
-const CHROMA_OFFSET = 0.0008;
+const CHROMA_OFFSET = 0.0004;
 const FILM_GRAIN = 0.03;
 const FADE_IN = 'opacity var(--duration-slow) var(--ease-out)';
 
