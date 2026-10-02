@@ -9,6 +9,7 @@
     "build": "tsc -b && vite build",
     "capture": "node scripts/capture-projects.mjs",
     "images": "node scripts/optimize-images.mjs",
+    "images:check": "node scripts/optimize-images.mjs --check",
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest run",
