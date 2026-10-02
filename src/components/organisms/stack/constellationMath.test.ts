@@ -7,6 +7,7 @@ import {
   estimateVelocity,
   fibonacciSphere,
   interleave,
+  LABEL_ROOM,
   maxExtent,
   nearestNeighbors,
   nodeOpacity,
@@ -181,17 +182,27 @@ describe('interleave', () => {
 
 describe('computeLayout', () => {
   it('escala la ficha con el ancho y la acota', () => {
-    expect(computeLayout(200).nodeSize).toBe(36);
-    expect(computeLayout(340).nodeSize).toBeCloseTo(51, 5);
+    expect(computeLayout(200).nodeSize).toBe(34);
+    expect(computeLayout(340).nodeSize).toBeCloseTo(44.2, 5);
     expect(computeLayout(800).nodeSize).toBe(64);
   });
 
-  it('deja media ficha libre en cada borde incluso con la perspectiva', () => {
-    for (const size of [260, 340, 480, 544]) {
-      const layout = computeLayout(size);
-      const reach = layout.radius * maxExtent() + layout.nodeSize / 2;
-      expect(reach).toBeLessThanOrEqual(size / 2);
+  it('deja media ficha libre en cada borde y sitio para un nombre bajo la ultima fila', () => {
+    for (const size of [260, 340, 480, 640]) {
+      const { nodeSize, radius, centerX, centerY } = computeLayout(size);
+      const reach = radius * maxExtent() + nodeSize / 2;
+      expect(centerX - reach).toBeGreaterThanOrEqual(0);
+      expect(centerX + reach).toBeLessThanOrEqual(size);
+      expect(centerY - reach).toBeGreaterThanOrEqual(0);
+      expect(centerY + reach + LABEL_ROOM).toBeLessThanOrEqual(size);
     }
+  });
+
+  it('centra la esfera en horizontal y la sube lo justo para dar sitio a los nombres', () => {
+    const { size, centerX, centerY } = computeLayout(400);
+    expect(centerX).toBe(size / 2);
+    expect(centerY).toBeLessThan(size / 2);
+    expect(size / 2 - centerY).toBeCloseTo(LABEL_ROOM / 2, 5);
   });
 
   it('sin ancho medido no dibuja ni arrastra', () => {

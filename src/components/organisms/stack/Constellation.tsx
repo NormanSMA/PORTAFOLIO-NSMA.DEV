@@ -9,8 +9,9 @@ interface ConstellationProps {
   graph: ConstellationGraph;
 }
 
-// Decorative: the grouped list next to it names every technology, so assistive tech skips the sphere.
+// Decorative: a visually hidden list next to it names every technology, so assistive tech skips the sphere.
 // Every position, opacity and line below is written by the renderer on each frame; React draws the markup once.
+// The square clips and isolates its own painting: a chip can never cross the card edge or climb over the fixed header.
 export function Constellation({ graph }: ConstellationProps) {
   const rootRef = useRef<HTMLDivElement>(null);
   const { layout } = useConstellation(rootRef, graph);
@@ -21,9 +22,9 @@ export function Constellation({ graph }: ConstellationProps) {
       aria-hidden="true"
       data-constellation
       style={{ '--cs-node': `${layout.nodeSize}px` } as CSSProperties}
-      className="relative mx-auto aspect-square w-full max-w-[34rem] touch-pan-y select-none overscroll-x-contain pointer-fine:cursor-grab pointer-fine:active:cursor-grabbing"
+      className="relative isolate mx-auto aspect-square w-full max-w-[40rem] touch-pan-y select-none overflow-hidden overscroll-x-contain [contain:layout_paint] pointer-fine:cursor-grab pointer-fine:active:cursor-grabbing"
     >
-      <svg viewBox="-50 -50 100 100" focusable="false" className="absolute inset-0 size-full overflow-visible">
+      <svg viewBox="0 0 100 100" focusable="false" className="absolute inset-0 size-full">
         {graph.edges.map(([a, b]) => (
           <line
             key={`${a}-${b}`}
@@ -46,14 +47,19 @@ export function Constellation({ graph }: ConstellationProps) {
         </span>
       ))}
 
-      <span
-        data-label
-        style={{ opacity: 0, zIndex: 2000 }}
-        className={cn(
-          typography.caption,
-          'pointer-events-none absolute left-0 top-0 whitespace-nowrap rounded-control border border-line bg-ink px-2 py-1 text-fg motion-safe:transition-opacity motion-safe:duration-fast',
-        )}
-      />
+      {graph.nodes.map((node) => (
+        <span
+          key={`${node.tech}-name`}
+          data-label
+          style={{ opacity: 0 }}
+          className={cn(
+            typography.caption,
+            'pointer-events-none absolute left-0 top-0 whitespace-nowrap rounded-control bg-surface px-1 text-fg-muted motion-safe:transition-opacity motion-safe:duration-fast data-[active=true]:text-fg',
+          )}
+        >
+          {node.name}
+        </span>
+      ))}
     </div>
   );
 }

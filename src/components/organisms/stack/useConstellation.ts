@@ -34,13 +34,11 @@ function useElementWidth(ref: RefObject<HTMLElement | null>) {
   return width;
 }
 
-function collectParts(root: HTMLElement): ConstellationParts | null {
-  const label = root.querySelector<HTMLElement>('[data-label]');
-  if (!label) return null;
+function collectParts(root: HTMLElement): ConstellationParts {
   return {
     nodes: Array.from(root.querySelectorAll<HTMLElement>('[data-node]')),
+    labels: Array.from(root.querySelectorAll<HTMLElement>('[data-label]')),
     lines: Array.from(root.querySelectorAll<SVGLineElement>('[data-edge]')),
-    label,
   };
 }
 
@@ -79,10 +77,10 @@ export function useConstellation(rootRef: RefObject<HTMLElement | null>, graph: 
 
   useLayoutEffect(() => {
     const root = rootRef.current;
-    const parts = root ? collectParts(root) : null;
-    if (!root || !parts) return;
+    if (!root) return;
 
-    const scene = { points: graph.points, edges: graph.edges, names: graph.nodes.map((node) => node.name) };
+    const parts = collectParts(root);
+    const scene = { points: graph.points, edges: graph.edges };
     const renderer = createConstellationRenderer(scene, parts, () => live.current.layout);
     // Getters read the live values, so the engine never holds a stale layout and the options are not rebuilt per frame.
     const options: EngineOptions = {
@@ -122,10 +120,19 @@ export function useConstellation(rootRef: RefObject<HTMLElement | null>, graph: 
     listeners.forEach(([type, handler]) => root.addEventListener(type, handler as EventListener));
     const stopObserving = observeVisibility(root, engine.setVisible);
 
-    refresh.current = engine.refresh;
-    engine.refresh();
+    refresh.current = () => {
+      renderer.measure();
+      engine.refresh();
+    };
+    refresh.current();
+    // The names change width once the web font arrives, and the label rules read that width.
+    let alive = true;
+    document.fonts?.ready.then(() => {
+      if (alive) refresh.current?.();
+    });
 
     return () => {
+      alive = false;
       refresh.current = null;
       stopObserving();
       listeners.forEach(([type, handler]) => root.removeEventListener(type, handler as EventListener));

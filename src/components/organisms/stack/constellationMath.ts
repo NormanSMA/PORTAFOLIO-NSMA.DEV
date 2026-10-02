@@ -24,7 +24,7 @@ export const CAMERA_DISTANCE = 3.2;
 export const FULL_TURN = 360;
 
 const MIN_NODE_SCALE = 0.62;
-const MIN_NODE_OPACITY = 0.3;
+const MIN_NODE_OPACITY = 0.26;
 const OPACITY_STEP = 0.02;
 const MIN_EDGE_OPACITY = 0.05;
 const MAX_EDGE_OPACITY = 0.55;
@@ -34,8 +34,8 @@ const VELOCITY_STALE_MS = 80;
 // Speed closes about 95 % of its gap to the target in 0.75 s, so a fling fades out in roughly that time.
 const RELAX_RATE = 4;
 
-const NODE_SHARE = 0.15;
-const MIN_NODE_SIZE = 36;
+const NODE_SHARE = 0.13;
+const MIN_NODE_SIZE = 34;
 const MAX_NODE_SIZE = 64;
 const EDGE_PADDING = 2;
 // Drag moves the front of the sphere about this many times the pointer distance.
@@ -127,15 +127,24 @@ export interface ConstellationLayout {
   size: number;
   nodeSize: number;
   radius: number;
+  // The sphere is centered horizontally; vertically it sits high so the lowest label has room below it.
+  centerX: number;
+  centerY: number;
   degreesPerPixel: number;
 }
 
-// The sphere radius leaves room for half a chip on every side, so no node leaves the square.
+// Space kept under the lowest chip: the gap plus one caption line.
+export const LABEL_ROOM = 24;
+
+// The radius leaves half a chip on every side and a label's height under the sphere, so nothing leaves the square.
 export function computeLayout(size: number): ConstellationLayout {
   const nodeSize = clamp(size * NODE_SHARE, MIN_NODE_SIZE, MAX_NODE_SIZE);
-  const radius = Math.max(0, (size - nodeSize) / 2 - EDGE_PADDING) / maxExtent();
+  const margin = nodeSize / 2 + EDGE_PADDING;
+  const span = Math.max(0, size - 2 * margin - LABEL_ROOM);
+  const reach = span / 2;
+  const radius = reach / maxExtent();
   const degreesPerPixel = radius > 0 ? DRAG_GAIN / radius / RADIANS_PER_DEGREE : 0;
-  return { size, nodeSize, radius, degreesPerPixel };
+  return { size, nodeSize, radius, centerX: size / 2, centerY: margin + reach, degreesPerPixel };
 }
 
 export interface AngleSample {

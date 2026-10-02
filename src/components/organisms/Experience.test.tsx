@@ -101,23 +101,71 @@ describe.each(['es', 'en'] as const)('Experience (%s)', (language) => {
     items.forEach((item) => expect(item.textContent).not.toMatch(/\d{4}/));
   });
 
-  it('pone el stack primero y lista cada grupo con sus tecnologias', () => {
+  it('pone la constelacion primero y deja los tres bloques despues', () => {
     const { container } = renderExperience(language);
     const stack = screen.getByRole('heading', { level: 3, name: translations[language].skills.title });
     const education = screen.getByRole('heading', { level: 3, name: text.education });
+
     expect(stack.compareDocumentPosition(education) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(container.querySelectorAll('[data-reveal="card"]')).toHaveLength(4);
+  });
+
+  it('maqueta dos columnas desde lg y una sola debajo', () => {
+    const { container } = renderExperience(language);
+    const grid = container.querySelector('[data-reveal="card"]')?.parentElement;
+    const side = screen.getByRole('heading', { level: 3, name: text.education }).closest('[data-reveal="card"]')
+      ?.parentElement;
+
+    expect(grid?.classList.contains('grid')).toBe(true);
+    expect(grid?.className).toContain('lg:grid-cols-[minmax(0,1fr)_22rem]');
+    expect(grid?.className).not.toMatch(/(^|\s)grid-cols-/);
+    expect(side?.classList.contains('flex-col')).toBe(true);
+    expect(side?.querySelectorAll('[data-reveal="card"]')).toHaveLength(3);
+  });
+
+  it('centra el titulo debajo de lg y lo alinea a la izquierda desde lg', () => {
+    renderExperience(language);
+    const heading = screen.getByRole('heading', { level: 2, name: text.heading });
+
+    expect(heading.classList.contains('text-center')).toBe(true);
+    expect(heading.classList.contains('lg:text-left')).toBe(true);
+  });
+
+  it('no dibuja ninguna lista visible por categorias: solo la lista oculta para lectores de pantalla', () => {
+    renderExperience(language);
+    const outer = screen.getByRole('list', { name: translations[language].skills.title });
+    const stackCard = outer.closest('[data-reveal="card"]') as HTMLElement;
+
+    expect(outer.classList.contains('sr-only')).toBe(true);
+    // Every list inside the stack card is the hidden one or nested in it; the group names are not headings.
+    for (const list of within(stackCard).getAllByRole('list')) {
+      expect(list.closest('.sr-only')).toBe(outer);
+    }
+    expect(stackCard.querySelectorAll('h4')).toHaveLength(0);
+  });
+
+  it('la lista oculta agrupa cada tecnologia bajo su categoria', () => {
+    renderExperience(language);
 
     for (const group of skillGroups) {
       const list = screen.getByRole('list', { name: translations[language].skills.groups[group.id] });
       const names = within(list)
         .getAllByRole('listitem')
         .map((item) => item.textContent);
+
       expect(names).toHaveLength(group.skills.length);
       for (const skill of group.skills) {
         expect(names.some((name) => name?.startsWith(skill.name))).toBe(true);
       }
     }
+  });
+
+  it('asocia la lista oculta con el titulo del bloque mediante aria-labelledby', () => {
+    renderExperience(language);
+    const heading = screen.getByRole('heading', { level: 3, name: translations[language].skills.title });
+    const list = screen.getByRole('list', { name: translations[language].skills.title });
+
+    expect(list.getAttribute('aria-labelledby')).toBe(heading.id);
   });
 
   it('oculta la constelacion a los lectores de pantalla y muestra la pista de arrastre', () => {
