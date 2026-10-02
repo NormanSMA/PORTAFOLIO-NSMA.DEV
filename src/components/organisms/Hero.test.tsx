@@ -46,11 +46,17 @@ describe('Hero', () => {
     expect(headings[0].getAttribute('aria-label')).toBe('Norman Martínez');
   });
 
-  it('muestra titular, subtexto y disponibilidad en español', () => {
+  it('muestra el titular en dos líneas cortas y la disponibilidad en español', () => {
     renderHero();
-    expect(screen.getByText('Ingeniero en Sistemas · Desarrollo web, bases de datos y cloud')).toBeTruthy();
-    expect(screen.getByText(/quinto año de Ingeniería en Sistemas de Información en la UAM/)).toBeTruthy();
+    expect(screen.getByText('Ingeniero en Sistemas')).toBeTruthy();
+    expect(screen.getByText('Desarrollo web, bases de datos y cloud')).toBeTruthy();
     expect(screen.getByText('Busco pasantía o empleo · Managua o remoto')).toBeTruthy();
+  });
+
+  it('no repite un resumen: solo nombre, titular, disponibilidad y el CTA', () => {
+    const { container } = renderHero();
+    expect(container.querySelectorAll('p')).toHaveLength(2);
+    expect(screen.queryByText(/quinto año/)).toBeNull();
   });
 
   it('ofrece un solo CTA que lleva a projects con scrollToSection', () => {

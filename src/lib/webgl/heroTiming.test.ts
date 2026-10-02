@@ -1,24 +1,40 @@
 import { describe, it, expect } from 'vitest';
 import {
+  NODE_PASS_SECONDS,
   SAMPLE_FRAMES,
   WARMUP_FRAMES,
   createFrameMeter,
   decideQuality,
+  driftAmount,
+  easeNode,
   nodeProgress,
 } from './heroTiming';
 
+describe('easeNode', () => {
+  it('fija los extremos y el punto medio', () => {
+    expect(easeNode(0)).toBe(0);
+    expect(easeNode(0.5)).toBeCloseTo(0.5);
+    expect(easeNode(1)).toBeCloseTo(1);
+  });
+
+  it('es simétrica: lo que avanza al inicio lo recupera al final', () => {
+    expect(easeNode(0.2) + easeNode(0.8)).toBeCloseTo(1);
+  });
+});
+
 describe('nodeProgress', () => {
-  it('recorre la curva de un extremo al otro en 6 s y vuelve', () => {
+  it('recorre la curva de un extremo al otro en 5 s y vuelve', () => {
+    expect(NODE_PASS_SECONDS).toBe(5);
     expect(nodeProgress(0)).toBe(0);
-    expect(nodeProgress(3)).toBeCloseTo(0.5);
-    expect(nodeProgress(6)).toBeCloseTo(1);
-    expect(nodeProgress(9)).toBeCloseTo(0.5);
-    expect(nodeProgress(12)).toBeCloseTo(0);
+    expect(nodeProgress(2.5)).toBeCloseTo(0.5);
+    expect(nodeProgress(5)).toBeCloseTo(1);
+    expect(nodeProgress(7.5)).toBeCloseTo(0.5);
+    expect(nodeProgress(10)).toBeCloseTo(0);
   });
 
   it('acelera suave en los extremos (ease in-out)', () => {
-    expect(nodeProgress(0.3)).toBeLessThan(0.3 / 6);
-    expect(nodeProgress(5.7)).toBeGreaterThan(1 - 0.3 / 6);
+    expect(nodeProgress(0.3)).toBeLessThan(0.3 / NODE_PASS_SECONDS);
+    expect(nodeProgress(NODE_PASS_SECONDS - 0.3)).toBeGreaterThan(1 - 0.3 / NODE_PASS_SECONDS);
   });
 
   it('se mantiene dentro de 0 y 1', () => {
@@ -27,6 +43,20 @@ describe('nodeProgress', () => {
       expect(value).toBeGreaterThanOrEqual(0);
       expect(value).toBeLessThanOrEqual(1);
     }
+  });
+});
+
+describe('driftAmount', () => {
+  it('no mueve la curva mientras el canvas aparece sobre el póster', () => {
+    expect(driftAmount(0)).toBe(0);
+    expect(driftAmount(1.2)).toBe(0);
+  });
+
+  it('sube de forma gradual hasta el vaivén completo', () => {
+    expect(driftAmount(2)).toBeGreaterThan(0);
+    expect(driftAmount(2)).toBeLessThan(driftAmount(3));
+    expect(driftAmount(4.2)).toBeCloseTo(1);
+    expect(driftAmount(60)).toBe(1);
   });
 });
 
@@ -40,8 +70,8 @@ describe('decideQuality', () => {
     expect(decideQuality(30, true)).toBe('lower');
   });
 
-  it('congela si ya no queda escalón', () => {
-    expect(decideQuality(30, false)).toBe('freeze');
+  it('retira el canvas si ya no queda escalón', () => {
+    expect(decideQuality(30, false)).toBe('fallback');
   });
 });
 

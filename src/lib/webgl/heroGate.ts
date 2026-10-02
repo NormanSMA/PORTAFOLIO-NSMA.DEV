@@ -40,6 +40,14 @@ export function readHeroEnvironment(win: Window = window): HeroEnvironment {
   };
 }
 
+// Names reported by the GPU-less paths: SwiftShader (Chrome without a GPU), Mesa's llvmpipe and softpipe, and Windows' fallback adapter.
+const SOFTWARE_RENDERER = /swiftshader|llvmpipe|softpipe|basic render|software/i;
+
+// An unknown name (extension missing or masked) counts as hardware; the frame meter catches a slow one.
+export function isSoftwareRenderer(rendererName: string | null | undefined): boolean {
+  return rendererName ? SOFTWARE_RENDERER.test(rendererName) : false;
+}
+
 export function isTouchDevice(win: Window = window): boolean {
   return win.matchMedia(TOUCH_QUERY).matches;
 }

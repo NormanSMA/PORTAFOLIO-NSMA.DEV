@@ -5,10 +5,10 @@ import type { HeroScene } from '../../lib/webgl/heroScene';
 import { HeroPoster } from './HeroPoster';
 
 // Creating the GPU context and linking the shader is one 60 ms task on desktop and several times that on a phone.
-// Waiting out the entrance animation and the load work keeps that task from landing on top of them.
-const SETTLE_MS = 3000;
+// The poster already moves on its own, so the canvas can wait for the first paint and the entrance animation.
+const SETTLE_MS = 800;
 // Upper bound so a busy main thread cannot hold the canvas back for good.
-const IDLE_TIMEOUT_MS = 1500;
+const IDLE_TIMEOUT_MS = 1200;
 const FALLBACK_DELAY_MS = 300;
 const REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)';
 
@@ -32,7 +32,7 @@ function whenSettled(task: () => void): () => void {
   };
 }
 
-// The poster paints with the page; the canvas is created later, only where WebGL pays off, and fades in over it.
+// The poster paints and moves with the page; the canvas is created later, only where WebGL pays off, and fades in over it.
 export function HeroBackground() {
   const hostRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);

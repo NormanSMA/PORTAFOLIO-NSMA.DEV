@@ -1,5 +1,6 @@
 import type { CSSProperties, Ref } from 'react';
 import { HALF_LENGTH, WORLD_HEIGHT, WORLD_WIDTH, curvePath } from '../../lib/webgl/heroCurve';
+import { posterMotionCss } from '../../lib/webgl/heroPosterMotion';
 
 interface HeroPosterProps {
   // The shader reads this box to place the filament, so poster and canvas agree on layout.
@@ -8,6 +9,7 @@ interface HeroPosterProps {
 
 const PATH = curvePath();
 const VIEW_BOX = `${-WORLD_WIDTH / 2} ${-WORLD_HEIGHT / 2} ${WORLD_WIDTH} ${WORLD_HEIGHT}`;
+const MOTION_CSS = posterMotionCss();
 
 // The 30% ramp repeats RAMP_SHARE from heroStage.ts. It keeps text off the brightest light; the shader floors at MIN_GLOW where this goes to zero.
 // Below the text the stage has a fixed height and the hero reserves room for it with its bottom padding.
@@ -28,7 +30,11 @@ function blur(id: string, deviation: number) {
   );
 }
 
-// First paint: the same filament as still SVG. It is also the whole hero when WebGL is off.
+function stop(offset: number, color: string, opacity: number) {
+  return <stop offset={offset} style={{ stopColor: `rgb(var(--color-${color}))`, stopOpacity: opacity }} />;
+}
+
+// First paint: the same filament as SVG, with CSS motion. It is also the whole hero when WebGL is off or retired.
 export function HeroPoster({ stageRef }: HeroPosterProps) {
   return (
     <div
@@ -36,10 +42,11 @@ export function HeroPoster({ stageRef }: HeroPosterProps) {
       className={`absolute ${STAGE_BELOW_TEXT} ${STAGE_BESIDE_TEXT}`}
       style={{ '--hero-stage-left': STAGE_LEFT } as CSSProperties}
     >
+      <style>{MOTION_CSS}</style>
       <svg
         viewBox={VIEW_BOX}
         preserveAspectRatio="xMidYMid meet"
-        className="h-full w-full overflow-visible"
+        className="hero-poster-pulse h-full w-full overflow-visible"
         focusable="false"
         aria-hidden="true"
       >
@@ -68,6 +75,25 @@ export function HeroPoster({ stageRef }: HeroPosterProps) {
           <path d={PATH} className="stroke-secondary-400" strokeWidth="0.08" strokeOpacity="0.55" filter="url(#hero-poster-inner)" />
           <path d={PATH} className="stroke-fg" strokeWidth="0.016" strokeOpacity="0.95" filter="url(#hero-poster-core)" />
         </g>
+      </svg>
+      {/* Its own SVG so each frame of the spark repaints this small layer and not the blurred filament. */}
+      <svg
+        viewBox={VIEW_BOX}
+        preserveAspectRatio="xMidYMid meet"
+        className="absolute inset-0 h-full w-full overflow-visible"
+        focusable="false"
+        aria-hidden="true"
+      >
+        <defs>
+          <radialGradient id="hero-poster-spark-glow">
+            {stop(0, 'secondary-100', 0.95)}
+            {stop(0.2, 'secondary-100', 0.65)}
+            {stop(0.5, 'secondary-400', 0.28)}
+            {stop(1, 'primary-500', 0)}
+          </radialGradient>
+        </defs>
+        {/* Longer than tall and turned along the curve, so it reads as the filament brightening and not as an orb. */}
+        <ellipse className="hero-poster-spark" rx="0.5" ry="0.2" fill="url(#hero-poster-spark-glow)" />
       </svg>
     </div>
   );

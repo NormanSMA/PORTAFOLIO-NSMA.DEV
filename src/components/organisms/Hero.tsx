@@ -56,8 +56,7 @@ export function Hero() {
   const { t } = useLanguage();
   const contentRef = useRef<HTMLDivElement>(null);
 
-  // The name leads and the lines around it follow two beats later. The summary is the largest text block, so it is
-  // the LCP element: it stays out of the reveal and paints with the page instead of waiting for a fade.
+  // The name leads and the lines around it follow two beats later.
   useMotion(contentRef, ({ noReducedMotion }) => {
     if (!noReducedMotion) return;
     gsap.from('[data-hero-reveal]', {
@@ -88,13 +87,11 @@ export function Hero() {
       <Container className="relative">
         <div ref={contentRef} className="max-w-[var(--hero-text-width)]">
           <HeroTitle />
-          <p data-hero-reveal className={cn(typography.h4, 'mt-6 text-fg')}>
-            {t('hero.role')}
+          <p data-hero-reveal className="mt-6">
+            <span className={cn(typography.h4, 'block text-fg')}>{t('hero.role')}</span>
+            <span className={cn(typography.bodyLarge, 'mt-1 block text-fg-muted')}>{t('hero.focus')}</span>
           </p>
-          <p className={cn(typography.bodyLarge, 'mt-6 text-fg-muted')}>
-            {t('hero.summary')}
-          </p>
-          <p data-hero-reveal className={cn(typography.body, 'mt-4 font-medium text-fg')}>
+          <p data-hero-reveal className={cn(typography.body, 'mt-6 font-medium text-fg')}>
             {t('hero.availability')}
           </p>
           <a

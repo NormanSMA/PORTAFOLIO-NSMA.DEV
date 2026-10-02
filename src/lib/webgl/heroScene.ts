@@ -1,9 +1,10 @@
 import { Mesh, Program, Renderer, Triangle } from 'ogl';
 import { readHeroPalette } from './heroColors';
-import { getRenderDpr, getRenderProfile, isTouchDevice, type RenderProfile } from './heroGate';
+import { getRenderDpr, getRenderProfile, isSoftwareRenderer, isTouchDevice, type RenderProfile } from './heroGate';
 import { FRAGMENT, VERTEX } from './heroShader';
+import { readPosterSeconds } from './heroPosterMotion';
 import { MIN_GLOW, computeStage, type Point } from './heroStage';
-import { createFrameMeter, decideQuality, nodeProgress } from './heroTiming';
+import { createFrameMeter, decideQuality, driftAmount, nodeProgress } from './heroTiming';
 
 export interface HeroScene {
   dispose(): void;
@@ -25,18 +26,30 @@ interface GpuParts {
 
 const CHROMA_OFFSET = 0.0004;
 const FILM_GRAIN = 0.03;
+// HeroPoster pauses its animations while this attribute is on the host.
+const LIVE_SCENE = 'live';
 const FADE_IN = 'opacity var(--duration-slow) var(--ease-out)';
+// Matches --duration-slow; the canvas is removed once its fade-out has played.
+const FADE_OUT_MS = 1100;
 
-// OGL does not expose context attributes. Creating the context first lets software rendering be refused
-// (it would run this shader far too slowly), and OGL then reuses the same context from the canvas.
+function rendererName(gl: WebGL2RenderingContext): string | null {
+  const info = gl.getExtension('WEBGL_debug_renderer_info');
+  return info ? String(gl.getParameter(info.UNMASKED_RENDERER_WEBGL)) : null;
+}
+
+// Creating the context first lets software rendering be refused (this shader runs far too slowly there), and OGL
+// then reuses the same context from the canvas. Asking the browser to fail on a "performance caveat" is not used:
+// it also refuses valid GPUs on some drivers, so the renderer name decides and the frame meter backs it up.
 function createContext(canvas: HTMLCanvasElement): WebGL2RenderingContext | null {
-  return canvas.getContext('webgl2', {
+  const gl = canvas.getContext('webgl2', {
     alpha: false,
     depth: false,
     antialias: false,
     powerPreference: 'low-power',
-    failIfMajorPerformanceCaveat: true,
   });
+  if (!gl || !isSoftwareRenderer(rendererName(gl))) return gl;
+  gl.getExtension('WEBGL_lose_context')?.loseContext();
+  return null;
 }
 
 function createCanvas(): HTMLCanvasElement {
@@ -53,6 +66,7 @@ function createUniforms(): GpuParts['uniforms'] {
     uResolution: { value: [1, 1] },
     uTime: { value: 0 },
     uNode: { value: 0 },
+    uDrift: { value: 0 },
     uCenter: { value: [0, 0] },
     uUnit: { value: 1 },
     uRampFrom: { value: [0, 0] },
@@ -101,6 +115,7 @@ function toGl(point: Point, scaleX: number, scaleY: number, bufferHeight: number
 class HeroSceneRuntime implements HeroScene {
   private readonly gpu: GpuParts;
   private readonly targets: HeroSceneTargets;
+  private readonly startSeconds: number;
   private readonly touch = isTouchDevice();
   private readonly profile: RenderProfile = getRenderProfile(this.touch);
   private readonly meter = createFrameMeter();
@@ -115,19 +130,24 @@ class HeroSceneRuntime implements HeroScene {
   private monitoring = true;
   private inView = true;
   private frozen = false;
+  private retired = false;
   private disposed = false;
   private shown = false;
+  private retireTimer = 0;
   private rafId = 0;
-  private clockStart = -1;
+  private readonly clockStart = performance.now();
   private pausedAt = 0;
   private pausedTotal = 0;
   private lastFrame = 0;
   private lastRender = 0;
   private seconds = 0;
 
-  constructor(gpu: GpuParts, targets: HeroSceneTargets) {
+  // The scene clock starts at the poster's own, so node and pulse carry on from where the poster is.
+  constructor(gpu: GpuParts, targets: HeroSceneTargets, startSeconds: number) {
     this.gpu = gpu;
     this.targets = targets;
+    this.startSeconds = startSeconds;
+    this.seconds = startSeconds;
   }
 
   start() {
@@ -147,16 +167,27 @@ class HeroSceneRuntime implements HeroScene {
     const { canvas, renderer, mesh, uniforms } = this.gpu;
     uniforms.uTime.value = this.seconds;
     uniforms.uNode.value = nodeProgress(this.seconds);
+    uniforms.uDrift.value = driftAmount(this.seconds - this.startSeconds);
     renderer.render({ scene: mesh });
     if (this.shown) return;
     this.shown = true;
     // Two frames after the canvas exists, so the opacity transition has a computed start style to leave.
     requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        canvas.style.opacity = '1';
-      });
+      requestAnimationFrame(() => this.reveal());
     });
   }
+
+  // The poster keeps moving under the fade so the crossfade has no stall, then rests while the canvas covers it.
+  private reveal() {
+    const { canvas } = this.gpu;
+    if (this.disposed) return;
+    canvas.style.opacity = '1';
+    canvas.addEventListener('transitionend', this.cover, { once: true });
+  }
+
+  private cover = () => {
+    if (!this.disposed && !this.retired) this.targets.host.dataset.scene = LIVE_SCENE;
+  };
 
   // Resizing clears the drawing buffer, so every call ends with a render.
   private resize() {
@@ -200,15 +231,23 @@ class HeroSceneRuntime implements HeroScene {
       this.resize();
     } else {
       this.monitoring = false;
-      this.frozen = true;
-      this.render();
-      this.syncLoop();
+      this.retire();
     }
+  }
+
+  // A canvas that cannot hold the frame budget is worse than none: the animated poster takes over and the
+  // canvas fades out over it instead of freezing on one frame.
+  private retire() {
+    this.retired = true;
+    this.frozen = true;
+    this.syncLoop();
+    delete this.targets.host.dataset.scene;
+    this.gpu.canvas.style.opacity = '0';
+    this.retireTimer = window.setTimeout(this.dispose, FADE_OUT_MS);
   }
 
   private frame = (now: number) => {
     this.rafId = requestAnimationFrame(this.frame);
-    if (this.clockStart < 0) this.clockStart = now;
 
     if (this.monitoring && this.lastFrame > 0) {
       const average = this.meter.push(now - this.lastFrame);
@@ -218,7 +257,7 @@ class HeroSceneRuntime implements HeroScene {
     if (this.frozen || now - this.lastRender < this.minFrameMs) return;
 
     this.lastRender = now;
-    this.seconds = (now - this.clockStart - this.pausedTotal) / 1000;
+    this.seconds = this.startSeconds + (now - this.clockStart - this.pausedTotal) / 1000;
     this.render();
   };
 
@@ -226,7 +265,7 @@ class HeroSceneRuntime implements HeroScene {
     const shouldRun = !this.disposed && !this.frozen && this.inView && !document.hidden;
     if (shouldRun && this.rafId === 0) {
       // Time spent paused does not count, so the motion resumes where it stopped.
-      if (this.pausedAt > 0 && this.clockStart >= 0) this.pausedTotal += performance.now() - this.pausedAt;
+      if (this.pausedAt > 0) this.pausedTotal += performance.now() - this.pausedAt;
       this.pausedAt = 0;
       this.lastFrame = 0;
       this.rafId = requestAnimationFrame(this.frame);
@@ -240,6 +279,8 @@ class HeroSceneRuntime implements HeroScene {
   dispose = () => {
     if (this.disposed) return;
     this.disposed = true;
+    window.clearTimeout(this.retireTimer);
+    delete this.targets.host.dataset.scene;
     this.syncLoop();
     this.resizeObserver.disconnect();
     this.visibility.disconnect();
@@ -255,7 +296,7 @@ export function mountHeroScene(targets: HeroSceneTargets): HeroScene | null {
   const gpu = createGpuParts();
   if (!gpu) return null;
 
-  const runtime = new HeroSceneRuntime(gpu, targets);
+  const runtime = new HeroSceneRuntime(gpu, targets, readPosterSeconds(targets.stage));
   runtime.start();
   return runtime;
 }

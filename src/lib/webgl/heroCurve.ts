@@ -12,6 +12,10 @@ export function curveY(x: number): number {
   return AMPLITUDE * Math.sin((x * Math.PI) / HALF_LENGTH);
 }
 
+export function curveSlope(x: number): number {
+  return AMPLITUDE * (Math.PI / HALF_LENGTH) * Math.cos((x * Math.PI) / HALF_LENGTH);
+}
+
 // SVG y grows downward, so the world y is negated.
 export function curvePath(): string {
   const points = Array.from({ length: POSTER_SEGMENTS + 1 }, (_, index) => {

@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import {
   getRenderDpr,
   getRenderProfile,
+  isSoftwareRenderer,
   isTouchDevice,
   readHeroEnvironment,
   shouldEnableWebGL,
@@ -117,5 +118,25 @@ describe('perfil de render', () => {
     expect(getRenderDpr(3, getRenderProfile(false), 0)).toBe(2);
     expect(getRenderDpr(3, getRenderProfile(true), 0)).toBeCloseTo(1.125);
     expect(getRenderDpr(1, getRenderProfile(false), 1)).toBeCloseTo(0.6);
+  });
+});
+
+describe('isSoftwareRenderer', () => {
+  it('reconoce los renderizadores por software', () => {
+    expect(isSoftwareRenderer('ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero)), SwiftShader driver)')).toBe(true);
+    expect(isSoftwareRenderer('llvmpipe (LLVM 15.0.7, 256 bits)')).toBe(true);
+    expect(isSoftwareRenderer('Microsoft Basic Render Driver')).toBe(true);
+  });
+
+  it('acepta GPU reales aunque Chrome las marque con una advertencia de rendimiento', () => {
+    expect(isSoftwareRenderer('ANGLE (NVIDIA, NVIDIA GeForce RTX 3060 Direct3D11 vs_5_0 ps_5_0, D3D11)')).toBe(false);
+    expect(isSoftwareRenderer('ANGLE (Intel, Intel(R) UHD Graphics 620 Direct3D11 vs_5_0 ps_5_0, D3D11)')).toBe(false);
+    expect(isSoftwareRenderer('Apple M2')).toBe(false);
+  });
+
+  it('trata un nombre ausente como hardware', () => {
+    expect(isSoftwareRenderer(undefined)).toBe(false);
+    expect(isSoftwareRenderer(null)).toBe(false);
+    expect(isSoftwareRenderer('')).toBe(false);
   });
 });
