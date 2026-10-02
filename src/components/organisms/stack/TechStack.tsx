@@ -4,23 +4,25 @@ import { cn } from '../../../utils/helpers';
 import { Card } from '../../atoms';
 import { Constellation } from './Constellation';
 import { techGraph } from './constellationGraph';
-import { TechList } from './TechList';
+import { TechSummary } from './TechSummary';
 
-// The sphere is the showpiece and the list is the readable source: same technologies, grouped as in the CV.
+const HEADING_ID = 'stack-heading';
+
+// The sphere is the whole showpiece: it names its front chips itself and the card adds no second visible list.
 // The section reveals the card; the sphere starts its own frames only while it is on screen.
 export function TechStack() {
   const { t } = useLanguage();
 
   return (
-    <Card variant="info" data-reveal="card">
-      <h3 className={cn(typography.h4, 'text-fg')}>{t('skills.title')}</h3>
-      <div className="grid gap-8 lg:grid-cols-2 lg:items-center lg:gap-10">
-        <div className="flex flex-col items-center gap-2">
-          <Constellation graph={techGraph} />
-          <p className={cn(typography.caption, 'text-fg-subtle')}>{t('skills.hint')}</p>
-        </div>
-        <TechList />
+    <Card variant="info" data-reveal="card" className="min-w-0">
+      <h3 id={HEADING_ID} className={cn(typography.h4, 'text-fg')}>
+        {t('skills.title')}
+      </h3>
+      <div className="flex flex-1 flex-col items-center justify-center gap-3">
+        <Constellation graph={techGraph} />
+        <p className={cn(typography.caption, 'text-fg-subtle')}>{t('skills.hint')}</p>
       </div>
+      <TechSummary labelledBy={HEADING_ID} />
     </Card>
   );
 }

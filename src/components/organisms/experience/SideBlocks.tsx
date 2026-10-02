@@ -17,12 +17,12 @@ const languages = [
 
 const headingStyles = cn(typography.h5, 'text-fg');
 
-// Education, certifications and languages: one Card each; the section reveals each card on its own.
+// Education, certifications and languages: one Card each, stacked; the section reveals each card on its own.
 export function SideBlocks() {
   const { t } = useLanguage();
 
   return (
-    <div className="grid gap-6 lg:grid-cols-3">
+    <div className="flex min-w-0 flex-col gap-6">
       <Card variant="info" data-reveal="card">
         <h3 className={headingStyles}>{t('experience.education.title')}</h3>
         <div className="flex flex-col gap-1">

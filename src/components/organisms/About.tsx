@@ -36,7 +36,7 @@ export function About() {
   return (
     <section id="about" ref={scope} aria-labelledby="about-heading" className="py-section">
       <Container>
-        <h2 id="about-heading" data-reveal className={cn(typography.h2, 'text-fg')}>
+        <h2 id="about-heading" data-reveal className={cn(typography.h2, 'text-center text-fg lg:text-left')}>
           {t('about.title')}
         </h2>
 
@@ -55,7 +55,7 @@ export function About() {
             <p data-reveal className={cn(typography.bodyLarge, 'max-w-prose text-fg-muted')}>
               {t('about.bio.goals')}
             </p>
-            <div data-reveal>
+            <div data-reveal className="text-center lg:text-left">
               <a
                 href="#projects"
                 onClick={(event) => {

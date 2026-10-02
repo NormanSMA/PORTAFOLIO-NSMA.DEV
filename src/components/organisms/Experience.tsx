@@ -46,10 +46,15 @@ export function Experience() {
   return (
     <section ref={sectionRef} id="experience" aria-labelledby="experience-heading" className="py-section">
       <Container>
-        <h2 id="experience-heading" data-reveal="heading" className={cn(typography.h2, 'text-fg')}>
+        <h2
+          id="experience-heading"
+          data-reveal="heading"
+          className={cn(typography.h2, 'text-center text-fg lg:text-left')}
+        >
           {t('experience.title')}
         </h2>
-        <div className="mt-10 flex flex-col gap-6 lg:mt-12">
+        {/* Below lg the sphere comes first and the three blocks follow in one column; from lg the blocks sit beside it. */}
+        <div className="mt-10 grid gap-6 lg:mt-12 lg:grid-cols-[minmax(0,1fr)_22rem]">
           <TechStack />
           <SideBlocks />
         </div>
