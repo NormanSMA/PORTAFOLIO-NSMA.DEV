@@ -52,7 +52,7 @@ export function Approach() {
   return (
     <section id="approach" ref={sectionRef} aria-labelledby="approach-heading" className="py-section">
       <Container>
-        <div data-reveal-group="all" className="max-w-2xl">
+        <div data-reveal-group="all" className="mx-auto max-w-2xl text-center lg:mx-0 lg:text-left">
           <h2 id="approach-heading" data-reveal className={cn(typography.h2, 'text-fg')}>
             {t('services.heading')}
           </h2>

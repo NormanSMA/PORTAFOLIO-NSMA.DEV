@@ -52,7 +52,7 @@ export function Contact() {
   return (
     <section ref={sectionRef} id="contact" aria-labelledby="contact-heading" className="bg-ink py-section">
       <Container>
-        <div className="flex max-w-2xl flex-col gap-4">
+        <div className="mx-auto flex max-w-2xl flex-col items-center gap-4 text-center lg:mx-0 lg:items-start lg:text-left">
           <h2 id="contact-heading" data-contact-reveal className={cn(typography.h1, 'text-fg')}>
             {t('contact.title')}
           </h2>
