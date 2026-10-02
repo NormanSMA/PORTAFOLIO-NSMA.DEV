@@ -2,7 +2,6 @@ import { describe, it, expect } from 'vitest';
 import {
   activeIndexFor,
   cardDepth,
-  computeLayout,
   depthBlur,
   depthOpacity,
   estimateVelocity,
@@ -77,62 +76,27 @@ describe('profundidad', () => {
   it('el desenfoque va de 0 a 4 px en pasos de .5', () => {
     expect(depthBlur(1)).toBe(0);
     expect(depthBlur(0)).toBe(4);
-    for (const depth of [0.9, 0.7, 0.33, 0.12]) {
+    for (const depth of [0.75, 0.5, 0.33, 0.12]) {
       expect((depthBlur(depth) * 2) % 1).toBe(0);
     }
-    expect(depthBlur(0.99)).toBe(0);
-  });
-});
-
-describe('computeLayout', () => {
-  const widths = [375, 768, 1024, 1440];
-
-  it('limita el ancho de tarjeta a 170-270 px y mantiene 3:4', () => {
-    expect(computeLayout(1200, 7).cardWidth).toBe(270);
-    expect(computeLayout(343, 7).cardWidth).toBeCloseTo(171.5);
-    expect(computeLayout(200, 7).cardWidth).toBe(170);
-    const layout = computeLayout(1200, 7);
-    expect(layout.cardHeight / layout.cardWidth).toBeCloseTo(4 / 3);
   });
 
-  it('las tarjetas vecinas no se cruzan de 3 a 12 tarjetas', () => {
-    for (const width of widths) {
-      for (let count = 3; count <= 12; count += 1) {
-        const { cardWidth, radius } = computeLayout(width, count);
-        const polygonSide = 2 * radius * Math.tan(Math.PI / count);
-        expect(cardWidth).toBeLessThan(polygonSide);
-      }
+  it('no hay desenfoque con profundidad de 0.8 o mas: ni la frontal ni las vecinas', () => {
+    for (const depth of [1, 0.99, 0.9, 0.81, 0.8]) {
+      expect(depthBlur(depth), `depth ${depth}`).toBe(0);
     }
+    // The neighbors of a ring of 7 sit at about 0.81.
+    expect(depthBlur(cardDepth(0, 1, 7))).toBe(0);
+    expect(depthBlur(0.79)).toBeGreaterThanOrEqual(0);
+    expect(depthBlur(0.4)).toBeGreaterThan(0);
   });
 
-  it('con 7 tarjetas conserva la forma del original: radio y perspectiva en proporcion', () => {
-    const { radius, perspective, cardWidth } = computeLayout(1440, 7);
-    expect(radius / cardWidth).toBeGreaterThan(1.2);
-    expect(radius / cardWidth).toBeLessThan(1.94);
-    expect(perspective / cardWidth).toBeCloseTo(1400 / 330);
-  });
-
-  it('el anillo se reduce en proporcion en movil', () => {
-    const desktop = computeLayout(1200, 7);
-    const mobile = computeLayout(343, 7);
-    expect(mobile.radius / desktop.radius).toBeCloseTo(mobile.cardWidth / desktop.cardWidth);
-    expect(mobile.perspective).toBeLessThan(desktop.perspective);
-    expect(mobile.stageHeight).toBeLessThan(desktop.stageHeight);
-  });
-
-  it('con menos de 3 tarjetas calcula geometria finita', () => {
-    for (const count of [0, 1, 2]) {
-      const layout = computeLayout(800, count);
-      expect(Number.isFinite(layout.radius)).toBe(true);
-      expect(layout.radius).toBeGreaterThan(0);
-    }
-  });
-
-  it('degreesPerPixel es positivo y finito', () => {
-    for (const width of widths) {
-      const { degreesPerPixel } = computeLayout(width, 7);
-      expect(degreesPerPixel).toBeGreaterThan(0.05);
-      expect(degreesPerPixel).toBeLessThan(0.4);
+  it('el desenfoque crece de forma monotona hacia el fondo del anillo', () => {
+    let previous = -1;
+    for (let depth = 1; depth >= 0; depth -= 0.05) {
+      const blur = depthBlur(depth);
+      expect(blur).toBeGreaterThanOrEqual(previous);
+      previous = blur;
     }
   });
 });

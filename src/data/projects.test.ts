@@ -73,9 +73,16 @@ describe('getProjects', () => {
     expect(projects.find((p) => p.id === 'portfolio')?.links.repo).toBeUndefined();
   });
 
-  it('solo los cuatro proyectos con captura movil lo declaran', () => {
-    const withMobile = projects.filter((p) => p.hasMobileImage).map((p) => p.id);
-    expect(withMobile).toEqual(['ecopulse', 'turno', 'iuris', 'pantano']);
+  it('la tarjeta solo usa la captura de escritorio: no quedan campos ni textos moviles', () => {
+    for (const project of projectDefinitions) {
+      expect(project).not.toHaveProperty('hasMobileImage');
+      expect(project).not.toHaveProperty('imagePosition');
+    }
+    for (const project of projects) {
+      expect(project).not.toHaveProperty('altMobile');
+    }
+    expect(JSON.stringify(translations.es.projects)).not.toContain('altMobile');
+    expect(JSON.stringify(translations.en.projects)).not.toContain('altMobile');
   });
 
   it('muestra entre 1 y 5 etiquetas de tecnologia por proyecto', () => {
@@ -135,10 +142,6 @@ describe.each(['es', 'en'] as const)('copy de proyectos (%s)', (language) => {
       expect(project.title, `${project.id} title`).toBeTruthy();
       expect(project.statusLabel, `${project.id} status`).toBeTruthy();
       expect(project.altDesktop, `${project.id} altDesktop`).toBeTruthy();
-      if (project.hasMobileImage) {
-        expect(project.altMobile, `${project.id} altMobile`).toBeTruthy();
-        expect(project.altMobile).not.toBe(project.altDesktop);
-      }
     }
   });
 

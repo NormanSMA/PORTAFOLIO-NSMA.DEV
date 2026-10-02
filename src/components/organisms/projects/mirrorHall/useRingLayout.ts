@@ -1,5 +1,5 @@
 import { useLayoutEffect, useMemo, useState, type RefObject } from 'react';
-import { computeLayout } from './ringMath';
+import { computeLayout } from './ringLayout';
 
 // Width used until the first measurement, and in environments without layout (jsdom).
 const FALLBACK_WIDTH = 960;

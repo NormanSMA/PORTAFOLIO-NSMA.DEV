@@ -7,7 +7,6 @@ export const projects = {
     description:
       'Mapa en tiempo real de sismos, incendios, clima y calidad del aire en todo el mundo. Se puede ver como mapa plano o como globo 3D.',
     altDesktop: 'Captura de la versión de escritorio de EcoPulse',
-    altMobile: 'Captura de la versión móvil de EcoPulse',
   },
   turno: {
     title: 'Turno',
@@ -15,7 +14,6 @@ export const projects = {
     description:
       'Sistema para pedir comida con anticipación en el campus: reservas tu hora de retiro y, si está llena, te propone la siguiente. Es mi proyecto de tesis.',
     altDesktop: 'Captura de la versión de escritorio de Turno',
-    altMobile: 'Captura de la versión móvil de Turno',
   },
   iuris: {
     title: 'Iuris Consultus',
@@ -23,7 +21,6 @@ export const projects = {
     description:
       'Sitio web en español e inglés de la firma legal Iuris Consultus Nicaragua. Lo desarrollé de principio a fin y hoy lo mantengo.',
     altDesktop: 'Captura de la versión de escritorio de Iuris Consultus',
-    altMobile: 'Captura de la versión móvil de Iuris Consultus',
   },
   claudehub: {
     title: 'ClaudeHub',
@@ -45,7 +42,6 @@ export const projects = {
     description:
       'Sitio del Hotel y Restaurante El Pantano, en Nueva Segovia: muestra habitaciones, menú y eventos, y recibe reservas por WhatsApp. Lo hice como proyecto freelance.',
     altDesktop: 'Captura de la versión de escritorio del sitio de Hotel El Pantano',
-    altMobile: 'Captura de la versión móvil del sitio de Hotel El Pantano',
   },
   portfolio: {
     title: 'Este portafolio',

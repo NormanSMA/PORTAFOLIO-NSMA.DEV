@@ -1,10 +1,7 @@
 import type { CSSProperties } from 'react';
 
-type ProjectImageKind = 'desktop' | 'mobile';
-
 interface ProjectImageProps {
   projectId: string;
-  kind: ProjectImageKind;
   alt: string;
   sizes: string;
   priority?: boolean;
@@ -13,27 +10,25 @@ interface ProjectImageProps {
 }
 
 // Widths and intrinsic size must match scripts/capture-projects.mjs; the intrinsic size reserves space and avoids layout shift.
-const projectImageSpecs = {
-  desktop: { widths: [480, 800, 1200, 1600], width: 1600, height: 1000 },
-  mobile: { widths: [240, 360, 480, 720], width: 720, height: 1558 },
-} as const;
+const WIDTHS = [480, 960, 1440, 1920] as const;
+const INTRINSIC = { width: 1920, height: 1200 } as const;
+const FALLBACK_WIDTH = WIDTHS[1];
 
-export function ProjectImage({ projectId, kind, alt, sizes, priority = false, className, style }: ProjectImageProps) {
-  const { widths, width, height } = projectImageSpecs[kind];
-  const basePath = `/projects/${projectId}/${kind}`;
+export function ProjectImage({ projectId, alt, sizes, priority = false, className, style }: ProjectImageProps) {
+  const basePath = `/projects/${projectId}/desktop`;
   const buildSrcSet = (format: 'avif' | 'webp') =>
-    widths.map((w) => `${basePath}-${w}.${format} ${w}w`).join(', ');
+    WIDTHS.map((width) => `${basePath}-${width}.${format} ${width}w`).join(', ');
 
   return (
     <picture>
       <source type="image/avif" srcSet={buildSrcSet('avif')} sizes={sizes} />
       <img
-        src={`${basePath}-${widths[1]}.webp`}
+        src={`${basePath}-${FALLBACK_WIDTH}.webp`}
         srcSet={buildSrcSet('webp')}
         sizes={sizes}
         alt={alt}
-        width={width}
-        height={height}
+        width={INTRINSIC.width}
+        height={INTRINSIC.height}
         loading={priority ? 'eager' : 'lazy'}
         fetchPriority={priority ? 'high' : undefined}
         decoding="async"

@@ -2,47 +2,24 @@ import { useState } from 'react';
 import { ProjectImage } from '../../atoms/ProjectImage';
 import type { LocalizedProject } from '../../../types';
 
-type ProjectCardFaceProps = Pick<
-  LocalizedProject,
-  'id' | 'altDesktop' | 'altMobile' | 'hasMobileImage' | 'imagePosition'
->;
+type ProjectCardFaceProps = Pick<LocalizedProject, 'id' | 'altDesktop'>;
 
-// A missing image hides itself so the card keeps its surface fill instead of showing a broken-image icon.
-export function ProjectCardFace({ id, altDesktop, altMobile, hasMobileImage, imagePosition }: ProjectCardFaceProps) {
-  const [desktopFailed, setDesktopFailed] = useState(false);
-  const [mobileFailed, setMobileFailed] = useState(false);
-  const showMobile = hasMobileImage && altMobile && !mobileFailed;
+// The displayed card width, as ringLayout.cardWidthFor computes it: 230 px at 375 px of viewport, 440 px at most.
+// The reflection renders this same component, so both images resolve to the same file.
+const CARD_SIZES = 'clamp(200px, calc(230px + (100vw - 375px) * 0.313), 440px)';
+
+// The box has the capture's own 16:10 ratio, so cover crops nothing. A missing image hides itself and
+// the box keeps its surface fill instead of showing a broken-image icon.
+export function ProjectCardFace({ id, altDesktop }: ProjectCardFaceProps) {
+  const [failed, setFailed] = useState(false);
 
   return (
-    <div className="relative h-full w-full overflow-hidden bg-surface">
-      {!desktopFailed && (
-        <div
-          className="absolute inset-0 [&>picture]:block [&>picture]:h-full"
-          onErrorCapture={() => setDesktopFailed(true)}
-        >
-          <ProjectImage
-            projectId={id}
-            kind="desktop"
-            alt={altDesktop}
-            sizes="(min-width: 768px) 720px, 560px"
-            className="h-full w-full object-cover"
-            style={{ objectPosition: imagePosition }}
-          />
-        </div>
-      )}
-      {showMobile && (
-        <div
-          className="absolute bottom-3 right-3 w-[34%] overflow-hidden rounded-control border border-line bg-surface shadow-card [&>picture]:block"
-          onErrorCapture={() => setMobileFailed(true)}
-        >
-          <ProjectImage
-            projectId={id}
-            kind="mobile"
-            alt={altMobile}
-            sizes="128px"
-            className="block h-auto w-full"
-          />
-        </div>
+    <div
+      className="h-full w-full bg-surface [&>picture]:block [&>picture]:h-full"
+      onErrorCapture={() => setFailed(true)}
+    >
+      {!failed && (
+        <ProjectImage projectId={id} alt={altDesktop} sizes={CARD_SIZES} className="h-full w-full object-cover" />
       )}
     </div>
   );

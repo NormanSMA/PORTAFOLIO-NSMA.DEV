@@ -7,7 +7,6 @@ export const projects = {
     description:
       'A real-time map of earthquakes, wildfires, weather and air quality around the world. You can view it as a flat map or a 3D globe.',
     altDesktop: 'Screenshot of the desktop version of EcoPulse',
-    altMobile: 'Screenshot of the mobile version of EcoPulse',
   },
   turno: {
     title: 'Turno',
@@ -15,7 +14,6 @@ export const projects = {
     description:
       'A system to order food ahead on campus: you book your pickup time and, if that time is full, it suggests the next one. It is my thesis project.',
     altDesktop: 'Screenshot of the desktop version of Turno',
-    altMobile: 'Screenshot of the mobile version of Turno',
   },
   iuris: {
     title: 'Iuris Consultus',
@@ -23,7 +21,6 @@ export const projects = {
     description:
       'Website in Spanish and English for the law firm Iuris Consultus Nicaragua. I built it from start to finish and I still maintain it.',
     altDesktop: 'Screenshot of the desktop version of Iuris Consultus',
-    altMobile: 'Screenshot of the mobile version of Iuris Consultus',
   },
   claudehub: {
     title: 'ClaudeHub',
@@ -45,7 +42,6 @@ export const projects = {
     description:
       'Website of Hotel y Restaurante El Pantano in Nueva Segovia: it shows rooms, menu and events, and takes bookings through WhatsApp. I made it as a freelance project.',
     altDesktop: 'Screenshot of the desktop version of the Hotel El Pantano site',
-    altMobile: 'Screenshot of the mobile version of the Hotel El Pantano site',
   },
   portfolio: {
     title: 'This portfolio',

@@ -13,8 +13,6 @@ export const projectDefinitions: readonly Project[] = [
       live: 'https://ecopulse-eta-two.vercel.app/',
       repo: 'https://github.com/NormanSMA/EcoPulse',
     },
-    hasMobileImage: true,
-    imagePosition: '57% 0%',
   },
   {
     id: 'turno',
@@ -27,8 +25,6 @@ export const projectDefinitions: readonly Project[] = [
       live: 'https://turno-umber.vercel.app/',
       repo: 'https://github.com/NormanSMA/turno',
     },
-    hasMobileImage: true,
-    imagePosition: '0% 0%',
   },
   {
     id: 'iuris',
@@ -38,8 +34,6 @@ export const projectDefinitions: readonly Project[] = [
     status: 'delivered',
     technologies: ['Astro', 'React', 'TypeScript', 'Tailwind CSS', 'SEO'],
     links: { live: 'https://iurisnicaragua.com/' },
-    hasMobileImage: true,
-    imagePosition: '0% 0%',
   },
   {
     id: 'claudehub',
@@ -49,8 +43,6 @@ export const projectDefinitions: readonly Project[] = [
     status: 'active',
     technologies: ['Electron', 'Node.js', 'TypeScript', 'React 19', 'Hono'],
     links: { repo: 'https://github.com/NormanSMA/ClaudeHub' },
-    hasMobileImage: false,
-    imagePosition: '50% 0%',
   },
   {
     id: 'systech',
@@ -60,8 +52,6 @@ export const projectDefinitions: readonly Project[] = [
     status: 'delivered',
     technologies: ['WordPress', 'PHP', 'MySQL', 'CSS'],
     links: { live: 'https://systech.uam.edu.ni/' },
-    hasMobileImage: false,
-    imagePosition: '0% 0%',
   },
   {
     id: 'pantano',
@@ -71,8 +61,6 @@ export const projectDefinitions: readonly Project[] = [
     status: 'delivered',
     technologies: ['Astro', 'Tailwind CSS', 'Alpine.js', 'TypeScript', 'SEO'],
     links: { live: 'https://hotel-el-pantano.vercel.app/' },
-    hasMobileImage: true,
-    imagePosition: '0% 0%',
   },
   {
     id: 'portfolio',
@@ -83,8 +71,6 @@ export const projectDefinitions: readonly Project[] = [
     technologies: ['React 19', 'TypeScript', 'Tailwind CSS', 'GSAP', 'OGL'],
     // The repo link stays out until Norman confirms it is public.
     links: { live: 'https://portafolio-nsma-dev.vercel.app/' },
-    hasMobileImage: false,
-    imagePosition: '0% 0%',
   },
 ];
 
@@ -96,5 +82,4 @@ export const getProjects = (t: (key: string) => string): LocalizedProject[] =>
     description: t(`projects.${project.id}.description`),
     statusLabel: t(`projects.status.${project.status}`),
     altDesktop: t(`projects.${project.id}.altDesktop`),
-    altMobile: project.hasMobileImage ? t(`projects.${project.id}.altMobile`) : undefined,
   }));
