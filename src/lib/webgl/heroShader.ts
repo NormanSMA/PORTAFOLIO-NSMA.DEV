@@ -16,6 +16,7 @@ precision highp float;
 uniform vec2 uResolution;   // drawing buffer, px
 uniform float uTime;        // seconds of active time
 uniform float uNode;        // 0..1, where the bright node sits along the curve
+uniform float uDrift;       // 0..1, eases the sway in so the canvas starts exactly where the poster is
 uniform vec2 uCenter;       // stage center, px, y up
 uniform float uUnit;        // px per world unit
 uniform vec2 uRampFrom;     // glow floor starts here, px
@@ -45,11 +46,11 @@ float hash(vec2 p) {
 vec3 filament(vec2 frag) {
   vec2 p = (frag - uCenter) / uUnit;
 
-  // Two unrelated slow periods (17 s and 23 s) so the wobble never reads as a loop.
-  p -= vec2(0.05 * sin(uTime * 0.37), 0.07 * sin(uTime * 0.27));
+  // Two unrelated periods (11 s and 15 s) so the sway never reads as a loop; wide enough to see within a few seconds.
+  p -= uDrift * vec2(0.11 * sin(uTime * 0.55), 0.15 * sin(uTime * 0.42));
 
-  // Simulated yaw (40 s period): squeeze x and shrink the far end instead of rotating a tube.
-  float yaw = 0.45 * sin(uTime * 0.157);
+  // Simulated yaw (29 s period): squeeze x and shrink the far end instead of rotating a tube.
+  float yaw = uDrift * 0.6 * sin(uTime * 0.22);
   float c = cos(yaw);
   float x = p.x / c;
   float depth = 1.0 / (1.0 + 0.18 * x * sin(yaw));
@@ -61,7 +62,7 @@ vec3 filament(vec2 frag) {
   float d = length(vec2(across, along));
 
   float u = clamp(x / (2.0 * HALF_LENGTH) + 0.5, 0.0, 1.0);
-  float q = (u - uNode) / 0.07;
+  float q = (u - uNode) / 0.1;
   float node = exp(-q * q);
   float pulse = 1.0 + 0.4 * sin(uTime * 1.5707963);
   float ends = 1.0 - 0.65 * smoothstep(0.7, 1.0, abs(x) / HALF_LENGTH);
@@ -71,9 +72,9 @@ vec3 filament(vec2 frag) {
   float halo = exp(-d * d / (2.0 * 0.2 * 0.2));
   float haze = 1.0 / (1.0 + d * d / 0.3025);
 
-  vec3 glow = uCore * core * 1.2 * (1.0 + 1.6 * node)
-    + uInner * inner * 0.45 * (1.0 + 0.9 * node)
-    + uHalo * halo * 0.35 * (1.0 + 0.5 * node)
+  vec3 glow = uCore * core * 1.2 * (1.0 + 2.6 * node)
+    + uInner * inner * 0.45 * (1.0 + 2.4 * node)
+    + uHalo * halo * 0.35 * (1.0 + 1.8 * node)
     + uHalo * haze * 0.06;
 
   return glow * pulse * ends;
