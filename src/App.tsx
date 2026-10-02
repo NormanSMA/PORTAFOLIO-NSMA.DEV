@@ -37,6 +37,33 @@ function usePreloadSections() {
   }, []);
 }
 
+const REFRESH_DEBOUNCE_MS = 250;
+
+// Images, fonts, the project ficha and a viewport change all alter the page height after the
+// triggers measured it, which leaves every later reveal offset until the next refresh.
+function useRefreshOnHeightChange() {
+  useEffect(() => {
+    const main = document.getElementById('main');
+    if (!main || typeof ResizeObserver === 'undefined') return;
+
+    let lastHeight = main.offsetHeight;
+    let timer: number | undefined;
+    const observer = new ResizeObserver(() => {
+      const height = main.offsetHeight;
+      if (Math.abs(height - lastHeight) < 2) return;
+      lastHeight = height;
+      window.clearTimeout(timer);
+      timer = window.setTimeout(() => ScrollTrigger.refresh(), REFRESH_DEBOUNCE_MS);
+    });
+    observer.observe(main);
+
+    return () => {
+      observer.disconnect();
+      window.clearTimeout(timer);
+    };
+  }, []);
+}
+
 function SkipLink() {
   const { t } = useLanguage();
 
@@ -50,6 +77,7 @@ function SkipLink() {
 function App() {
   useLenis();
   usePreloadSections();
+  useRefreshOnHeightChange();
 
   return (
     <LanguageProvider>
