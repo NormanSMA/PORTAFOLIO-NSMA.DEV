@@ -164,7 +164,7 @@ class HeroSceneRuntime implements HeroScene {
   }
 
   private render() {
-    const { canvas, renderer, mesh, uniforms } = this.gpu;
+    const { renderer, mesh, uniforms } = this.gpu;
     uniforms.uTime.value = this.seconds;
     uniforms.uNode.value = nodeProgress(this.seconds);
     uniforms.uDrift.value = driftAmount(this.seconds - this.startSeconds);
