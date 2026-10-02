@@ -1,28 +1,5 @@
 export const experience = {
-  title: 'Experience',
-  present: 'Present',
-  timelineLabel: 'Professional experience',
-  viewProject: 'View project',
-  iuris: {
-    role: 'Freelance Web Developer',
-    organization: 'Iuris Consultus Nicaragua',
-    bullet1: 'Bilingual corporate website built with Astro, TypeScript and React.',
-    bullet2: 'Full cycle: requirements, development, deployment, domain and hosting.',
-    bullet3: 'Performance work and basic SEO. Delivered and under maintenance.',
-  },
-  pantano: {
-    role: 'Freelance Web Developer',
-    organization: 'Hotel-Restaurante El Pantano',
-    bullet1: 'Institutional website built with Astro and React.',
-    bullet2: 'Domain, hosting and deployment on Vercel.',
-    bullet3: 'Basic SEO.',
-  },
-  systech: {
-    role: 'Web Development Lead',
-    organization: 'SYSTECH Congress, UAM',
-    bullet1: 'Development and administration of the official website with WordPress.',
-    bullet2: 'Content publishing and updates.',
-  },
+  title: 'Education and stack',
   education: {
     title: 'Education',
     institution: 'Universidad Americana (UAM)',

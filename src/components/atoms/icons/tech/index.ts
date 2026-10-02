@@ -10,3 +10,4 @@ export { AwsIcon } from './AWSIcon';
 export { DockerIcon } from './DockerIcon';
 export { TypeScriptIcon } from './TypeScriptIcon';
 export { TailwindIcon } from './TailwindIcon';
+export { SqlServerIcon } from './SqlServerIcon';

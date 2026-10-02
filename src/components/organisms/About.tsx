@@ -7,7 +7,6 @@ import { scrollToSection } from '../../lib/scroll';
 import { cn } from '../../utils/helpers';
 import { Container } from '../atoms';
 import { AboutPhoto } from './about/AboutPhoto';
-import { SkillStack } from './about/SkillStack';
 
 export function About() {
   const { t } = useLanguage();
@@ -42,7 +41,7 @@ export function About() {
         </h2>
 
         <div className="mt-10 grid items-center gap-10 lg:mt-12 lg:grid-cols-12 lg:gap-x-16">
-          <div data-reveal className="max-w-72 md:max-w-sm lg:col-span-5 lg:max-w-none">
+          <div data-reveal className="mx-auto max-w-72 md:max-w-sm lg:col-span-5 lg:mx-0 lg:max-w-none">
             <AboutPhoto alt={t('about.photoAlt')} />
           </div>
 
@@ -69,10 +68,6 @@ export function About() {
               </a>
             </div>
           </div>
-        </div>
-
-        <div data-reveal className="mt-12 lg:mt-16">
-          <SkillStack />
         </div>
       </Container>
     </section>

@@ -1,28 +1,5 @@
 export const experience = {
-  title: 'Experiencia',
-  present: 'Presente',
-  timelineLabel: 'Trayectoria profesional',
-  viewProject: 'Ver proyecto',
-  iuris: {
-    role: 'Desarrollador Web Freelance',
-    organization: 'Iuris Consultus Nicaragua',
-    bullet1: 'Sitio corporativo bilingüe con Astro, TypeScript y React.',
-    bullet2: 'Ciclo completo: requerimientos, desarrollo, despliegue, dominio y hosting.',
-    bullet3: 'Rendimiento y SEO básico. Entregado y en mantenimiento.',
-  },
-  pantano: {
-    role: 'Desarrollador Web Freelance',
-    organization: 'Hotel-Restaurante El Pantano',
-    bullet1: 'Sitio institucional con Astro y React.',
-    bullet2: 'Dominio, hosting y despliegue en Vercel.',
-    bullet3: 'SEO básico.',
-  },
-  systech: {
-    role: 'Líder de Desarrollo Web',
-    organization: 'Congreso SYSTECH, UAM',
-    bullet1: 'Desarrollo y administración del sitio oficial con WordPress.',
-    bullet2: 'Publicación y actualización de contenido.',
-  },
+  title: 'Formación y stack',
   education: {
     title: 'Educación',
     institution: 'Universidad Americana (UAM)',

@@ -3,59 +3,54 @@ import { useLanguage, useMotion } from '../../hooks';
 import { Container } from '../atoms';
 import { motion } from '../../config/motion';
 import { typography } from '../../config/typography';
-import { gsap } from '../../lib/gsap';
+import { gsap, ScrollTrigger } from '../../lib/gsap';
 import { cn } from '../../utils/helpers';
-import { experienceEntries } from './experience/entries';
 import { SideBlocks } from './experience/SideBlocks';
-import { TimelineEntry } from './experience/TimelineEntry';
+import { TechStack } from './stack/TechStack';
 
-const reveal = {
-  opacity: 0,
-  y: motion.offset.reveal,
-  duration: motion.duration.base,
-  ease: motion.ease.out.gsap,
-  clearProps: 'opacity,transform',
-};
+const CARD_SCALE_FROM = 0.96;
 
 export function Experience() {
   const { t } = useLanguage();
   const sectionRef = useRef<HTMLElement>(null);
 
-  // Each entry reveals when it enters the viewport; the delay staggers those that enter together.
+  // Reduced motion returns before touching anything, so the content is never hidden.
+  // Each card has its own trigger: on a phone the cards are far apart, and the batch staggers the ones that enter together.
   useMotion(sectionRef, ({ noReducedMotion }) => {
     const section = sectionRef.current;
     if (!noReducedMotion || !section) return;
 
-    const entries = gsap.utils.toArray<HTMLElement>('[data-reveal="entry"]', section);
-    entries.forEach((entry, index) => {
-      gsap.from(entry, {
-        ...reveal,
-        delay: index * motion.stagger.loose,
-        scrollTrigger: { trigger: entry, start: motion.scrollStart.reveal, once: true },
-      });
+    const items = gsap.utils.toArray<HTMLElement>('[data-reveal]', section);
+    gsap.set(items, {
+      opacity: 0,
+      y: motion.offset.reveal,
+      scale: (_index: number, item: HTMLElement) => (item.dataset.reveal === 'card' ? CARD_SCALE_FROM : 1),
     });
-
-    const side = section.querySelector<HTMLElement>('[data-reveal="side"]');
-    if (!side) return;
-    gsap.from(gsap.utils.toArray<HTMLElement>('[data-reveal="block"]', side), {
-      ...reveal,
-      stagger: motion.stagger.loose,
-      scrollTrigger: { trigger: side, start: motion.scrollStart.reveal, once: true },
+    ScrollTrigger.batch(items, {
+      start: motion.scrollStart.reveal,
+      once: true,
+      onEnter: (batch) =>
+        gsap.to(batch, {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          duration: motion.duration.base,
+          ease: motion.ease.out.gsap,
+          stagger: motion.stagger.loose,
+          overwrite: true,
+          clearProps: 'opacity,transform',
+        }),
     });
   });
 
   return (
     <section ref={sectionRef} id="experience" aria-labelledby="experience-heading" className="py-section">
       <Container>
-        <h2 id="experience-heading" className={cn(typography.h2, 'text-fg')}>
+        <h2 id="experience-heading" data-reveal="heading" className={cn(typography.h2, 'text-fg')}>
           {t('experience.title')}
         </h2>
-        <div className="mt-10 grid gap-12 lg:mt-12 xl:grid-cols-[minmax(0,1fr)_minmax(0,22rem)] xl:gap-16">
-          <ol role="list" aria-label={t('experience.timelineLabel')} className="flex flex-col gap-6">
-            {experienceEntries.map((entry) => (
-              <TimelineEntry key={entry.id} entry={entry} />
-            ))}
-          </ol>
+        <div className="mt-10 flex flex-col gap-6 lg:mt-12">
+          <TechStack />
           <SideBlocks />
         </div>
       </Container>

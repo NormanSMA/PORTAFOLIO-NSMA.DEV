@@ -13,11 +13,9 @@ vi.hoisted(() => {
   })) as unknown as typeof window.matchMedia;
 });
 
-import { render, screen, within, cleanup } from '@testing-library/react';
+import { render, screen, cleanup } from '@testing-library/react';
 import { LanguageProvider } from '../../contexts/LanguageContext';
 import { LANGUAGE_CONFIG } from '../../config/constants';
-import { skillGroups } from '../../data/skills';
-import { translations } from '../../i18n/translations';
 import { About } from './About';
 
 // jsdom here exposes no usable localStorage, so the language is injected through a Map-backed stub.
@@ -60,6 +58,14 @@ describe('About', () => {
     expect(photo.getAttribute('srcset')).toContain('/norman_sf-1200w.webp 1200w');
   });
 
+  it('centra la foto en pantallas estrechas y la suelta de la columna en escritorio', () => {
+    renderAbout('es');
+    const frame = screen.getByRole('img', { name: /Retrato de Norman Martínez/ }).closest('[data-reveal]');
+
+    expect(frame?.classList.contains('mx-auto')).toBe(true);
+    expect(frame?.classList.contains('lg:mx-0')).toBe(true);
+  });
+
   it('no muestra estadisticas ni cifras de experiencia', () => {
     renderAbout('es');
 
@@ -68,26 +74,17 @@ describe('About', () => {
     expect(screen.queryByText(/Tecnologías Dominadas/i)).toBeNull();
   });
 
-  it('lista cada grupo del stack con sus habilidades', () => {
+  it('ya no incluye el stack tecnico: vive en Formacion y stack', () => {
     renderAbout('es');
 
-    for (const group of skillGroups) {
-      const list = screen.getByRole('list', { name: translations.es.skills.groups[group.id] });
-      const names = within(list)
-        .getAllByRole('listitem')
-        .map((item) => item.textContent);
-      expect(names).toHaveLength(group.skills.length);
-      for (const skill of group.skills) {
-        expect(names.some((text) => text?.startsWith(skill.name))).toBe(true);
-      }
-    }
+    expect(screen.queryByText('Stack técnico')).toBeNull();
+    expect(screen.queryByRole('list', { name: 'Lenguajes' })).toBeNull();
   });
 
   it('traduce el contenido al ingles', () => {
     renderAbout('en');
 
     expect(screen.getByRole('heading', { level: 2, name: 'About me' })).toBeTruthy();
-    expect(screen.getByRole('heading', { level: 4, name: 'Databases' })).toBeTruthy();
     expect(screen.getByRole('link', { name: 'See projects' }).getAttribute('href')).toBe('#projects');
   });
 });

@@ -17,13 +17,13 @@ const languages = [
 
 const headingStyles = cn(typography.h5, 'text-fg');
 
-// Education, certifications and languages: one Card each, revealed together by the section.
+// Education, certifications and languages: one Card each; the section reveals each card on its own.
 export function SideBlocks() {
   const { t } = useLanguage();
 
   return (
-    <div data-reveal="side" className="grid gap-6 lg:grid-cols-3 xl:grid-cols-1 xl:self-start">
-      <Card variant="info" data-reveal="block">
+    <div className="grid gap-6 lg:grid-cols-3">
+      <Card variant="info" data-reveal="card">
         <h3 className={headingStyles}>{t('experience.education.title')}</h3>
         <div className="flex flex-col gap-1">
           <p className={cn(typography.body, 'font-medium text-fg')}>{t('experience.education.institution')}</p>
@@ -35,7 +35,7 @@ export function SideBlocks() {
         </div>
       </Card>
 
-      <Card variant="info" data-reveal="block">
+      <Card variant="info" data-reveal="card">
         <h3 className={headingStyles}>{t('experience.certifications.title')}</h3>
         <ul role="list" className="flex flex-col gap-4">
           {certifications.map(({ name, issuer }) => (
@@ -51,7 +51,7 @@ export function SideBlocks() {
         </ul>
       </Card>
 
-      <Card variant="info" data-reveal="block">
+      <Card variant="info" data-reveal="card">
         <h3 className={headingStyles}>{t('experience.languages.title')}</h3>
         <dl className={cn(typography.bodySmall, 'flex flex-col gap-2')}>
           {languages.map(({ name, level }) => (

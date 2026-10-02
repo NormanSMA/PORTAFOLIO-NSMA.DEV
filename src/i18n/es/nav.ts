@@ -2,7 +2,7 @@ export const nav = {
   home: 'Inicio',
   about: 'Sobre mí',
   projects: 'Proyectos',
-  experience: 'Experiencia',
+  experience: 'Formación',
   approach: 'Qué hago',
   contact: 'Contacto',
   ariaLabel: 'Navegación principal',
