@@ -13,12 +13,11 @@ vi.hoisted(() => {
   })) as unknown as typeof window.matchMedia;
 });
 
-vi.mock('../../lib/scroll', () => ({ scrollToSection: vi.fn() }));
-
 import { render, screen, within, cleanup, fireEvent } from '@testing-library/react';
 import { LanguageProvider } from '../../contexts/LanguageContext';
+import { skillGroups } from '../../data/skills';
 import { useLanguage } from '../../hooks';
-import { scrollToSection } from '../../lib/scroll';
+import { translations } from '../../i18n/translations';
 import { Experience } from './Experience';
 
 type Language = 'es' | 'en';
@@ -34,13 +33,14 @@ function LanguageToggle() {
 }
 
 function renderExperience(language: Language) {
-  render(
+  const view = render(
     <LanguageProvider>
       <LanguageToggle />
       <Experience />
     </LanguageProvider>,
   );
   if (language === 'en') fireEvent.click(screen.getByText('toggle-language'));
+  return view;
 }
 
 afterEach(() => {
@@ -50,29 +50,25 @@ afterEach(() => {
 
 const copy = {
   es: {
-    heading: 'Experiencia',
-    timeline: 'Trayectoria profesional',
-    organizations: ['Iuris Consultus Nicaragua', 'Hotel-Restaurante El Pantano', 'Congreso SYSTECH, UAM'],
+    heading: 'Formación y stack',
     education: 'Educación',
     certifications: 'Certificaciones',
     languages: 'Idiomas',
-    viewProject: 'Ver proyecto',
+    hint: 'Arrastra para girar',
   },
   en: {
-    heading: 'Experience',
-    timeline: 'Professional experience',
-    organizations: ['Iuris Consultus Nicaragua', 'Hotel-Restaurante El Pantano', 'SYSTECH Congress, UAM'],
+    heading: 'Education and stack',
     education: 'Education',
     certifications: 'Certifications',
     languages: 'Languages',
-    viewProject: 'View project',
+    hint: 'Drag to rotate',
   },
 } as const;
 
 describe.each(['es', 'en'] as const)('Experience (%s)', (language) => {
   const text = copy[language];
 
-  it('expone la seccion con su encabezado h2', () => {
+  it('expone la seccion con su encabezado h2 y el ancla experience', () => {
     renderExperience(language);
     const heading = screen.getByRole('heading', { level: 2, name: text.heading });
     const section = heading.closest('section');
@@ -80,29 +76,11 @@ describe.each(['es', 'en'] as const)('Experience (%s)', (language) => {
     expect(section?.getAttribute('aria-labelledby')).toBe(heading.id);
   });
 
-  it('muestra tres entradas de experiencia con 2 o 3 vinetas', () => {
+  it('ya no muestra la linea de tiempo de experiencia', () => {
     renderExperience(language);
-    const timeline = screen.getByRole('list', { name: text.timeline });
-    const entries = Array.from(timeline.children) as HTMLElement[];
-    expect(entries).toHaveLength(3);
-
-    entries.forEach((entry, index) => {
-      expect(within(entry).getByText(text.organizations[index])).toBeTruthy();
-      const bullets = within(entry).getAllByRole('listitem');
-      expect(bullets.length).toBeGreaterThanOrEqual(2);
-      expect(bullets.length).toBeLessThanOrEqual(3);
-    });
-  });
-
-  it('ordena las entradas de la mas reciente a la mas antigua', () => {
-    renderExperience(language);
-    const timeline = screen.getByRole('list', { name: text.timeline });
-    const years = Array.from(timeline.children).map((entry) =>
-      Number(entry.querySelector('time')?.getAttribute('datetime')),
-    );
-
-    expect(years).toEqual([2026, 2025, 2025]);
-    expect([...years].sort((a, b) => b - a)).toEqual(years);
+    expect(screen.queryByText('Iuris Consultus Nicaragua')).toBeNull();
+    expect(screen.queryByText('Hotel-Restaurante El Pantano')).toBeNull();
+    expect(screen.queryByRole('button', { name: /^(Ver proyecto|View project)/ })).toBeNull();
   });
 
   it('incluye los bloques de educacion, certificaciones e idiomas', () => {
@@ -123,12 +101,33 @@ describe.each(['es', 'en'] as const)('Experience (%s)', (language) => {
     items.forEach((item) => expect(item.textContent).not.toMatch(/\d{4}/));
   });
 
-  it('lleva a la seccion de proyectos desde cada entrada', () => {
-    renderExperience(language);
-    const buttons = screen.getAllByRole('button', { name: new RegExp(`^${text.viewProject}:`) });
-    expect(buttons).toHaveLength(3);
+  it('pone el stack primero y lista cada grupo con sus tecnologias', () => {
+    const { container } = renderExperience(language);
+    const stack = screen.getByRole('heading', { level: 3, name: translations[language].skills.title });
+    const education = screen.getByRole('heading', { level: 3, name: text.education });
+    expect(stack.compareDocumentPosition(education) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(container.querySelectorAll('[data-reveal="card"]')).toHaveLength(4);
 
-    fireEvent.click(buttons[0]);
-    expect(scrollToSection).toHaveBeenCalledWith('projects');
+    for (const group of skillGroups) {
+      const list = screen.getByRole('list', { name: translations[language].skills.groups[group.id] });
+      const names = within(list)
+        .getAllByRole('listitem')
+        .map((item) => item.textContent);
+      expect(names).toHaveLength(group.skills.length);
+      for (const skill of group.skills) {
+        expect(names.some((name) => name?.startsWith(skill.name))).toBe(true);
+      }
+    }
+  });
+
+  it('oculta la constelacion a los lectores de pantalla y muestra la pista de arrastre', () => {
+    const { container } = renderExperience(language);
+    const sphere = container.querySelector('[data-constellation]');
+
+    expect(sphere?.getAttribute('aria-hidden')).toBe('true');
+    expect(sphere?.querySelectorAll('[data-node]')).toHaveLength(
+      skillGroups.reduce((total, group) => total + group.skills.length, 0),
+    );
+    expect(screen.getByText(text.hint)).toBeTruthy();
   });
 });

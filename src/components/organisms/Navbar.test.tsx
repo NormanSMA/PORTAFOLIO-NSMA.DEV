@@ -98,12 +98,12 @@ describe('Navbar enlaces', () => {
     renderNavbar();
     const nav = screen.getByRole('navigation', { name: 'Navegación principal' });
     const labels = within(nav).getAllByRole('link').map((link) => link.textContent);
-    expect(labels).toEqual(['Inicio', 'Sobre mí', 'Proyectos', 'Experiencia', 'Qué hago', 'Contacto']);
+    expect(labels).toEqual(['Inicio', 'Sobre mí', 'Proyectos', 'Formación', 'Qué hago', 'Contacto']);
   });
 
   it('navega con scrollToSection al activar un enlace', () => {
     renderNavbar();
-    fireEvent.click(screen.getByRole('link', { name: 'Experiencia' }));
+    fireEvent.click(screen.getByRole('link', { name: 'Formación' }));
     expect(scrollToSection).toHaveBeenCalledWith('experience');
   });
 

@@ -1,5 +1,6 @@
 export const skills = {
   title: 'Stack técnico',
+  hint: 'Arrastra para girar',
   groups: {
     languages: 'Lenguajes',
     frontend: 'Frontend',

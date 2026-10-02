@@ -2,7 +2,7 @@ export const nav = {
   home: 'Home',
   about: 'About',
   projects: 'Projects',
-  experience: 'Experience',
+  experience: 'Education',
   approach: 'What I do',
   contact: 'Contact',
   ariaLabel: 'Main navigation',
