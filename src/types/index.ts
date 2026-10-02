@@ -24,9 +24,6 @@ export interface Project {
   // The five most representative ones: the ficha is a summary, not the full stack.
   technologies: string[];
   links: { live?: string; repo?: string };
-  hasMobileImage: boolean;
-  // CSS object-position that frames the desktop capture inside a portrait card.
-  imagePosition: string;
 }
 
 export interface LocalizedProject extends Project {
@@ -35,5 +32,4 @@ export interface LocalizedProject extends Project {
   description: string;
   statusLabel: string;
   altDesktop: string;
-  altMobile?: string;
 }

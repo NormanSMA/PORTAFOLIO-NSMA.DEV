@@ -16,7 +16,7 @@ const media = vi.hoisted(() => {
 
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { MirrorHall, type MirrorHallItem } from './MirrorHall';
-import { computeLayout } from './mirrorHall/ringMath';
+import { computeLayout } from './mirrorHall/ringLayout';
 
 const REDUCED = '(prefers-reduced-motion: reduce)';
 const STEP = 360 / 7;
@@ -25,7 +25,6 @@ const items: MirrorHallItem[] = Array.from({ length: 7 }, (_, index) => ({
   id: `item-${index}`,
   label: `Etiqueta ${index}`,
   title: `Proyecto ${index}`,
-  caption: `Descripcion ${index}`,
   image: <img src={`/img-${index}.webp`} alt={`Captura ${index}`} />,
 }));
 
@@ -83,12 +82,32 @@ describe('MirrorHall: estructura y accesibilidad', () => {
     expect(cards()[1].getAttribute('aria-current')).toBeNull();
   });
 
-  it('muestra cara, etiqueta, titulo y descripcion de cada tarjeta', () => {
+  it('muestra la captura completa y, debajo, el titulo y el estado en una linea cada uno', () => {
     renderRing();
+    const card = cards()[3];
+    const shot = card.querySelector('.mh-face .mh-shot');
+    const foot = card.querySelector('.mh-face .mh-foot');
     expect(screen.getByText('Etiqueta 3')).toBeTruthy();
     expect(screen.getByText('Proyecto 3')).toBeTruthy();
-    expect(screen.getByText('Descripcion 3')).toBeTruthy();
     expect(screen.getAllByRole('img', { name: 'Captura 3' })).toHaveLength(1);
+    expect(shot?.querySelector('img')).not.toBeNull();
+    expect(foot?.textContent).toBe('Proyecto 3Etiqueta 3');
+    // The strip comes after the capture and nothing sits on top of it: no veils, no overlay text.
+    expect(shot?.nextElementSibling).toBe(foot);
+    expect(card.querySelector('.mh-veil-top, .mh-veil-bottom')).toBeNull();
+    expect(card.querySelectorAll('.mh-face p')).toHaveLength(2);
+  });
+
+  it('publica las medidas de la tarjeta, el plano del frente y la inclinacion como variables', () => {
+    renderRing();
+    const layout = computeLayout(960, 7);
+    const root = document.querySelector('.mh-root') as HTMLElement;
+    expect(root.style.getPropertyValue('--mh-card-w')).toBe(`${layout.cardWidth}px`);
+    expect(root.style.getPropertyValue('--mh-image-h')).toBe(`${layout.imageHeight}px`);
+    expect(root.style.getPropertyValue('--mh-foot-h')).toBe(`${layout.footerHeight}px`);
+    expect(root.style.getPropertyValue('--mh-front-z')).toBe(`${layout.frontZ}px`);
+    expect(root.style.getPropertyValue('--mh-tilt')).toBe('-8deg');
+    expect(layout.cardHeight).toBe(layout.imageHeight + layout.footerHeight);
   });
 
   it('el reflejo es aria-hidden, inert y no tiene elementos enfocables', () => {
@@ -243,7 +262,7 @@ describe('MirrorHall: rueda y arrastre', () => {
   });
 });
 
-describe('MirrorHall: la tarjeta frontal abre su enlace', () => {
+describe('MirrorHall: la cara de la tarjeta es un enlace real', () => {
   const OPEN_LABEL = '(abre en una pestaña nueva)';
   // Item 5 has no link on purpose: a card without href must stay inert.
   const linkedItems: MirrorHallItem[] = items.map((item, index) => ({
@@ -251,8 +270,24 @@ describe('MirrorHall: la tarjeta frontal abre su enlace', () => {
     href: index === 5 ? undefined : `https://example.com/${index}`,
     openLabel: OPEN_LABEL,
   }));
-  const front = () => cards().find((card) => card.tabIndex === 0) as HTMLElement;
+  const link = (index: number) => cards()[index].querySelector('a') as HTMLAnchorElement;
+  const front = () => cards().find((card) => card.getAttribute('aria-current') === 'true') as HTMLElement;
   let open: MockInstance<typeof window.open>;
+
+  // Clicks and reports whether the component cancelled the navigation. The document listener runs after
+  // React's and cancels it anyway, so jsdom never tries to navigate. detail 1 is a pointer click and
+  // detail 0 the click the browser synthesizes when Enter is pressed on a link.
+  const click = (element: Element, detail = 1) => {
+    let prevented = false;
+    const guard = (event: Event) => {
+      prevented = event.defaultPrevented;
+      event.preventDefault();
+    };
+    document.addEventListener('click', guard);
+    fireEvent.click(element, { detail });
+    document.removeEventListener('click', guard);
+    return { prevented };
+  };
 
   beforeEach(() => {
     media.matching = [REDUCED];
@@ -262,104 +297,148 @@ describe('MirrorHall: la tarjeta frontal abre su enlace', () => {
     vi.restoreAllMocks();
   });
 
-  it('un clic sin arrastre abre el enlace en una pestana nueva y no gira el anillo', () => {
+  it('cada tarjeta con enlace lleva un <a> con target _blank y rel noopener noreferrer', () => {
+    renderRing(vi.fn(), { items: linkedItems });
+    const links = Array.from(document.querySelectorAll('a'));
+    expect(links).toHaveLength(6);
+    links.forEach((anchor) => {
+      expect(anchor.getAttribute('target')).toBe('_blank');
+      expect(anchor.getAttribute('rel')).toBe('noopener noreferrer');
+      expect(anchor.getAttribute('href')).toMatch(/^https:\/\/example\.com\/\d$/);
+      expect(anchor.classList.contains('mh-face')).toBe(true);
+    });
+    expect(link(0).getAttribute('href')).toBe('https://example.com/0');
+  });
+
+  it('un clic sin arrastre en la frontal deja que el enlace navegue y no gira el anillo', () => {
     const { onActiveChange } = renderRing(vi.fn(), { items: linkedItems });
-    fireEvent.click(cards()[0]);
-    expect(open).toHaveBeenCalledTimes(1);
-    expect(open).toHaveBeenCalledWith('https://example.com/0', '_blank', 'noopener,noreferrer');
+    expect(click(link(0)).prevented).toBe(false);
     expect(counter()).toBe('01 / 07');
     expect(onActiveChange).not.toHaveBeenCalled();
-  });
-
-  it('Enter sobre la tarjeta frontal abre el enlace; mantener la tecla no lo repite', () => {
-    renderRing(vi.fn(), { items: linkedItems });
-    fireEvent.keyDown(cards()[0], { key: 'Enter' });
-    fireEvent.keyDown(cards()[0], { key: 'Enter', repeat: true });
-    expect(open).toHaveBeenCalledTimes(1);
-    expect(open).toHaveBeenCalledWith('https://example.com/0', '_blank', 'noopener,noreferrer');
-  });
-
-  it('una tarjeta no frontal se lleva al frente sin abrir; el segundo clic ya abre', () => {
-    renderRing(vi.fn(), { items: linkedItems });
-    fireEvent.click(cards()[3]);
     expect(open).not.toHaveBeenCalled();
-    expect(counter()).toBe('04 / 07');
-    fireEvent.click(cards()[3]);
-    expect(open).toHaveBeenCalledTimes(1);
-    expect(open).toHaveBeenCalledWith('https://example.com/3', '_blank', 'noopener,noreferrer');
   });
 
-  it('arrastrar NO abre el enlace, aunque el soltar termine en un clic sobre la tarjeta', () => {
+  it('una tarjeta no frontal cancela la navegacion y se lleva al frente; el segundo clic ya navega', () => {
     renderRing(vi.fn(), { items: linkedItems });
-    const frontCard = front();
+    expect(click(link(3)).prevented).toBe(true);
+    expect(counter()).toBe('04 / 07');
+    expect(click(link(3)).prevented).toBe(false);
+    expect(counter()).toBe('04 / 07');
+    expect(open).not.toHaveBeenCalled();
+  });
+
+  it('arrastrar cancela la navegacion, aunque el soltar termine en un clic sobre la tarjeta', () => {
+    renderRing(vi.fn(), { items: linkedItems });
+    const frontLink = link(0);
     fireEvent.pointerDown(stage(), { pointerId: 1, clientX: 600, clientY: 100, button: 0 });
     fireEvent.pointerMove(stage(), { pointerId: 1, clientX: 560, clientY: 100 });
     fireEvent.pointerMove(stage(), { pointerId: 1, clientX: 520, clientY: 100 });
     fireEvent.pointerUp(stage(), { pointerId: 1, clientX: 520, clientY: 100 });
-    fireEvent.click(frontCard);
-    expect(open).not.toHaveBeenCalled();
+    const counterAfterDrag = counter();
+    expect(click(frontLink).prevented).toBe(true);
+    expect(counter()).toBe(counterAfterDrag);
   });
 
-  it('un movimiento menor que el umbral sigue siendo un toque y abre el enlace', () => {
+  it('un movimiento menor que el umbral sigue siendo un toque y navega', () => {
     renderRing(vi.fn(), { items: linkedItems });
     fireEvent.pointerDown(stage(), { pointerId: 1, clientX: 600, clientY: 100, button: 0 });
     fireEvent.pointerMove(stage(), { pointerId: 1, clientX: 602, clientY: 100 });
     fireEvent.pointerUp(stage(), { pointerId: 1, clientX: 602, clientY: 100 });
-    fireEvent.click(front());
-    expect(open).toHaveBeenCalledTimes(1);
+    expect(click(link(0)).prevented).toBe(false);
   });
 
-  it('un gesto nuevo despues de arrastrar vuelve a permitir abrir', () => {
+  it('un gesto nuevo despues de arrastrar vuelve a permitir navegar', () => {
     renderRing(vi.fn(), { items: linkedItems });
     fireEvent.pointerDown(stage(), { pointerId: 1, clientX: 600, clientY: 100, button: 0 });
     fireEvent.pointerMove(stage(), { pointerId: 1, clientX: 520, clientY: 100 });
     fireEvent.pointerUp(stage(), { pointerId: 1, clientX: 520, clientY: 100 });
     fireEvent.pointerDown(stage(), { pointerId: 2, clientX: 300, clientY: 100, button: 0 });
     fireEvent.pointerUp(stage(), { pointerId: 2, clientX: 300, clientY: 100 });
-    fireEvent.click(front());
-    expect(open).toHaveBeenCalledTimes(1);
+    // 80 px of drag is under half a step, so card 0 is still in front.
+    expect(front()).toBe(cards()[0]);
+    expect(click(link(0)).prevented).toBe(false);
   });
 
-  it('una tarjeta frontal sin enlace no abre nada', () => {
+  it('una tarjeta frontal sin enlace no tiene <a> y no navega', () => {
     renderRing(vi.fn(), { items: linkedItems });
-    fireEvent.click(cards()[5]);
-    fireEvent.click(cards()[5]);
+    expect(cards()[5].querySelector('a')).toBeNull();
+    click(cards()[5]);
+    click(cards()[5]);
     fireEvent.keyDown(cards()[5], { key: 'Enter' });
     expect(counter()).toBe('06 / 07');
     expect(open).not.toHaveBeenCalled();
   });
 
-  it('sin href en ningun item el comportamiento no cambia', () => {
+  it('sin href en ningun item no hay enlaces y el comportamiento no cambia', () => {
     renderRing();
     fireEvent.click(cards()[0]);
     fireEvent.keyDown(cards()[0], { key: 'Enter' });
+    expect(document.querySelector('a')).toBeNull();
     expect(open).not.toHaveBeenCalled();
     expect(cards()[0].className).not.toContain('mh-card--link');
   });
 
-  it('no abre mientras el anillo todavia gira hacia la tarjeta', () => {
+  it('no navega mientras el anillo todavia gira hacia la tarjeta', () => {
     media.matching = [];
     renderRing(vi.fn(), { items: linkedItems });
-    fireEvent.click(cards()[2]);
-    fireEvent.click(cards()[2]);
-    expect(open).not.toHaveBeenCalled();
+    expect(click(link(2)).prevented).toBe(true);
+    expect(click(link(2)).prevented).toBe(true);
   });
 
-  it('el nombre accesible de la frontal avisa de la pestana nueva; el de las demas no', () => {
+  it('Enter sobre el enlace frontal navega aunque el anillo todavia este asentandose', () => {
+    media.matching = [];
     renderRing(vi.fn(), { items: linkedItems });
-    expect(cards()[0].getAttribute('aria-label')).toBe(`1 de 7: Proyecto 0 ${OPEN_LABEL}`);
-    expect(cards()[1].getAttribute('aria-label')).toBe('2 de 7: Proyecto 1');
+    fireEvent.click(link(2));
+    expect(click(link(2)).prevented).toBe(true);
+    expect(click(link(2), 0).prevented).toBe(false);
+    // Only the front card opens: a keyboard click on any other card still brings it forward.
+    expect(click(link(4), 0).prevented).toBe(true);
+  });
+
+  it('el enlace es la unica parada de tabulador de la frontal; los demas no son tabulables', () => {
+    renderRing(vi.fn(), { items: linkedItems });
+    const stops = (index: number) => [link(index)?.tabIndex, cards()[index].tabIndex];
+    expect(stops(0)).toEqual([0, -1]);
+    expect(stops(1)).toEqual([-1, -1]);
+    expect(cards()[0].hasAttribute('aria-label')).toBe(false);
+    fireEvent.click(link(2));
+    expect(stops(2)).toEqual([0, -1]);
+    expect(stops(0)).toEqual([-1, -1]);
+  });
+
+  it('el nombre accesible del enlace frontal avisa de la pestana nueva; el de las demas no', () => {
+    renderRing(vi.fn(), { items: linkedItems });
+    expect(screen.getByRole('link', { name: `1 de 7: Proyecto 0 ${OPEN_LABEL}` })).toBe(link(0));
+    expect(link(1).getAttribute('aria-label')).toBe('2 de 7: Proyecto 1');
     expect(cards()[0].className).toContain('mh-card--link');
     expect(cards()[1].className).not.toContain('mh-card--link');
-    fireEvent.click(cards()[1]);
-    expect(cards()[1].getAttribute('aria-label')).toBe(`2 de 7: Proyecto 1 ${OPEN_LABEL}`);
-    expect(cards()[0].getAttribute('aria-label')).toBe('1 de 7: Proyecto 0');
+    fireEvent.click(link(1));
+    expect(link(1).getAttribute('aria-label')).toBe(`2 de 7: Proyecto 1 ${OPEN_LABEL}`);
+    expect(link(0).getAttribute('aria-label')).toBe('1 de 7: Proyecto 0');
   });
 
   it('con href pero sin openLabel usa un texto por defecto', () => {
     const bare = items.map((item) => ({ ...item, href: 'https://example.com' }));
     renderRing(vi.fn(), { items: bare });
-    expect(cards()[0].getAttribute('aria-label')).toContain('pestaña nueva');
+    expect(link(0).getAttribute('aria-label')).toContain('pestaña nueva');
+  });
+
+  it('las flechas sobre el enlace frontal mueven el foco al enlace de la nueva frontal', () => {
+    renderRing(vi.fn(), { items: linkedItems });
+    link(0).focus();
+    fireEvent.keyDown(link(0), { key: 'ArrowRight' });
+    expect(counter()).toBe('02 / 07');
+    expect(document.activeElement).toBe(link(1));
+    expect(link(1).tabIndex).toBe(0);
+  });
+
+  it('las flechas pasan a una tarjeta sin enlace y le dan el foco a ella misma', () => {
+    renderRing(vi.fn(), { items: linkedItems });
+    fireEvent.click(link(4));
+    link(4).focus();
+    fireEvent.keyDown(link(4), { key: 'ArrowRight' });
+    expect(document.activeElement).toBe(cards()[5]);
+    expect(cards()[5].tabIndex).toBe(0);
   });
 
   it('el icono de enlace externo solo aparece en la tarjeta frontal y es decorativo', () => {

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
-import type { CSSProperties, KeyboardEvent, ReactNode } from 'react';
+import type { CSSProperties, KeyboardEvent, MouseEvent, ReactNode } from 'react';
 import { typography } from '../../../config/typography';
 import { useMediaQuery } from '../../../hooks/useMediaQuery';
 import { cn } from '../../../utils/helpers';
@@ -7,6 +7,7 @@ import { Button } from '../../atoms/Button';
 import './mirrorHall/mirrorHall.css';
 import { RingCard } from './mirrorHall/RingCard';
 import { writeRingFrame } from './mirrorHall/ringDom';
+import { TILT_DEGREES } from './mirrorHall/ringMath';
 import { type RingPhase, useRingRotation } from './mirrorHall/useRingRotation';
 import { useRingLayout } from './mirrorHall/useRingLayout';
 
@@ -14,9 +15,8 @@ export interface MirrorHallItem {
   id: string;
   label: string;
   title: string;
-  caption: string;
   image: ReactNode;
-  // When set, the front card opens it in a new tab on click or Enter.
+  // When set, the card face is a real link that opens in a new tab once the card is in front.
   href?: string;
   // Accessible text added to the front card's name when it has an href, e.g. "(opens in a new tab)".
   openLabel?: string;
@@ -40,6 +40,12 @@ const defaultCardLabel = (position: number, total: number, title: string) =>
   `${position} de ${total}: ${title}`;
 
 const pad = (value: number) => String(value).padStart(2, '0');
+
+// A linked card is focused through its anchor; a card without a link is focused itself.
+function focusCard(card: Element | undefined) {
+  const target = card?.querySelector<HTMLElement>('a[href]') ?? (card as HTMLElement | undefined);
+  target?.focus({ preventScroll: true });
+}
 
 export function MirrorHall({
   items,
@@ -98,18 +104,18 @@ export function MirrorHall({
     return () => observer.disconnect();
   }, [rotation]);
 
-  // The front card opens its link only once the ring has stopped; any other card comes to the front.
-  const activateCard = (index: number) => {
-    const { href } = items[index];
-    if (href && index === activeIndex && rootRef.current?.dataset.phase === 'idle') {
-      window.open(href, '_blank', 'noopener,noreferrer');
-      return;
-    }
-    rotation.goTo(index);
-  };
-
-  const handleCardClick = (index: number) => {
-    if (!rotation.wasDragged()) activateCard(index);
+  // The front card's anchor opens its link natively (a real target="_blank" link, which embedded browsers
+  // respect), but only without a drag and, for a pointer, once the ring has stopped: a double click on a side
+  // card must bring it forward, not also open it. A click with detail 0 comes from the keyboard (Enter on the
+  // focused link), so it is deliberate and does not wait for the ring.
+  const handleCardClick = (event: MouseEvent<HTMLElement>, index: number) => {
+    const dragged = rotation.wasDragged();
+    const linked = Boolean(items[index].href);
+    const atRest = event.detail === 0 || rootRef.current?.dataset.phase === 'idle';
+    const opensLink = linked && index === activeIndex && !dragged && atRest;
+    if (opensLink) return;
+    if (linked) event.preventDefault();
+    if (!dragged) rotation.goTo(index);
   };
 
   const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
@@ -121,7 +127,7 @@ export function MirrorHall({
     event.preventDefault();
     const next = rotation.stepBy(direction);
     // Roving focus: the focused card follows the front one.
-    if (onCard) (ringRef.current?.children[next] as HTMLElement | undefined)?.focus({ preventScroll: true });
+    if (onCard) focusCard(ringRef.current?.children[next]);
   };
 
   if (count === 0) return null;
@@ -129,8 +135,13 @@ export function MirrorHall({
   const rootStyle = {
     '--mh-card-w': `${layout.cardWidth}px`,
     '--mh-card-h': `${layout.cardHeight}px`,
+    '--mh-card-left': `${layout.cardLeft}px`,
+    '--mh-image-h': `${layout.imageHeight}px`,
+    '--mh-foot-h': `${layout.footerHeight}px`,
     '--mh-radius': `${layout.radius}px`,
     '--mh-perspective': `${layout.perspective}px`,
+    '--mh-front-z': `${layout.frontZ}px`,
+    '--mh-tilt': `${TILT_DEGREES}deg`,
     '--mh-pool-depth': `${layout.cardWidth * POOL_DEPTH_RATIO}px`,
   } as CSSProperties;
 
@@ -175,7 +186,6 @@ export function MirrorHall({
                   ariaLabel={getCardLabel(index + 1, count, item.title)}
                   onSelect={rotation.goTo}
                   onClick={handleCardClick}
-                  onEnter={activateCard}
                 />
               ))}
             </ul>
