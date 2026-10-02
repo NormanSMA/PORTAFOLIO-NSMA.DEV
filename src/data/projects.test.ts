@@ -78,22 +78,55 @@ describe('getProjects', () => {
     expect(withMobile).toEqual(['ecopulse', 'turno', 'iuris', 'pantano']);
   });
 
-  it('cada cifra lleva una fecha ISO de medicion', () => {
-    for (const metric of projects.flatMap((p) => p.metrics)) {
-      expect(metric.asOf).toMatch(/^\d{4}-\d{2}-\d{2}$/);
-      expect(Number.isNaN(Date.parse(metric.asOf))).toBe(false);
+  it('muestra entre 1 y 5 etiquetas de tecnologia por proyecto', () => {
+    for (const project of projects) {
+      expect(project.technologies.length, project.id).toBeGreaterThanOrEqual(1);
+      expect(project.technologies.length, project.id).toBeLessThanOrEqual(5);
     }
   });
+
+  it('ningun proyecto lleva cifras medidas', () => {
+    for (const project of projectDefinitions) {
+      expect(project).not.toHaveProperty('metrics');
+    }
+    expect(translations.es.projects).not.toHaveProperty('metrics');
+    expect(translations.en.projects).not.toHaveProperty('metrics');
+    expect(translations.es.projects.ui).not.toHaveProperty('metrics');
+    expect(translations.es.projects.ui).not.toHaveProperty('asOf');
+    expect(translations.en.projects.ui).not.toHaveProperty('asOf');
+  });
 });
+
+// Words a non-technical reader would trip on: the ficha keeps the stack in its tags, not in the prose.
+const JARGON =
+  /PostGIS|\bRLS\b|\bSSR\b|\bCI\b|\bCSP\b|Supabase|MapLibre|Cesium|Astro|React|Next\.js|Electron|Hono|GSAP|OGL|WebGL|JSONL|Vercel|\bA\/B\b|shader|service_role|honeypot/i;
+
+const sentenceCount = (text: string) => text.split(/[.!?]+\s/).filter(Boolean).length;
 
 describe.each(['es', 'en'] as const)('copy de proyectos (%s)', (language) => {
   const projects = getProjects(lookup(language));
 
-  it('cada proyecto tiene caption de una linea y descripcion', () => {
+  it('cada proyecto tiene caption de una linea y descripcion de una o dos frases', () => {
     for (const project of projects) {
       expect(project.caption, `${project.id} caption`).toBeTruthy();
-      expect(project.caption.length, `${project.id} caption`).toBeLessThanOrEqual(90);
+      expect(project.caption.length, `${project.id} caption`).toBeLessThanOrEqual(70);
       expect(project.description, `${project.id} description`).toBeTruthy();
+      expect(sentenceCount(project.description), `${project.id} description`).toBeLessThanOrEqual(2);
+      expect(project.description.length, `${project.id} description`).toBeLessThanOrEqual(180);
+    }
+  });
+
+  it('el texto no usa nombres de librerias ni siglas tecnicas', () => {
+    for (const project of projects) {
+      expect(project.caption, `${project.id} caption`).not.toMatch(JARGON);
+      expect(project.description, `${project.id} description`).not.toMatch(JARGON);
+    }
+  });
+
+  it('el texto no lleva cifras (solo "3D")', () => {
+    for (const project of projects) {
+      const text = `${project.caption} ${project.description}`.replace(/3D/g, '');
+      expect(text, project.id).not.toMatch(/\d/);
     }
   });
 
@@ -106,12 +139,6 @@ describe.each(['es', 'en'] as const)('copy de proyectos (%s)', (language) => {
         expect(project.altMobile, `${project.id} altMobile`).toBeTruthy();
         expect(project.altMobile).not.toBe(project.altDesktop);
       }
-    }
-  });
-
-  it('cada cifra tiene etiqueta traducida', () => {
-    for (const metric of projects.flatMap((p) => p.metrics)) {
-      expect(metric.label, metric.labelKey).toBeTruthy();
     }
   });
 

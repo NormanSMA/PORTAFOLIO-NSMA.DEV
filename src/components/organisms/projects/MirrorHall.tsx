@@ -16,6 +16,10 @@ export interface MirrorHallItem {
   title: string;
   caption: string;
   image: ReactNode;
+  // When set, the front card opens it in a new tab on click or Enter.
+  href?: string;
+  // Accessible text added to the front card's name when it has an href, e.g. "(opens in a new tab)".
+  openLabel?: string;
 }
 
 export interface MirrorHallProps {
@@ -94,6 +98,20 @@ export function MirrorHall({
     return () => observer.disconnect();
   }, [rotation]);
 
+  // The front card opens its link only once the ring has stopped; any other card comes to the front.
+  const activateCard = (index: number) => {
+    const { href } = items[index];
+    if (href && index === activeIndex && rootRef.current?.dataset.phase === 'idle') {
+      window.open(href, '_blank', 'noopener,noreferrer');
+      return;
+    }
+    rotation.goTo(index);
+  };
+
+  const handleCardClick = (index: number) => {
+    if (!rotation.wasDragged()) activateCard(index);
+  };
+
   const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     const direction = ARROW_DIRECTION[event.key];
     if (!direction || event.altKey || event.ctrlKey || event.metaKey) return;
@@ -156,13 +174,15 @@ export function MirrorHall({
                   active={index === activeIndex}
                   ariaLabel={getCardLabel(index + 1, count, item.title)}
                   onSelect={rotation.goTo}
+                  onClick={handleCardClick}
+                  onEnter={activateCard}
                 />
               ))}
             </ul>
           </div>
         </div>
       </div>
-      <div className="mt-6 flex items-center justify-center gap-6">
+      <div className="mt-6 flex items-center justify-center gap-3 px-gutter sm:gap-6">
         <Button variant="outline" onClick={() => rotation.stepBy(-1)}>
           {previousLabel}
         </Button>

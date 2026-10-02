@@ -1,0 +1,30 @@
+/*
+  Entrance of the ficha when the active project changes. Opacity everywhere; phones and tablets
+  also rise a few pixels, which reads as the card sliding in. Only transform and opacity animate,
+  and nothing runs under prefers-reduced-motion (the content swaps instantly).
+*/
+
+@keyframes ficha-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes ficha-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .ficha-enter {
+    animation: ficha-fade var(--duration-fast) var(--ease-out);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) and (max-width: 1023px) {
+  .ficha-enter {
+    animation: ficha-rise var(--duration-base) var(--ease-out);
+  }
+}

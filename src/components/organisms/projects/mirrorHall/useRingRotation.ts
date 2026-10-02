@@ -40,6 +40,9 @@ const COAST_SECONDS = 0.4;
 const MIN_FLING_DEGREES_PER_SECOND = 20;
 const MAX_FLING_DEGREES_PER_SECOND = 1200;
 const MAX_FRAME_SECONDS = 1 / 30;
+// The click that closes a drag is dispatched with the pointer release. A real tap starts with a pointerdown,
+// which clears the mark, so this window only has to outlast the release.
+const CLICK_AFTER_DRAG_MS = 500;
 
 // Plain closure state: the ring moves every frame and must not go through React renders.
 function createRingEngine(getOptions: () => EngineOptions) {
@@ -52,6 +55,7 @@ function createRingEngine(getOptions: () => EngineOptions) {
   let running = false;
   let phase: RingPhase = 'idle';
   let drag: DragState | null = null;
+  let dragEndedAt = Number.NEGATIVE_INFINITY;
 
   const setPhase = (next: RingPhase) => {
     if (next === phase) return;
@@ -172,6 +176,7 @@ function createRingEngine(getOptions: () => EngineOptions) {
   const onPointerDown = (event: StagePointerEvent) => {
     if (drag || (event.pointerType === 'mouse' && event.button !== 0)) return;
     drag = { pointerId: event.pointerId, startX: event.clientX, lastX: event.clientX, engaged: false, samples: [] };
+    dragEndedAt = Number.NEGATIVE_INFINITY;
     freeze();
   };
 
@@ -191,6 +196,7 @@ function createRingEngine(getOptions: () => EngineOptions) {
     const finished = drag;
     drag = null;
     if (!finished.engaged) return;
+    dragEndedAt = performance.now();
     const flick = withInertia && !getOptions().reducedMotion ? estimateVelocity(finished.samples, event.timeStamp) : 0;
     if (Math.abs(flick) < MIN_FLING_DEGREES_PER_SECOND) {
       setPhase('idle');
@@ -228,9 +234,13 @@ function createRingEngine(getOptions: () => EngineOptions) {
     drag = null;
   };
 
+  // True for the click that follows a drag, so releasing a drag over a card never counts as a tap on it.
+  const wasDragged = () => performance.now() - dragEndedAt < CLICK_AFTER_DRAG_MS;
+
   return {
     goTo,
     stepBy,
+    wasDragged,
     refresh,
     setVisible,
     dispose,

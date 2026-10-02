@@ -42,6 +42,22 @@ describe('ProjectDetails', () => {
     expect(demo.getAttribute('rel')).toBe('noopener noreferrer');
     expect(demo.textContent).toContain('(abre en una pestaña nueva)');
     expect(code.getAttribute('href')).toBe('https://github.com/NormanSMA/EcoPulse');
+    expect(code.getAttribute('target')).toBe('_blank');
+    expect(code.getAttribute('rel')).toBe('noopener noreferrer');
+    expect(code.textContent).toContain('(abre en una pestaña nueva)');
+  });
+
+  it('todos los enlaces externos de todos los proyectos abren en otra ventana', () => {
+    for (const project of projects) {
+      const { unmount } = renderDetails(project);
+      const links = screen.getAllByRole('link');
+      expect(links.length, project.id).toBeGreaterThan(0);
+      for (const link of links) {
+        expect(link.getAttribute('target'), project.id).toBe('_blank');
+        expect(link.getAttribute('rel'), project.id).toBe('noopener noreferrer');
+      }
+      unmount();
+    }
   });
 
   it('omite el enlace al repositorio cuando no existe', () => {
@@ -58,19 +74,45 @@ describe('ProjectDetails', () => {
     expect(screen.getByRole('link', { name: /Ver código/ })).toBeTruthy();
   });
 
-  it('muestra cada cifra con su fecha de medicion', () => {
-    renderDetails(byId('turno'));
+  it('el boton relleno es el enlace principal: la demo, o el repo si no hay demo', () => {
+    const { unmount } = renderDetails(byId('ecopulse'));
+    expect(screen.getByRole('link', { name: /Ver demo/ }).className).toContain('bg-primary-600');
+    expect(screen.getByRole('link', { name: /Ver código/ }).className).not.toContain('bg-primary-600');
+    unmount();
 
-    const list = screen.getByRole('heading', { name: 'Cifras medidas' }).parentElement as HTMLElement;
-    expect(within(list).getByText('669')).toBeTruthy();
-    expect(within(list).getAllByText(/^Al 27 sep/).length).toBe(3);
-    expect(within(list).getByText(/^Al 31 ago 2026$/)).toBeTruthy();
+    renderDetails(byId('claudehub'));
+    expect(screen.getByRole('link', { name: /Ver código/ }).className).toContain('bg-primary-600');
   });
 
-  it('no muestra el bloque de cifras cuando el proyecto no tiene', () => {
-    renderDetails(byId('iuris'));
+  it('los enlaces tienen alto tactil de al menos 44 px', () => {
+    renderDetails(byId('ecopulse'));
+    for (const link of screen.getAllByRole('link')) {
+      expect(link.className).toContain('min-h-target');
+    }
+  });
+
+  it('no muestra cifras medidas', () => {
+    renderDetails(byId('turno'));
 
     expect(screen.queryByRole('heading', { name: 'Cifras medidas' })).toBeNull();
+    expect(screen.queryByText(/^Al \d/)).toBeNull();
+    expect(screen.queryByRole('term')).toBeNull();
+  });
+
+  it('muestra como mucho 5 etiquetas de tecnologia, en una lista con nombre', () => {
+    renderDetails(byId('turno'));
+
+    const list = screen.getByRole('list', { name: 'Tecnologías' });
+    const tags = within(list).getAllByRole('listitem');
+    expect(tags.length).toBeLessThanOrEqual(5);
+    expect(tags.map((tag) => tag.textContent)).toEqual(byId('turno').technologies);
+  });
+
+  it('muestra la linea de meta en texto plano: destacado, categoria, anio y estado', () => {
+    renderDetails(byId('turno'));
+
+    const meta = screen.getByText('Destacado').parentElement as HTMLElement;
+    expect(meta.textContent).toBe('Destacado·Next.js·2026·En pausa');
   });
 
   it('usa h3 para el titulo y marca solo los destacados', () => {

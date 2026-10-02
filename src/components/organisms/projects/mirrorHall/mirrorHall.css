@@ -99,6 +99,25 @@
   box-shadow: 0 0 72px 4px rgb(var(--color-primary-500) / calc(var(--mh-depth, 1) * 0.14));
 }
 
+/* The front card with a link: a pointer over the grab cursor of the stage, and a press that gives back. */
+.mh-card--link {
+  cursor: pointer;
+}
+
+.mh-root[data-phase='dragging'] .mh-card--link {
+  cursor: grabbing;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .mh-card--link .mh-face {
+    transition: transform var(--duration-fast) var(--ease-out);
+  }
+
+  .mh-root:not([data-phase='dragging']) .mh-card--link:active .mh-face {
+    transform: scale(0.985);
+  }
+}
+
 .mh-face picture,
 .mh-ripple picture {
   display: block;

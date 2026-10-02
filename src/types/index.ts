@@ -14,15 +14,6 @@ export type ProjectTier = 'featured' | 'secondary';
 
 export type ProjectStatus = 'production' | 'paused' | 'delivered' | 'active';
 
-export interface ProjectMetric {
-  labelKey: string;
-  value: number;
-  // Only 'percent' needs a suffix; plain counts carry no unit.
-  unit?: 'percent';
-  // ISO date (YYYY-MM-DD) of the measurement.
-  asOf: string;
-}
-
 // Language-independent data. Copy lives in src/i18n and is resolved by getProjects(t).
 export interface Project {
   id: ProjectId;
@@ -30,16 +21,12 @@ export interface Project {
   category: string;
   year: number;
   status: ProjectStatus;
+  // The five most representative ones: the ficha is a summary, not the full stack.
   technologies: string[];
   links: { live?: string; repo?: string };
-  metrics: ProjectMetric[];
   hasMobileImage: boolean;
   // CSS object-position that frames the desktop capture inside a portrait card.
   imagePosition: string;
-}
-
-export interface LocalizedProjectMetric extends ProjectMetric {
-  label: string;
 }
 
 export interface LocalizedProject extends Project {
@@ -49,5 +36,4 @@ export interface LocalizedProject extends Project {
   statusLabel: string;
   altDesktop: string;
   altMobile?: string;
-  metrics: LocalizedProjectMetric[];
 }

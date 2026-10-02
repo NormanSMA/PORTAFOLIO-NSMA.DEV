@@ -21,6 +21,9 @@ export function Projects() {
         label: project.statusLabel,
         title: project.title,
         caption: project.caption,
+        // Same target as the filled button of the ficha: the demo, or the repo when there is none.
+        href: project.links.live ?? project.links.repo,
+        openLabel: t('projects.ui.newTab'),
         image: (
           <ProjectCardFace
             id={project.id}
@@ -31,7 +34,7 @@ export function Projects() {
           />
         ),
       })),
-    [projects],
+    [projects, t],
   );
 
   return (
@@ -56,7 +59,7 @@ export function Projects() {
         />
       </div>
 
-      <Container className="mt-12 md:mt-16">
+      <Container className="mt-10 md:mt-12">
         <ProjectFicha projects={projects} activeIndex={activeIndex} />
       </Container>
     </section>

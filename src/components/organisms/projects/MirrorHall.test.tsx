@@ -1,4 +1,4 @@
-import { describe, it, expect, afterEach, beforeEach, vi } from 'vitest';
+import { describe, it, expect, afterEach, beforeEach, vi, type MockInstance } from 'vitest';
 
 // gsap's ScrollTrigger and useMediaQuery call window.matchMedia, so the stub must exist before the imports run.
 const media = vi.hoisted(() => {
@@ -240,6 +240,134 @@ describe('MirrorHall: rueda y arrastre', () => {
     fireEvent.pointerMove(stage(), { pointerId: 1, clientX: 602, clientY: 100 });
     fireEvent.pointerUp(stage(), { pointerId: 1, clientX: 602, clientY: 100 });
     expect(angle()).toBe(0);
+  });
+});
+
+describe('MirrorHall: la tarjeta frontal abre su enlace', () => {
+  const OPEN_LABEL = '(abre en una pestaña nueva)';
+  // Item 5 has no link on purpose: a card without href must stay inert.
+  const linkedItems: MirrorHallItem[] = items.map((item, index) => ({
+    ...item,
+    href: index === 5 ? undefined : `https://example.com/${index}`,
+    openLabel: OPEN_LABEL,
+  }));
+  const front = () => cards().find((card) => card.tabIndex === 0) as HTMLElement;
+  let open: MockInstance<typeof window.open>;
+
+  beforeEach(() => {
+    media.matching = [REDUCED];
+    open = vi.spyOn(window, 'open').mockImplementation(() => null);
+  });
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('un clic sin arrastre abre el enlace en una pestana nueva y no gira el anillo', () => {
+    const { onActiveChange } = renderRing(vi.fn(), { items: linkedItems });
+    fireEvent.click(cards()[0]);
+    expect(open).toHaveBeenCalledTimes(1);
+    expect(open).toHaveBeenCalledWith('https://example.com/0', '_blank', 'noopener,noreferrer');
+    expect(counter()).toBe('01 / 07');
+    expect(onActiveChange).not.toHaveBeenCalled();
+  });
+
+  it('Enter sobre la tarjeta frontal abre el enlace; mantener la tecla no lo repite', () => {
+    renderRing(vi.fn(), { items: linkedItems });
+    fireEvent.keyDown(cards()[0], { key: 'Enter' });
+    fireEvent.keyDown(cards()[0], { key: 'Enter', repeat: true });
+    expect(open).toHaveBeenCalledTimes(1);
+    expect(open).toHaveBeenCalledWith('https://example.com/0', '_blank', 'noopener,noreferrer');
+  });
+
+  it('una tarjeta no frontal se lleva al frente sin abrir; el segundo clic ya abre', () => {
+    renderRing(vi.fn(), { items: linkedItems });
+    fireEvent.click(cards()[3]);
+    expect(open).not.toHaveBeenCalled();
+    expect(counter()).toBe('04 / 07');
+    fireEvent.click(cards()[3]);
+    expect(open).toHaveBeenCalledTimes(1);
+    expect(open).toHaveBeenCalledWith('https://example.com/3', '_blank', 'noopener,noreferrer');
+  });
+
+  it('arrastrar NO abre el enlace, aunque el soltar termine en un clic sobre la tarjeta', () => {
+    renderRing(vi.fn(), { items: linkedItems });
+    const frontCard = front();
+    fireEvent.pointerDown(stage(), { pointerId: 1, clientX: 600, clientY: 100, button: 0 });
+    fireEvent.pointerMove(stage(), { pointerId: 1, clientX: 560, clientY: 100 });
+    fireEvent.pointerMove(stage(), { pointerId: 1, clientX: 520, clientY: 100 });
+    fireEvent.pointerUp(stage(), { pointerId: 1, clientX: 520, clientY: 100 });
+    fireEvent.click(frontCard);
+    expect(open).not.toHaveBeenCalled();
+  });
+
+  it('un movimiento menor que el umbral sigue siendo un toque y abre el enlace', () => {
+    renderRing(vi.fn(), { items: linkedItems });
+    fireEvent.pointerDown(stage(), { pointerId: 1, clientX: 600, clientY: 100, button: 0 });
+    fireEvent.pointerMove(stage(), { pointerId: 1, clientX: 602, clientY: 100 });
+    fireEvent.pointerUp(stage(), { pointerId: 1, clientX: 602, clientY: 100 });
+    fireEvent.click(front());
+    expect(open).toHaveBeenCalledTimes(1);
+  });
+
+  it('un gesto nuevo despues de arrastrar vuelve a permitir abrir', () => {
+    renderRing(vi.fn(), { items: linkedItems });
+    fireEvent.pointerDown(stage(), { pointerId: 1, clientX: 600, clientY: 100, button: 0 });
+    fireEvent.pointerMove(stage(), { pointerId: 1, clientX: 520, clientY: 100 });
+    fireEvent.pointerUp(stage(), { pointerId: 1, clientX: 520, clientY: 100 });
+    fireEvent.pointerDown(stage(), { pointerId: 2, clientX: 300, clientY: 100, button: 0 });
+    fireEvent.pointerUp(stage(), { pointerId: 2, clientX: 300, clientY: 100 });
+    fireEvent.click(front());
+    expect(open).toHaveBeenCalledTimes(1);
+  });
+
+  it('una tarjeta frontal sin enlace no abre nada', () => {
+    renderRing(vi.fn(), { items: linkedItems });
+    fireEvent.click(cards()[5]);
+    fireEvent.click(cards()[5]);
+    fireEvent.keyDown(cards()[5], { key: 'Enter' });
+    expect(counter()).toBe('06 / 07');
+    expect(open).not.toHaveBeenCalled();
+  });
+
+  it('sin href en ningun item el comportamiento no cambia', () => {
+    renderRing();
+    fireEvent.click(cards()[0]);
+    fireEvent.keyDown(cards()[0], { key: 'Enter' });
+    expect(open).not.toHaveBeenCalled();
+    expect(cards()[0].className).not.toContain('mh-card--link');
+  });
+
+  it('no abre mientras el anillo todavia gira hacia la tarjeta', () => {
+    media.matching = [];
+    renderRing(vi.fn(), { items: linkedItems });
+    fireEvent.click(cards()[2]);
+    fireEvent.click(cards()[2]);
+    expect(open).not.toHaveBeenCalled();
+  });
+
+  it('el nombre accesible de la frontal avisa de la pestana nueva; el de las demas no', () => {
+    renderRing(vi.fn(), { items: linkedItems });
+    expect(cards()[0].getAttribute('aria-label')).toBe(`1 de 7: Proyecto 0 ${OPEN_LABEL}`);
+    expect(cards()[1].getAttribute('aria-label')).toBe('2 de 7: Proyecto 1');
+    expect(cards()[0].className).toContain('mh-card--link');
+    expect(cards()[1].className).not.toContain('mh-card--link');
+    fireEvent.click(cards()[1]);
+    expect(cards()[1].getAttribute('aria-label')).toBe(`2 de 7: Proyecto 1 ${OPEN_LABEL}`);
+    expect(cards()[0].getAttribute('aria-label')).toBe('1 de 7: Proyecto 0');
+  });
+
+  it('con href pero sin openLabel usa un texto por defecto', () => {
+    const bare = items.map((item) => ({ ...item, href: 'https://example.com' }));
+    renderRing(vi.fn(), { items: bare });
+    expect(cards()[0].getAttribute('aria-label')).toContain('pestaña nueva');
+  });
+
+  it('el icono de enlace externo solo aparece en la tarjeta frontal y es decorativo', () => {
+    renderRing(vi.fn(), { items: linkedItems });
+    const icons = document.querySelectorAll('.mh-face svg');
+    expect(icons).toHaveLength(1);
+    expect(icons[0].closest('[aria-hidden="true"]')).not.toBeNull();
+    expect(cards()[0].contains(icons[0])).toBe(true);
   });
 });
 
