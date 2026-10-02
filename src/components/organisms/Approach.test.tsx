@@ -88,12 +88,51 @@ describe('Approach', () => {
     expect(hidden).toEqual([]);
   });
 
-  it('oculta los elementos de cada grupo hasta que llegue el scroll cuando hay movimiento', () => {
-    media.matching = [motion.media.noReducedMotion];
+  it('oculta los elementos de cada grupo hasta que llegue el scroll en escritorio', () => {
+    media.matching = [motion.media.noReducedMotion, motion.media.desktop];
     const { container } = renderApproach();
 
     const items = [...container.querySelectorAll<HTMLElement>('[data-reveal]')];
     expect(items).toHaveLength(2 + 3 + 4);
     expect(items.every((element) => element.style.opacity === '0')).toBe(true);
+  });
+
+  it('en escritorio no aplica la pila ni la linea de progreso', () => {
+    media.matching = [motion.media.noReducedMotion, motion.media.desktop];
+    const { container } = renderApproach();
+
+    const dims = [...container.querySelectorAll<HTMLElement>('[data-stack-dim]')];
+    const fill = container.querySelector<HTMLElement>('[data-process-fill]');
+    expect(dims.every((dim) => dim.style.opacity === '')).toBe(true);
+    expect(fill?.style.transform).toBe('');
+  });
+
+  it('en movil solo revela el encabezado y anima la pila y la linea del proceso', () => {
+    media.matching = [motion.media.noReducedMotion, motion.media.mobile];
+    const { container } = renderApproach();
+
+    const hidden = [...container.querySelectorAll<HTMLElement>('[data-reveal]')].filter(
+      (element) => element.style.opacity === '0',
+    );
+    // Dos del encabezado y cuatro pasos que entran con scroll; las tarjetas se apilan sin ocultarse.
+    expect(hidden).toHaveLength(2 + 4);
+
+    const dims = [...container.querySelectorAll<HTMLElement>('[data-stack-dim]')];
+    expect(dims.map((dim) => dim.style.opacity)).toEqual(['0', '0', '']);
+
+    // GSAP escribe la transformacion inicial (escala 0) al crear la linea; jsdom no la serializa como scale().
+    const fill = container.querySelector<HTMLElement>('[data-process-fill]');
+    expect(fill?.style.transform).not.toBe('');
+  });
+
+  it('con reduced motion en movil no apila ni oculta nada', () => {
+    media.matching = [motion.media.mobile];
+    const { container } = renderApproach();
+
+    const touched = [...container.querySelectorAll<HTMLElement>('[data-stack-item], [data-process-step]')].filter(
+      (element) => element.style.transform !== '' || element.style.opacity !== '',
+    );
+    expect(touched).toEqual([]);
+    expect(container.querySelector<HTMLElement>('[data-process-fill]')?.style.transform).toBe('');
   });
 });
