@@ -32,22 +32,13 @@ const FADE_IN = 'opacity var(--duration-slow) var(--ease-out)';
 // Matches --duration-slow; the canvas is removed once its fade-out has played.
 const FADE_OUT_MS = 1100;
 
-function rendererName(gl: WebGL2RenderingContext): string | null {
-  const info = gl.getExtension('WEBGL_debug_renderer_info');
-  return info ? String(gl.getParameter(info.UNMASKED_RENDERER_WEBGL)) : null;
-}
-
 // Creating the context first lets software rendering be refused (this shader runs far too slowly there), and OGL
 // then reuses the same context from the canvas. Asking the browser to fail on a "performance caveat" is not used:
 // it also refuses valid GPUs on some drivers, so the renderer name decides and the frame meter backs it up.
 function createContext(canvas: HTMLCanvasElement): WebGL2RenderingContext | null {
-  const gl = canvas.getContext('webgl2', {
-    alpha: false,
-    depth: false,
-    antialias: false,
-    powerPreference: 'low-power',
-  });
-  if (!gl || !isSoftwareRenderer(rendererName(gl))) return gl;
+  const gl = canvas.getContext('webgl2', { alpha: false, depth: false, antialias: false, powerPreference: 'low-power' });
+  const info = gl?.getExtension('WEBGL_debug_renderer_info');
+  if (!gl || !isSoftwareRenderer(info ? String(gl.getParameter(info.UNMASKED_RENDERER_WEBGL)) : null)) return gl;
   gl.getExtension('WEBGL_lose_context')?.loseContext();
   return null;
 }
@@ -180,7 +171,7 @@ class HeroSceneRuntime implements HeroScene {
   // The poster keeps moving under the fade so the crossfade has no stall, then rests while the canvas covers it.
   private reveal() {
     const { canvas } = this.gpu;
-    if (this.disposed) return;
+    if (this.disposed || this.retired) return;
     canvas.style.opacity = '1';
     canvas.addEventListener('transitionend', this.cover, { once: true });
   }
@@ -235,8 +226,7 @@ class HeroSceneRuntime implements HeroScene {
     }
   }
 
-  // A canvas that cannot hold the frame budget is worse than none: the animated poster takes over and the
-  // canvas fades out over it instead of freezing on one frame.
+  // A canvas that misses the frame budget fades out over the animated poster instead of freezing on one frame.
   private retire() {
     this.retired = true;
     this.frozen = true;
