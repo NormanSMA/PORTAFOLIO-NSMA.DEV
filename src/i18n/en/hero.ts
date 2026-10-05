@@ -6,9 +6,9 @@ export const hero = {
     projects: 'View projects',
   },
   canvas: {
-    label: 'Four points joined by a curve: look, clarity, tweak and goal. A pulse of light travels along it',
+    label: 'Four points joined by a curve: see, clarity, tweak and goal. A pulse of light travels along it',
     nodes: {
-      first: 'Look',
+      first: 'See',
       second: 'Clarity',
       third: 'Tweak',
       fourth: 'Goal',

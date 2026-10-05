@@ -7,9 +7,9 @@ export const hero = {
   },
   canvas: {
     label:
-      'Cuatro puntos conectados por una curva: mirada, claridad, ajuste y meta. Un pulso de luz recorre la curva',
+      'Cuatro puntos conectados por una curva: ver, claridad, ajuste y meta. Un pulso de luz recorre la curva',
     nodes: {
-      first: 'Mirada',
+      first: 'Ver',
       second: 'Claridad',
       third: 'Ajuste',
       fourth: 'Meta',
