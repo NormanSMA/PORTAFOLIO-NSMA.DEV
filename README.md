@@ -4,9 +4,8 @@
 
 **Ingeniero en Sistemas · Desarrollo web, bases de datos y cloud**
 
-Mi portafolio personal. Rápido, accesible y en español e inglés.
+Busco pasantía o empleo. Managua o remoto.
 
-[![Demo](https://img.shields.io/badge/demo-portafolio--nsma--dev.vercel.app-6366F1?style=flat-square&logo=vercel&logoColor=white&labelColor=0A0A0F)](https://portafolio-nsma-dev.vercel.app/)
 ![React](https://img.shields.io/badge/React_19-3B82F6?style=flat-square&logo=react&logoColor=white&labelColor=0A0A0F)
 ![TypeScript](https://img.shields.io/badge/TypeScript-3B82F6?style=flat-square&logo=typescript&logoColor=white&labelColor=0A0A0F)
 ![Vite](https://img.shields.io/badge/Vite_7-3B82F6?style=flat-square&logo=vite&logoColor=white&labelColor=0A0A0F)
@@ -15,18 +14,9 @@ Mi portafolio personal. Rápido, accesible y en español e inglés.
 
 <br />
 
-<img src="docs/preview.webp" alt="Vista del portafolio: nombre, rol y un lienzo animado con cuatro nodos conectados" width="860" />
+<img src="docs/preview.webp" alt="Portafolio de Norman Martínez: nombre, rol y un lienzo animado con cuatro nodos conectados" width="860" />
 
 </div>
-
-## Inicio rápido
-
-```bash
-pnpm install
-pnpm dev
-```
-
-Otros comandos: `pnpm build`, `pnpm test` y `pnpm lint`.
 
 ## Contacto
 
