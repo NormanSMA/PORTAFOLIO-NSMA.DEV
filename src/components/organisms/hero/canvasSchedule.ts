@@ -1,12 +1,15 @@
-// The cycle in seconds. Four phases: nodes appear out of order, the pen puts each one on its grid point,
-// a pulse of light runs along the curve, and a pause. The fade that closes the cycle hides the jump back to the mess.
+// Two schedules in seconds. The intro plays once, when the page loads: the artboard draws itself and the nodes appear out
+// of order. The cycle then loops for good, very slowly: the nodes appear in a mess, the pen puts each one on its grid
+// point, a pulse of light runs along the curve, and a pause. The fade that closes the cycle hides the jump back to the mess.
 export type NodeNumber = 1 | 2 | 3 | 4;
 export type NodeStepId = `${'take' | 'move' | 'snap'}${NodeNumber}`;
+export type TravelStepId = `travel${2 | 3 | 4}`;
 export type StepId =
   | 'fadeIn'
   | 'approach'
   | NodeStepId
-  | 'settle'
+  | TravelStepId
+  | 'relax'
   | 'flow'
   | 'tail'
   | 'rest'
@@ -22,41 +25,41 @@ export type PhaseId = 'disorder' | 'settle' | 'flow' | 'pause';
 
 export const NODE_NUMBERS: readonly NodeNumber[] = [1, 2, 3, 4];
 
-const FADE_IN = 0.35;
-const APPROACH_AT = 0.6;
-const APPROACH = 0.6;
-// Each node: the pen reaches it and takes it, drags it to its grid point, and releases it with a snap.
-const TAKE = 0.25;
-const MOVE = 0.5;
-const SNAP = 0.1;
-const SETTLE = 0.3;
-// One constant-speed pass: the nodes light exactly when the pulse crosses them.
-const FLOW = 2.6;
-const TAIL = 0.3;
-const REST = 1.4;
-const FADE_OUT = 0.4;
+const FADE_IN = 1;
+const APPROACH = 1.1;
+// Each node: the pen travels to it, takes it, drags it to its grid point, and releases it with a soft snap.
+const TRAVEL = 1.1;
+const TAKE = 0.3;
+const MOVE = 1;
+const SNAP = 0.4;
+// The pen leaves and the handles step back before the pulse starts.
+const RELAX = 1;
+// One constant-speed pass: the nodes and their labels light exactly when the pulse crosses them.
+const FLOW = 6;
+const TAIL = 1;
+const REST = 3;
+const FADE_OUT = 1.2;
 
-const SEQUENCE_BEFORE_NODES: readonly Step[] = [
-  { id: 'fadeIn', at: 0, duration: FADE_IN },
-  { id: 'approach', at: APPROACH_AT, duration: APPROACH },
-];
+// The first run joins the cycle here: the content is already on screen and the pen is about to enter.
+export const CYCLE_JOIN = FADE_IN;
 
-// The fade-in overlaps the approach, so the pen enters while the scene appears.
 export function buildSchedule(): Step[] {
-  const steps: Step[] = [...SEQUENCE_BEFORE_NODES];
-  let clock = APPROACH_AT + APPROACH;
+  const steps: Step[] = [{ id: 'fadeIn', at: 0, duration: FADE_IN }];
+  let clock = FADE_IN;
 
   const push = (id: StepId, duration: number) => {
     steps.push({ id, at: clock, duration });
     clock += duration;
   };
 
+  push('approach', APPROACH);
   NODE_NUMBERS.forEach((node) => {
+    if (node > 1) push(`travel${node as 2 | 3 | 4}`, TRAVEL);
     push(`take${node}`, TAKE);
     push(`move${node}`, MOVE);
     push(`snap${node}`, SNAP);
   });
-  push('settle', SETTLE);
+  push('relax', RELAX);
   push('flow', FLOW);
   push('tail', TAIL);
   push('rest', REST);
@@ -81,7 +84,39 @@ export function phaseRanges(steps: readonly Step[]): Record<PhaseId, [number, nu
   return {
     disorder: [0, start('take1')],
     settle: [start('take1'), end('snap4')],
-    flow: [start('settle'), end('tail')],
+    flow: [start('relax'), end('tail')],
     pause: [start('rest'), end('rest')],
   };
+}
+
+export type IntroStepId = 'frame' | 'dots' | 'guides' | 'nodes' | 'handles' | 'curve' | 'hold';
+
+export interface IntroStep {
+  id: IntroStepId;
+  at: number;
+  duration: number;
+}
+
+// The frame draws itself and its four corners appear as the line reaches them. The dots light in a wave from the center
+// and the guides slide in while that happens. Then the nodes fade in out of order and the irregular curve is drawn through them.
+export function buildIntroSchedule(): IntroStep[] {
+  return [
+    { id: 'frame', at: 0, duration: 2.4 },
+    { id: 'dots', at: 0.5, duration: 1.9 },
+    { id: 'guides', at: 1, duration: 1.4 },
+    { id: 'nodes', at: 2.4, duration: 1.9 },
+    { id: 'handles', at: 2.6, duration: 1.4 },
+    { id: 'curve', at: 2.8, duration: 1.6 },
+    { id: 'hold', at: 4.4, duration: 0.6 },
+  ];
+}
+
+export function introStepOf(steps: readonly IntroStep[], id: IntroStepId): IntroStep {
+  const step = steps.find((candidate) => candidate.id === id);
+  if (!step) throw new Error(`Unknown intro step ${id}`);
+  return step;
+}
+
+export function introLength(steps: readonly IntroStep[]): number {
+  return Math.max(...steps.map((step) => step.at + step.duration));
 }

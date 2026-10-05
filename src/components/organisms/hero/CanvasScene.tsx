@@ -1,6 +1,10 @@
+import { typography } from '../../../config/typography';
+import { useLanguage } from '../../../hooks';
+import { cn } from '../../../utils/helpers';
 import {
   ALIGNED_MIX,
   CURSOR_START,
+  NODE_ROWS,
   SCENE_HEIGHT,
   SCENE_WIDTH,
   controlPoints,
@@ -17,6 +21,7 @@ const ALIGNED_PATH = curvePath(ALIGNED);
 const HALO_REGION = { x: -40, y: -40, width: SCENE_WIDTH + 80, height: SCENE_HEIGHT + 80 };
 
 const MARKER = 'absolute left-0 top-0';
+const LABEL_KEYS = ['order', 'align', 'connect', 'flow'] as const;
 
 function Halo() {
   return (
@@ -49,7 +54,7 @@ function Strokes() {
   return (
     <svg viewBox={VIEW_BOX} className="absolute inset-0 size-full overflow-visible" focusable="false" aria-hidden="true">
       <g fill="none" strokeLinejoin="round" strokeLinecap="round">
-        <path data-canvas-curve d={ALIGNED_PATH} className="hero-canvas-edge stroke-secondary-400" strokeOpacity="0.35" />
+        <path data-canvas-curve d={ALIGNED_PATH} pathLength={1} className="hero-canvas-edge stroke-secondary-400" strokeOpacity="0.35" />
         <path
           data-canvas-trail
           d={ALIGNED_PATH}
@@ -60,7 +65,7 @@ function Strokes() {
           className="hero-canvas-trail stroke-primary-400"
           strokeOpacity="0.5"
         />
-        <path data-canvas-curve d={ALIGNED_PATH} className="hero-canvas-core stroke-secondary-50" />
+        <path data-canvas-curve d={ALIGNED_PATH} pathLength={1} className="hero-canvas-core stroke-secondary-50" />
       </g>
       <g data-canvas-handles fill="none" className="opacity-30">
         {ALIGNED.map((point) => (
@@ -108,6 +113,35 @@ function Nodes() {
   );
 }
 
+// One word per node, left to right. The labels of the upper row sit above their node and the lower row's sit below,
+// away from the wave, 14 px from the node's center. They stay where the nodes end up, so nothing here moves with the pen.
+function Labels() {
+  const { t } = useLanguage();
+
+  return (
+    <>
+      {ALIGNED.map((point, index) => (
+        <span key={point.anchor.x} className={MARKER} style={{ transform: sceneTransform(point.anchor) }}>
+          <span
+            className={cn('absolute left-0 -translate-x-1/2', NODE_ROWS[index] === 0 ? 'bottom-[14px]' : 'top-[14px]')}
+          >
+            <span
+              data-canvas-label
+              data-lit="false"
+              className={cn(
+                typography.caption,
+                'hero-canvas-label block whitespace-nowrap text-[12px] text-fg-muted sm:text-[13px] data-[lit=true]:text-fg',
+              )}
+            >
+              {t(`hero.canvas.nodes.${LABEL_KEYS[index]}`)}
+            </span>
+          </span>
+        </span>
+      ))}
+    </>
+  );
+}
+
 // The pulse: a small bright point with a static soft halo around it.
 function Pulse() {
   return (
@@ -144,6 +178,7 @@ export function CanvasScene() {
       <Strokes />
       <Handles />
       <Nodes />
+      <Labels />
       <Pulse />
       <Cursor />
     </div>

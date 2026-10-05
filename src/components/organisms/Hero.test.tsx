@@ -71,11 +71,42 @@ describe('Hero', () => {
     expect(scrollToSection).toHaveBeenCalledWith('projects');
   });
 
-  it('junto al texto hay un lienzo descrito como una sola imagen y sin texto propio', () => {
+  it('junto al texto hay un lienzo descrito como una sola imagen con las cuatro etiquetas de los nodos', () => {
     renderHero();
-    const canvas = screen.getByRole('img', { name: /curva con cuatro puntos conectados que se acomodan en orden/ });
+    const canvas = screen.getByRole('img', { name: /ordenar, alinear, conectar y fluir/ });
     expect(canvas.closest('#home')).toBeTruthy();
-    expect(canvas.textContent).toBe('');
+    expect(canvas.textContent).toBe('OrdenarAlinearConectarFluir');
+  });
+
+  it('con movimiento, la disponibilidad y el botón entran por opacidad y siguen en el orden de tabulación', () => {
+    media.matching = ['(prefers-reduced-motion: no-preference)'];
+    renderHero();
+    const availability = screen.getByText('Busco pasantía o empleo · Managua o remoto');
+    const cta = screen.getByRole('link', { name: 'Ver proyectos' });
+    expect(availability.style.opacity).toBe('0');
+    expect(cta.style.opacity).toBe('0');
+    expect(cta.style.visibility).toBe('');
+    expect(cta.style.pointerEvents).toBe('');
+
+    cta.focus();
+    expect(document.activeElement).toBe(cta);
+  });
+
+  it('el nombre y las dos líneas del rol nunca se ocultan para el reveal', () => {
+    media.matching = ['(prefers-reduced-motion: no-preference)'];
+    renderHero();
+    for (const text of ['Ingeniero en Sistemas', 'Desarrollo web, bases de datos y cloud']) {
+      const line = screen.getByText(text);
+      expect(line.style.opacity).toBe('');
+      expect(line.closest('[data-hero-reveal]')).toBeNull();
+    }
+  });
+
+  it('con reduced motion la disponibilidad y el botón se ven desde el primer pintado', () => {
+    media.matching = [REDUCED];
+    renderHero();
+    expect(screen.getByText('Busco pasantía o empleo · Managua o remoto').style.opacity).toBe('');
+    expect(screen.getByRole('link', { name: 'Ver proyectos' }).style.opacity).toBe('');
   });
 
   it('con reduced motion pinta el nombre como texto plano', () => {

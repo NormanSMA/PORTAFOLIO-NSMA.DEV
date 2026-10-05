@@ -110,6 +110,27 @@ export function gridDotsPath(): string {
   return dots.join('');
 }
 
+// The same dots grouped in rings of equal distance from the center, nearest first, so the intro can light them in a wave
+// with one element per ring instead of one per dot.
+export function gridDotRings(): string[] {
+  const rings = new Map<number, string[]>();
+  for (let y = 0; y <= SCENE_HEIGHT; y += GRID_STEP) {
+    for (let x = 0; x <= SCENE_WIDTH; x += GRID_STEP) {
+      const distance = Math.hypot(x - CENTER_X, y - SCENE_HEIGHT / 2) / GRID_STEP;
+      const ring = Math.round(distance * 2);
+      rings.set(ring, [...(rings.get(ring) ?? []), `M${x} ${y}h0`]);
+    }
+  }
+  return [...rings.entries()].sort(([a], [b]) => a - b).map(([, dots]) => dots.join(''));
+}
+
+// Where along the frame outline (top left, clockwise) each corner sits, from 0 to 1: the intro pops a corner as the
+// drawn line reaches it.
+export function frameCornerFractions(): number[] {
+  const perimeter = 2 * (SCENE_WIDTH + SCENE_HEIGHT);
+  return [0, SCENE_WIDTH, SCENE_WIDTH + SCENE_HEIGHT, 2 * SCENE_WIDTH + SCENE_HEIGHT].map((length) => length / perimeter);
+}
+
 export interface CurveTable {
   x: number[];
   y: number[];

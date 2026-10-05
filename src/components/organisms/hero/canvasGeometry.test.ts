@@ -15,6 +15,8 @@ import {
   SCENE_WIDTH,
   controlPoints,
   curvePath,
+  frameCornerFractions,
+  gridDotRings,
   gridDotsPath,
   handlePath,
   pointAt,
@@ -46,6 +48,42 @@ describe('rejilla', () => {
 
   it('dibuja un punto por cruce: 17 columnas por 11 filas', () => {
     expect(gridDotsPath().match(/h0/g)).toHaveLength((SCENE_WIDTH / GRID_STEP + 1) * (SCENE_HEIGHT / GRID_STEP + 1));
+  });
+});
+
+describe('anillos de la rejilla', () => {
+  const rings = gridDotRings();
+  const all = rings.join('');
+
+  it('reparten todos los puntos de la rejilla sin repetir ni perder ninguno', () => {
+    expect(all.match(/h0/g)).toHaveLength(17 * 11);
+    expect([...all.matchAll(/M\d+ \d+h0/g)].map((match) => match[0]).sort()).toEqual(
+      [...gridDotsPath().matchAll(/M\d+ \d+h0/g)].map((match) => match[0]).sort(),
+    );
+  });
+
+  it('empiezan en el centro y van hacia afuera, con más de diez anillos para una ola suave', () => {
+    expect(rings[0]).toBe(`M${CENTER_X} ${SCENE_HEIGHT / 2}h0`);
+    expect(rings.length).toBeGreaterThan(10);
+    expect(rings[rings.length - 1]).toContain(`M${SCENE_WIDTH} ${SCENE_HEIGHT}h0`);
+  });
+
+  it('cada anillo es simétrico: sus puntos vienen de a pares respecto al centro', () => {
+    for (const ring of rings.slice(1)) expect(ring.match(/h0/g)!.length % 2).toBe(0);
+  });
+});
+
+describe('esquinas del marco', () => {
+  it('quedan en orden horario desde arriba a la izquierda, de 0 a menos de 1', () => {
+    const fractions = frameCornerFractions();
+    expect(fractions).toHaveLength(4);
+    expect(fractions[0]).toBe(0);
+    for (let index = 1; index < 4; index += 1) expect(fractions[index]).toBeGreaterThan(fractions[index - 1]);
+    expect(fractions[3]).toBeLessThan(1);
+  });
+
+  it('la esquina de arriba a la derecha llega tras el ancho del marco', () => {
+    expect(frameCornerFractions()[1]).toBeCloseTo(SCENE_WIDTH / (2 * (SCENE_WIDTH + SCENE_HEIGHT)));
   });
 });
 
