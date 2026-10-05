@@ -18,7 +18,7 @@ function writeCard(card: HTMLElement, depth: number) {
     depth: depthLevel(depth),
   };
   const previous = written.get(card);
-  if (previous?.opacity !== next.opacity) body.style.opacity = String(next.opacity);
+  if (previous?.opacity !== next.opacity) card.style.setProperty('--mh-dim', String(1 - next.opacity));
   if (previous?.blur !== next.blur) body.style.filter = next.blur === 0 ? '' : `blur(${next.blur}px)`;
   if (previous?.depth !== next.depth) card.style.setProperty('--mh-depth', String(next.depth));
   written.set(card, next);

@@ -115,6 +115,18 @@
   box-shadow: 0 0 56px 0 rgb(var(--color-primary-500) / calc(var(--mh-depth, 1) * 0.1));
 }
 
+/*
+  Depth dimming is a dark layer, not opacity: an accessibility audit measures the title against the
+  card surface, and a faded title would report a contrast that nobody actually sees.
+*/
+.mh-face::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgb(var(--color-ink) / var(--mh-dim, 0));
+  pointer-events: none;
+}
+
 /* A 1 px frame drawn over the capture edge: it separates the card from the floor without a veil. */
 .mh-face::after {
   content: '';
@@ -188,7 +200,7 @@
   overflow: hidden;
   border-radius: var(--radius-card);
   background: rgb(var(--color-surface));
-  opacity: 0.35;
+  opacity: calc(0.35 * (1 - var(--mh-dim, 0)));
   filter: blur(8px);
   pointer-events: none;
   transform: scaleY(-1);
