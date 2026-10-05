@@ -5,4 +5,9 @@ export const hero = {
   cta: {
     projects: 'Ver proyectos',
   },
+  canvas: {
+    frame: 'Diseño de interfaces',
+    label:
+      'Una curva Bézier dibujada con la herramienta pluma, con la paleta de colores y la tipografía del sitio',
+  },
 } as const;

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type CSSProperties, type MouseEvent } from 'react';
+import { useEffect, useRef, useState, type MouseEvent } from 'react';
 import { motion } from '../../config/motion';
 import { typography } from '../../config/typography';
 import { useLanguage, useMediaQuery, useMotion } from '../../hooks';
@@ -7,11 +7,10 @@ import { scrollToSection } from '../../lib/scroll';
 import { cn } from '../../utils/helpers';
 import { Container } from '../atoms';
 import SplitText from '../atoms/SplitText';
-import { HeroBackground } from '../webgl/HeroBackground';
+import { DesignCanvas } from './hero/DesignCanvas';
 
 const NAME = 'Norman Martínez';
 const REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)';
-const TEXT_WIDTH_VARIABLE = { '--hero-text-width': '30rem' } as CSSProperties;
 
 // The letters start hidden inside SplitText's own effect; the heading stays invisible until that effect has run,
 // so the plain text never flashes before the reveal. Child effects run before this one.
@@ -76,33 +75,33 @@ export function Hero() {
   };
 
   return (
-    // The filament sits below the text until lg and beside it from lg up: the bottom padding is the room reserved for it.
-    // HeroPoster reads --hero-text-width to start its stage where the text column ends.
+    // The text column is 30rem; from lg the design canvas takes the rest of the row, and below lg it sits under the text.
     <section
       id="home"
       aria-labelledby="home-heading"
-      style={TEXT_WIDTH_VARIABLE}
-      className="relative isolate flex min-h-svh items-center overflow-hidden bg-ink pb-40 pt-24 md:pb-60 lg:pb-20 lg:pt-20"
+      className="relative isolate flex min-h-svh items-center overflow-hidden bg-ink pb-16 pt-24 lg:py-20"
     >
-      <HeroBackground />
       <Container className="relative">
-        <div ref={contentRef} className="max-w-[var(--hero-text-width)]">
-          <HeroTitle />
-          <p className="mt-6">
-            <span className={cn(typography.h4, 'block text-fg')}>{t('hero.role')}</span>
-            <span className={cn(typography.bodyLarge, 'mt-1 block text-fg-muted')}>{t('hero.focus')}</span>
-          </p>
-          <p data-hero-reveal className={cn(typography.body, 'mt-6 font-medium text-fg')}>
-            {t('hero.availability')}
-          </p>
-          <a
-            data-hero-reveal
-            href="#projects"
-            onClick={handleProjectsClick}
-            className="mt-10 inline-flex min-h-target items-center justify-center rounded-control bg-fg px-8 font-body font-semibold text-ink motion-safe:transition-colors motion-safe:duration-fast motion-safe:ease-out pointer-fine:hover:bg-fg/85"
-          >
-            {t('hero.cta.projects')}
-          </a>
+        <div className="grid items-center gap-12 lg:grid-cols-[minmax(0,30rem)_minmax(0,1fr)] lg:gap-16">
+          <div ref={contentRef} className="max-w-[30rem]">
+            <HeroTitle />
+            <p className="mt-6">
+              <span className={cn(typography.h4, 'block text-fg')}>{t('hero.role')}</span>
+              <span className={cn(typography.bodyLarge, 'mt-1 block text-fg-muted')}>{t('hero.focus')}</span>
+            </p>
+            <p data-hero-reveal className={cn(typography.body, 'mt-6 font-medium text-fg')}>
+              {t('hero.availability')}
+            </p>
+            <a
+              data-hero-reveal
+              href="#projects"
+              onClick={handleProjectsClick}
+              className="mt-10 inline-flex min-h-target items-center justify-center rounded-control bg-fg px-8 font-body font-semibold text-ink motion-safe:transition-colors motion-safe:duration-fast motion-safe:ease-out pointer-fine:hover:bg-fg/85"
+            >
+              {t('hero.cta.projects')}
+            </a>
+          </div>
+          <DesignCanvas />
         </div>
       </Container>
     </section>

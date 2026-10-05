@@ -5,4 +5,9 @@ export const hero = {
   cta: {
     projects: 'View projects',
   },
+  canvas: {
+    frame: 'Interface design',
+    label:
+      "A Bézier curve drawn with the pen tool, with the site's color palette and typography",
+  },
 } as const;
