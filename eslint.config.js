@@ -12,8 +12,6 @@ export default defineConfig({
     '.claude/**',
     'scripts/**',
     'public/_headers',
-    'public/protect-images.js',
-    'public/theme-init.js',
   ],
   files: ['**/*.{ts,tsx}'],
   extends: [

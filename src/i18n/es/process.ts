@@ -1,6 +1,5 @@
 export const process = {
   title: 'Proceso de trabajo',
-  subtitle: 'Cuatro pasos para pasar de una idea a un sitio publicado.',
   steps: {
     discovery: {
       title: 'Descubrimiento',

@@ -1,7 +1,7 @@
 import type { SVGProps } from 'react';
 
-// Same logo as SqlIcon with every coordinate rounded to one decimal: it is drawn at 30 px or less, and the
-// lighter path saves about 2 KB gzipped in the Experience chunk.
+// Every coordinate is rounded to one decimal: the icon is drawn at 30 px or less, and the lighter path
+// saves about 2 KB gzipped in the Experience chunk.
 export function SqlServerIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg
