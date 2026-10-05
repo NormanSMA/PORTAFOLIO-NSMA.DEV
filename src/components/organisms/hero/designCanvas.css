@@ -56,3 +56,10 @@
   width: calc(var(--node) + 8px);
   height: calc(var(--node) + 8px);
 }
+
+/* The label turns from muted to full white in 0.8 s when the pulse reaches its node, and back. */
+@media (prefers-reduced-motion: no-preference) {
+  .hero-canvas-label {
+    transition: color 800ms var(--ease-in-out);
+  }
+}

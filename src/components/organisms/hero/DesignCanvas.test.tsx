@@ -42,12 +42,12 @@ afterEach(() => {
 });
 
 describe('DesignCanvas', () => {
-  it('es una sola imagen con la descripción de la curva en español', () => {
+  it('es una sola imagen que nombra los cuatro pasos, en español', () => {
     renderCanvas();
     const image = screen.getByRole('img');
     expect(image.getAttribute('aria-label')).toBe(translations.es.hero.canvas.label);
     expect(image.getAttribute('aria-label')).toBe(
-      'Una curva con cuatro puntos conectados que se acomodan en orden, con un pulso de luz que la recorre',
+      'Cuatro puntos conectados por una curva: ordenar, alinear, conectar y fluir. Un pulso de luz recorre la curva',
     );
   });
 
@@ -56,22 +56,43 @@ describe('DesignCanvas', () => {
     fireEvent.click(screen.getByText('toggle'));
     expect(screen.getByRole('img').getAttribute('aria-label')).toBe(translations.en.hero.canvas.label);
     expect(translations.en.hero.canvas.label).toBe(
-      'A curve with four connected points that snap into order, with a pulse of light travelling along it',
+      'Four points joined by a curve: order, align, connect and flow. A pulse of light travels along it',
     );
   });
 
-  it('no muestra ningún texto: ni etiqueta de marco ni muestras ni palabras sueltas', () => {
+  it('rotula los nodos de izquierda a derecha con Ordenar, Alinear, Conectar y Fluir', () => {
     renderCanvas();
-    const image = screen.getByRole('img');
-    expect(image.textContent).toBe('');
-    expect(screen.queryByText('Diseño de interfaces')).toBeNull();
-    expect(screen.queryByText('#6366F1')).toBeNull();
-    expect(screen.queryByText('Sora')).toBeNull();
+    const labels = Array.from(screen.getByRole('img').querySelectorAll('[data-canvas-label]'));
+    expect(labels.map((label) => label.textContent)).toEqual(['Ordenar', 'Alinear', 'Conectar', 'Fluir']);
   });
 
-  it('ya no declara las claves del marco ni de los tokens', () => {
-    expect(Object.keys(translations.es.hero.canvas)).toEqual(['label']);
-    expect(Object.keys(translations.en.hero.canvas)).toEqual(['label']);
+  it('rotula los nodos en inglés cuando cambia el idioma', () => {
+    renderCanvas();
+    fireEvent.click(screen.getByText('toggle'));
+    const labels = Array.from(screen.getByRole('img').querySelectorAll('[data-canvas-label]'));
+    expect(labels.map((label) => label.textContent)).toEqual(['Order', 'Align', 'Connect', 'Flow']);
+  });
+
+  it('no muestra más texto que las cuatro etiquetas', () => {
+    renderCanvas();
+    const image = screen.getByRole('img');
+    expect(image.textContent).toBe('OrdenarAlinearConectarFluir');
+    expect(screen.queryByText('Diseño de interfaces')).toBeNull();
+    expect(screen.queryByText('#6366F1')).toBeNull();
+  });
+
+  it('las etiquetas de la fila alta van arriba del nodo y las de la fila baja abajo', () => {
+    renderCanvas();
+    const placement = Array.from(screen.getByRole('img').querySelectorAll('[data-canvas-label]')).map((label) =>
+      (label.parentElement as HTMLElement).className.includes('bottom-[14px]') ? 'arriba' : 'abajo',
+    );
+    expect(placement).toEqual(['abajo', 'arriba', 'abajo', 'arriba']);
+  });
+
+  it('declara las claves de las etiquetas en ambos idiomas', () => {
+    expect(Object.keys(translations.es.hero.canvas.nodes)).toEqual(['order', 'align', 'connect', 'flow']);
+    expect(Object.keys(translations.en.hero.canvas.nodes)).toEqual(['order', 'align', 'connect', 'flow']);
+    expect(Object.keys(translations.es.hero.canvas)).toEqual(['label', 'nodes']);
   });
 
   it('todo lo visible dentro de la imagen está oculto a la tecnología de asistencia', () => {
@@ -87,6 +108,10 @@ describe('DesignCanvas', () => {
     expect(container.querySelectorAll('[data-canvas-handle-dot]')).toHaveLength(8);
     expect(container.querySelectorAll('[data-canvas-handle-line]')).toHaveLength(4);
     expect(container.querySelectorAll('[data-canvas-guide]')).toHaveLength(2);
+    expect(container.querySelectorAll('[data-canvas-center-guide]')).toHaveLength(1);
+    expect(container.querySelectorAll('[data-canvas-frame]')).toHaveLength(1);
+    expect(container.querySelectorAll('[data-canvas-corner]')).toHaveLength(4);
+    expect(container.querySelectorAll('[data-canvas-label]')).toHaveLength(4);
     expect(container.querySelectorAll('[data-canvas-curve]')).toHaveLength(2);
     expect(container.querySelectorAll('[data-canvas-halo]')).toHaveLength(1);
   });
@@ -101,19 +126,32 @@ describe('DesignCanvas', () => {
     container.querySelectorAll('[data-canvas-node]').forEach((node) => {
       expect(node.getAttribute('data-active')).toBe('false');
     });
+    container.querySelectorAll<HTMLElement>('[data-canvas-label]').forEach((label) => {
+      expect(label.style.opacity).toBe('');
+      expect(label.className).not.toContain('opacity-0');
+    });
   });
 
-  it('sin reduced motion arranca el ciclo con los nodos desalineados y lo limpia al desmontar', () => {
+  it('sin reduced motion arranca el intro con el lienzo vacío y los nodos desalineados, y lo limpia al desmontar', () => {
     media.matching = ['(prefers-reduced-motion: no-preference)'];
     const { container, unmount } = renderCanvas();
     const nodes = Array.from(container.querySelectorAll<HTMLElement>('[data-canvas-node]'));
+    const labels = Array.from(container.querySelectorAll<HTMLElement>('[data-canvas-label]'));
+    const frame = container.querySelector('[data-canvas-frame]') as SVGRectElement;
+    const dots = Array.from(container.querySelectorAll<SVGPathElement>('[data-canvas-dot-ring]'));
     const disordered = nodes.map((node) => node.style.transform);
-    const content = container.querySelector('[data-canvas-content]') as HTMLElement;
-    expect(content.style.opacity).toBe('0');
+
+    expect(frame.style.strokeDashoffset).toBe('1.01');
+    expect(nodes.every((node) => node.style.opacity === '0')).toBe(true);
+    expect(labels.every((label) => label.style.opacity === '0')).toBe(true);
+    expect(dots.every((dot) => dot.style.opacity === '0')).toBe(true);
+
     unmount();
-    const restored = nodes.map((node) => node.style.transform);
-    expect(restored).not.toEqual(disordered);
-    expect(content.style.opacity).toBe('');
+    expect(nodes.map((node) => node.style.transform)).not.toEqual(disordered);
+    expect(frame.style.strokeDashoffset).toBe('');
+    expect(nodes.every((node) => node.style.opacity === '')).toBe(true);
+    expect(labels.every((label) => label.style.opacity === '')).toBe(true);
+    expect(dots.every((dot) => dot.style.opacity === '')).toBe(true);
   });
 
   it('es compatible con StrictMode: el doble montaje deja un solo ciclo y se limpia', () => {
