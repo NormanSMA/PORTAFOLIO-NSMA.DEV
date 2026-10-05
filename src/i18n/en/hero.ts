@@ -6,8 +6,6 @@ export const hero = {
     projects: 'View projects',
   },
   canvas: {
-    frame: 'Interface design',
-    label:
-      "A Bézier curve drawn with the pen tool, with the site's color palette and typography",
+    label: 'A curve with four connected points that snap into order, with a pulse of light travelling along it',
   },
 } as const;

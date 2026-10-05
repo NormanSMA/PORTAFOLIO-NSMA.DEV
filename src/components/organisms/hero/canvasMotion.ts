@@ -1,10 +1,12 @@
 import { motion } from '../../../config/motion';
 import { gsap } from '../../../lib/gsap';
 import {
-  ANCHORS,
-  ROUGH_MIX,
+  ALIGNED_MIX,
+  DISORDERED_ANCHORS,
+  GUIDE_REST_OPACITY,
+  NODE_ROWS,
+  anchorAt,
   controlPoints,
-  pointAt,
   sampleCurve,
 } from './canvasGeometry';
 import {
@@ -16,33 +18,34 @@ import {
   type CanvasRenderer,
   type CanvasState,
 } from './canvasRenderer';
-import { buildSchedule, stepOf, type StepId } from './canvasSchedule';
+import { NODE_NUMBERS, buildSchedule, stepOf, type NodeNumber, type Step, type StepId } from './canvasSchedule';
 
 interface CanvasElements {
   parts: CanvasParts;
   content: HTMLElement;
   halo: SVGElement;
-  controls: Element[];
+  handles: Element[];
+  guides: SVGLineElement[];
   boxes: HTMLElement[];
-  rings: HTMLElement[];
-  dotTips: HTMLElement[];
-  tokens: HTMLElement[];
+  bursts: HTMLElement[];
   cursorTip: HTMLElement;
 }
 
-const POP_SECONDS = 0.35;
-const RING_SECONDS = 0.5;
-const REACH_SECONDS = 0.3;
-const REACH_DELAY = 0.1;
-const GRAB_SECONDS = 0.12;
-const CONTROLS_DIMMED = 0.3;
-const TOKEN_OFFSET = 6;
-const TOKEN_STAGGER = 0.08;
-const TOKEN_DELAY = 0.2;
-const POP_EASE = 'back.out(2.6)';
+const GUIDE_FLASH_OPACITY = 0.6;
+const GUIDE_FLASH_SECONDS = 0.3;
+const BURST_SECONDS = 0.5;
+const BURST_SCALE = 2.6;
+const SETTLE_SCALE = 1.35;
+const SETTLE_SECONDS = 0.35;
+const SETTLE_EASE = 'back.out(2.4)';
+const LIT_SECONDS = 0.45;
+const HANDLES_DIMMED = 0.3;
+const HANDLES_LIFTED = 1;
+const TRAIL_FADE_DELAY = 0.2;
+const TRAIL_FADE_SECONDS = 0.6;
 // The tip of the arrow sits 1.5 px inside its box; the press shrinks toward that point.
 const CURSOR_TIP_ORIGIN = '1.5px 1.5px';
-const GRABBED_DOT_SCALE = 1.5;
+const PRESS_SCALE = 0.85;
 
 function all<T extends Element>(root: Element, selector: string): T[] {
   return Array.from(root.querySelectorAll<T>(selector));
@@ -51,32 +54,33 @@ function all<T extends Element>(root: Element, selector: string): T[] {
 function collect(root: HTMLElement): CanvasElements | null {
   const content = root.querySelector<HTMLElement>('[data-canvas-content]');
   const halo = root.querySelector<SVGElement>('[data-canvas-halo]');
+  const pulse = root.querySelector<HTMLElement>('[data-canvas-pulse]');
   const cursor = root.querySelector<HTMLElement>('[data-canvas-cursor]');
   const cursorTip = root.querySelector<HTMLElement>('[data-canvas-cursor-tip]');
-  if (!content || !halo || !cursor || !cursorTip) return null;
+  if (!content || !halo || !pulse || !cursor || !cursorTip) return null;
 
   return {
     parts: {
       curves: all<SVGPathElement>(root, '[data-canvas-curve]'),
+      trails: all<SVGPathElement>(root, '[data-canvas-trail]'),
       handleLines: all<SVGPathElement>(root, '[data-canvas-handle-line]'),
       handleDots: all<HTMLElement>(root, '[data-canvas-handle-dot]'),
+      nodes: all<HTMLElement>(root, '[data-canvas-node]'),
+      pulse,
       cursor,
     },
     content,
     halo,
-    controls: all(root, '[data-canvas-controls]'),
-    boxes: all<HTMLElement>(root, '[data-canvas-anchor-box]'),
-    rings: all<HTMLElement>(root, '[data-canvas-anchor-ring]'),
-    dotTips: all<HTMLElement>(root, '[data-canvas-dot-tip]'),
-    tokens: all<HTMLElement>(root, '[data-canvas-token]'),
+    handles: all(root, '[data-canvas-handles]'),
+    guides: all<SVGLineElement>(root, '[data-canvas-guide]'),
+    boxes: all<HTMLElement>(root, '[data-canvas-node-box]'),
+    bursts: all<HTMLElement>(root, '[data-canvas-node-burst]'),
     cursorTip,
   };
 }
 
-function setActive(elements: CanvasElements, index: number): void {
-  elements.boxes.forEach((box, position) => {
-    box.dataset.active = String(position === index);
-  });
+function setLit(elements: CanvasElements, index: number, lit: boolean): void {
+  elements.parts.nodes[index].dataset.active = String(lit);
 }
 
 // Puts every animated element in its first-frame state. It runs on build and on each loop.
@@ -85,40 +89,43 @@ function resetScene(elements: CanvasElements, state: CanvasState, renderer: Canv
   renderer.render(state);
   gsap.set(elements.content, { opacity: 0 });
   gsap.set(elements.halo, { opacity: 0 });
-  gsap.set(elements.controls, { opacity: 1 });
-  gsap.set(elements.boxes, { scale: 0 });
-  gsap.set(elements.rings, { opacity: 0 });
-  gsap.set(elements.dotTips, { scale: 1 });
-  gsap.set(elements.tokens, { opacity: 0, y: TOKEN_OFFSET });
-  gsap.set(elements.parts.cursor, { opacity: 0 });
+  gsap.set(elements.handles, { opacity: HANDLES_LIFTED });
+  gsap.set(elements.guides, { opacity: GUIDE_REST_OPACITY });
+  gsap.set(elements.boxes, { scale: 1 });
+  gsap.set(elements.bursts, { opacity: 0 });
+  gsap.set(elements.parts.trails, { opacity: 1 });
+  gsap.set([elements.parts.pulse, elements.parts.cursor], { opacity: 0 });
   gsap.set(elements.cursorTip, { transformOrigin: CURSOR_TIP_ORIGIN });
-  setActive(elements, -1);
+  elements.parts.nodes.forEach((_, index) => setLit(elements, index, false));
 }
 
-// Back to the markup React rendered, which is the finished still frame.
+// Back to the markup React rendered, which is the finished still frame. The wrappers that the renderer positions
+// keep their transform; only what GSAP wrote is cleared.
 function restoreStill(elements: CanvasElements, renderer: CanvasRenderer): void {
   renderer.render(finalState());
-  const animated = [
+  const faded = [
     elements.content,
     elements.halo,
-    ...elements.controls,
-    ...elements.boxes,
-    ...elements.rings,
-    ...elements.dotTips,
-    ...elements.tokens,
+    ...elements.handles,
+    ...elements.guides,
+    ...elements.bursts,
+    ...elements.parts.trails,
+    elements.parts.pulse,
     elements.parts.cursor,
-    elements.cursorTip,
   ];
-  gsap.set(animated, { clearProps: 'opacity,transform,scale,y,transformOrigin' });
-  elements.boxes.forEach((box) => delete box.dataset.active);
+  gsap.set(faded, { clearProps: 'opacity' });
+  gsap.set([...elements.boxes, elements.cursorTip], { clearProps: 'transform,scale,transformOrigin' });
+  elements.parts.nodes.forEach((_, index) => setLit(elements, index, false));
 }
 
 function buildTimeline(elements: CanvasElements, state: CanvasState, renderer: CanvasRenderer) {
   const schedule = buildSchedule();
   const step = (id: StepId) => stepOf(schedule, id);
-  const rough = sampleCurve(controlPoints(ROUGH_MIX));
+  const end = (id: StepId) => step(id).at + step(id).duration;
+  const aligned = sampleCurve(controlPoints(ALIGNED_MIX));
   const out = motion.ease.out.gsap;
   const inOut = motion.ease.inOut.gsap;
+  const fast = motion.duration.fast;
 
   const tl = gsap.timeline({
     repeat: -1,
@@ -132,92 +139,82 @@ function buildTimeline(elements: CanvasElements, state: CanvasState, renderer: C
   const fromTo = (target: gsap.TweenTarget, from: gsap.TweenVars, to: gsap.TweenVars, at: number) =>
     tl.fromTo(target, from, { ...to, immediateRender: false }, at);
 
-  const moveCursorTo = (id: StepId, target: { x: number; y: number }) => {
-    const { at, duration } = step(id);
-    tl.to(state.cursor, { x: target.x, y: target.y, duration, ease: inOut }, at);
-  };
-
-  const click = (id: StepId, index: number) => {
-    const { at } = step(id);
-    tl.call(() => setActive(elements, index), undefined, at);
-    fromTo(elements.boxes[index], { scale: 0 }, { scale: 1, duration: POP_SECONDS, ease: POP_EASE }, at);
+  const burst = (node: number, at: number) =>
     fromTo(
-      elements.rings[index],
-      { scale: 1, opacity: 0.7 },
-      { scale: 2.8, opacity: 0, duration: RING_SECONDS },
+      elements.bursts[node],
+      { scale: 1, opacity: 0.6 },
+      { scale: BURST_SCALE, opacity: 0, duration: BURST_SECONDS },
       at,
     );
-    tl.to(state.reach, { [index]: 1, duration: REACH_SECONDS }, at + REACH_DELAY);
-    fromTo(elements.cursorTip, { scale: 0.85 }, { scale: 1, duration: motion.duration.fast }, at);
-  };
 
-  // The pen rides the tip of the stroke, so it looks like the pen is what draws the segment.
-  const leg = (id: StepId, stop: number) => {
-    const { at, duration } = step(id);
-    const followTip = () => {
-      const tip = pointAt(rough, state.trace);
-      state.cursor.x = tip.x;
-      state.cursor.y = tip.y;
-    };
-    tl.to(state, { trace: stop, duration, ease: inOut, onUpdate: followTip }, at);
-  };
+  // One node taken: the pen reaches it, it lights, the pen drags it onto its grid point and releases it with a snap.
+  const place = (node: NodeNumber) => {
+    const index = node - 1;
+    const take: Step = step(`take${node}`);
+    const move: Step = step(`move${node}`);
+    const snap: Step = step(`snap${node}`);
+    const start = DISORDERED_ANCHORS[index];
 
-  // The drag moves a handle dot, and the pen holds it.
-  const drag = (id: StepId, key: 'second' | 'third', anchor: number, side: 'in' | 'out', dot: number) => {
-    const { at, duration } = step(id);
-    tl.to(elements.dotTips[dot], { scale: GRABBED_DOT_SCALE, duration: GRAB_SECONDS }, at);
+    tl.to(state.cursor, { x: start.x, y: start.y, duration: take.duration, ease: inOut }, take.at);
+    tl.call(() => setLit(elements, index, true), undefined, move.at);
+    fromTo(elements.cursorTip, { scale: PRESS_SCALE }, { scale: 1, duration: fast }, move.at);
     tl.to(
-      state,
+      state.mix,
       {
-        [key]: 1,
-        duration,
+        [index]: 1,
+        duration: move.duration,
         ease: inOut,
         onUpdate: () => {
-          const handle = controlPoints(state)[anchor][side];
-          state.cursor.x = handle.x;
-          state.cursor.y = handle.y;
+          const anchor = anchorAt(index, state.mix[index]);
+          state.cursor.x = anchor.x;
+          state.cursor.y = anchor.y;
         },
       },
-      at,
+      move.at,
     );
-    tl.to(elements.dotTips[dot], { scale: 1, duration: GRAB_SECONDS }, at + duration - GRAB_SECONDS);
+
+    fromTo(
+      elements.guides[NODE_ROWS[index]],
+      { opacity: GUIDE_FLASH_OPACITY },
+      { opacity: GUIDE_REST_OPACITY, duration: GUIDE_FLASH_SECONDS },
+      snap.at,
+    );
+    burst(index, snap.at);
+    fromTo(elements.boxes[index], { scale: SETTLE_SCALE }, { scale: 1, duration: SETTLE_SECONDS, ease: SETTLE_EASE }, snap.at);
+    tl.call(() => setLit(elements, index, false), undefined, snap.at + LIT_SECONDS);
   };
 
-  const [, second, third] = controlPoints(ROUGH_MIX);
-  const stops = rough.stops;
+  // The pulse crosses the nodes at constant speed, so each one lights at the moment the pulse reaches it.
+  const flow = () => {
+    const { at, duration } = step('flow');
+    fromTo(elements.parts.pulse, { opacity: 0 }, { opacity: 1, duration: fast }, at);
+    tl.to(state, { pulse: 1, duration, ease: 'none' }, at);
+    aligned.stops.forEach((stop, index) => {
+      const crossing = at + stop * duration;
+      tl.call(() => setLit(elements, index, true), undefined, crossing);
+      burst(index, crossing);
+      tl.call(() => setLit(elements, index, false), undefined, crossing + LIT_SECONDS);
+    });
+    tl.to(elements.parts.pulse, { opacity: 0, duration: fast }, at + duration);
+  };
 
-  fromTo(elements.content, { opacity: 0 }, { opacity: 1, duration: step('fadeIn').duration }, 0);
-  fromTo(elements.parts.cursor, { opacity: 0 }, { opacity: 1, duration: motion.duration.fast }, step('approach').at);
-  moveCursorTo('approach', ANCHORS[0]);
+  tl.fromTo(elements.content, { opacity: 0 }, { opacity: 1, duration: step('fadeIn').duration }, 0);
+  tl.fromTo(elements.parts.cursor, { opacity: 0 }, { opacity: 1, duration: fast }, step('approach').at);
+  const first = DISORDERED_ANCHORS[0];
+  tl.to(state.cursor, { x: first.x, y: first.y, duration: step('approach').duration, ease: inOut }, step('approach').at);
 
-  click('click1', 0);
-  leg('leg1', stops[1]);
-  click('click2', 1);
-  leg('leg2', stops[2]);
-  click('click3', 2);
-  leg('leg3', stops[3]);
-  click('click4', 3);
+  NODE_NUMBERS.forEach(place);
 
-  moveCursorTo('reachSecond', second.out);
-  tl.call(() => setActive(elements, 1), undefined, step('dragSecond').at);
-  drag('dragSecond', 'second', 1, 'out', 3);
-  moveCursorTo('reachThird', third.in);
-  tl.call(() => setActive(elements, 2), undefined, step('dragThird').at);
-  drag('dragThird', 'third', 2, 'in', 4);
+  // The nodes are placed: the pen leaves, the handles step back, the halo comes in, and the pulse runs.
+  const settle = step('settle');
+  tl.to(elements.parts.cursor, { opacity: 0, duration: fast }, settle.at);
+  tl.to(elements.handles, { opacity: HANDLES_DIMMED, duration: motion.duration.base }, settle.at);
+  tl.to(elements.halo, { opacity: 1, duration: motion.duration.base }, settle.at);
+  flow();
 
-  const finish = step('tokens');
-  tl.call(() => setActive(elements, -1), undefined, finish.at);
-  tl.to(elements.parts.cursor, { opacity: 0, duration: motion.duration.fast }, finish.at);
-  tl.to(elements.controls, { opacity: CONTROLS_DIMMED, duration: motion.duration.base }, finish.at);
-  tl.to(elements.halo, { opacity: 1, duration: motion.duration.base }, finish.at);
-  tl.to(
-    elements.tokens,
-    { opacity: 1, y: 0, duration: motion.duration.fast + 0.15, stagger: TOKEN_STAGGER },
-    finish.at + TOKEN_DELAY,
-  );
-
+  tl.to(elements.parts.trails, { opacity: 0, duration: TRAIL_FADE_SECONDS }, end('tail') + TRAIL_FADE_DELAY);
   const fade = step('fadeOut');
-  tl.to([elements.content, ...elements.tokens], { opacity: 0, duration: fade.duration, ease: 'none' }, fade.at);
+  tl.to(elements.content, { opacity: 0, duration: fade.duration, ease: 'none' }, fade.at);
   return tl;
 }
 
@@ -247,7 +244,8 @@ export function startCanvasMotion(root: HTMLElement): () => void {
   if (!elements) return () => {};
 
   const state = initialState();
-  const renderer = createCanvasRenderer(elements.parts);
+  const aligned = sampleCurve(controlPoints(ALIGNED_MIX));
+  const renderer = createCanvasRenderer(elements.parts, aligned);
   resetScene(elements, state, renderer);
 
   const timeline = buildTimeline(elements, state, renderer);

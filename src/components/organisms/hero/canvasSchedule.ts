@@ -1,21 +1,15 @@
-// The cycle in seconds. Three phases: draw the curve anchor by anchor, drag two handles to reshape it, show the tokens.
-// A pause and a short fade close the loop so the restart is not a cut.
+// The cycle in seconds. Four phases: nodes appear out of order, the pen puts each one on its grid point,
+// a pulse of light runs along the curve, and a pause. The fade that closes the cycle hides the jump back to the mess.
+export type NodeNumber = 1 | 2 | 3 | 4;
+export type NodeStepId = `${'take' | 'move' | 'snap'}${NodeNumber}`;
 export type StepId =
   | 'fadeIn'
   | 'approach'
-  | 'click1'
-  | 'leg1'
-  | 'click2'
-  | 'leg2'
-  | 'click3'
-  | 'leg3'
-  | 'click4'
-  | 'reachSecond'
-  | 'dragSecond'
-  | 'reachThird'
-  | 'dragThird'
-  | 'tokens'
-  | 'hold'
+  | NodeStepId
+  | 'settle'
+  | 'flow'
+  | 'tail'
+  | 'rest'
   | 'fadeOut';
 
 export interface Step {
@@ -24,47 +18,49 @@ export interface Step {
   duration: number;
 }
 
-export type PhaseId = 'trace' | 'edit' | 'tokens';
+export type PhaseId = 'disorder' | 'settle' | 'flow' | 'pause';
 
-const FADE_IN = 0.3;
+export const NODE_NUMBERS: readonly NodeNumber[] = [1, 2, 3, 4];
+
+const FADE_IN = 0.35;
+const APPROACH_AT = 0.6;
 const APPROACH = 0.6;
-const CLICK = 0.4;
-// The legs follow the arc length of each segment, so the pen keeps a similar speed along the whole S.
-const LEGS = [0.75, 0.95, 0.75] as const;
-const REACH_SECOND = 0.7;
-const DRAG_SECOND = 0.85;
-const REACH_THIRD = 0.5;
-const DRAG_THIRD = 0.75;
-const TOKENS = 1;
-const HOLD = 1.3;
-const FADE_OUT = 0.35;
+// Each node: the pen reaches it and takes it, drags it to its grid point, and releases it with a snap.
+const TAKE = 0.25;
+const MOVE = 0.5;
+const SNAP = 0.1;
+const SETTLE = 0.3;
+// One constant-speed pass: the nodes light exactly when the pulse crosses them.
+const FLOW = 2.6;
+const TAIL = 0.3;
+const REST = 1.4;
+const FADE_OUT = 0.4;
 
-const SEQUENCE: readonly [StepId, number][] = [
-  ['approach', APPROACH],
-  ['click1', CLICK],
-  ['leg1', LEGS[0]],
-  ['click2', CLICK],
-  ['leg2', LEGS[1]],
-  ['click3', CLICK],
-  ['leg3', LEGS[2]],
-  ['click4', CLICK],
-  ['reachSecond', REACH_SECOND],
-  ['dragSecond', DRAG_SECOND],
-  ['reachThird', REACH_THIRD],
-  ['dragThird', DRAG_THIRD],
-  ['tokens', TOKENS],
-  ['hold', HOLD],
-  ['fadeOut', FADE_OUT],
+const SEQUENCE_BEFORE_NODES: readonly Step[] = [
+  { id: 'fadeIn', at: 0, duration: FADE_IN },
+  { id: 'approach', at: APPROACH_AT, duration: APPROACH },
 ];
 
 // The fade-in overlaps the approach, so the pen enters while the scene appears.
 export function buildSchedule(): Step[] {
-  let clock = 0;
-  const steps: Step[] = [{ id: 'fadeIn', at: 0, duration: FADE_IN }];
-  SEQUENCE.forEach(([id, duration]) => {
+  const steps: Step[] = [...SEQUENCE_BEFORE_NODES];
+  let clock = APPROACH_AT + APPROACH;
+
+  const push = (id: StepId, duration: number) => {
     steps.push({ id, at: clock, duration });
     clock += duration;
+  };
+
+  NODE_NUMBERS.forEach((node) => {
+    push(`take${node}`, TAKE);
+    push(`move${node}`, MOVE);
+    push(`snap${node}`, SNAP);
   });
+  push('settle', SETTLE);
+  push('flow', FLOW);
+  push('tail', TAIL);
+  push('rest', REST);
+  push('fadeOut', FADE_OUT);
   return steps;
 }
 
@@ -83,8 +79,9 @@ export function phaseRanges(steps: readonly Step[]): Record<PhaseId, [number, nu
   const start = (id: StepId) => stepOf(steps, id).at;
   const end = (id: StepId) => stepOf(steps, id).at + stepOf(steps, id).duration;
   return {
-    trace: [start('approach'), end('click4')],
-    edit: [start('reachSecond'), end('dragThird')],
-    tokens: [start('tokens'), end('tokens')],
+    disorder: [0, start('take1')],
+    settle: [start('take1'), end('snap4')],
+    flow: [start('settle'), end('tail')],
+    pause: [start('rest'), end('rest')],
   };
 }

@@ -71,11 +71,11 @@ describe('Hero', () => {
     expect(scrollToSection).toHaveBeenCalledWith('projects');
   });
 
-  it('junto al texto hay un lienzo de diseño descrito como una sola imagen', () => {
+  it('junto al texto hay un lienzo descrito como una sola imagen y sin texto propio', () => {
     renderHero();
-    const canvas = screen.getByRole('img', { name: /curva Bézier dibujada con la herramienta pluma/ });
+    const canvas = screen.getByRole('img', { name: /curva con cuatro puntos conectados que se acomodan en orden/ });
     expect(canvas.closest('#home')).toBeTruthy();
-    expect(screen.getByText('Diseño de interfaces')).toBeTruthy();
+    expect(canvas.textContent).toBe('');
   });
 
   it('con reduced motion pinta el nombre como texto plano', () => {

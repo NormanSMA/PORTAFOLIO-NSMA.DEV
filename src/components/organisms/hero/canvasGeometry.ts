@@ -1,7 +1,8 @@
-// The hero draws one Bezier curve with four anchors, the way a pen tool does. Every number lives in scene units:
-// a 340 x 200 box, the same 17:10 ratio as the box on screen, so a point maps to a percentage without distortion.
-export const SCENE_WIDTH = 340;
+// One curve through four nodes. Every number lives in scene units: a 320 x 200 box with a 20-unit grid, so the box
+// and the grid share one ratio (16:10) and the box holds a whole number of cells on both axes.
+export const SCENE_WIDTH = 320;
 export const SCENE_HEIGHT = 200;
+export const GRID_STEP = 20;
 
 export interface Point {
   x: number;
@@ -14,43 +15,47 @@ export interface ControlPoint {
   out: Point;
 }
 
-// How far the two middle anchors have moved from the rough drag to the finished handles: 0 is rough, 1 is finished.
-export interface EditMix {
-  second: number;
-  third: number;
-}
+// The two rows that nodes occupy, as guides. Row 0 is the upper one; they sit on grid lines.
+export const ROW_Y = [60, 140] as const;
+// Down, up, down, up. The pattern is point-symmetric about the center of the scene.
+export const NODE_ROWS = [1, 0, 1, 0] as const;
+export const NODE_SPACING = 80;
+export const FIRST_NODE_X = 40;
+export const CENTER_X = SCENE_WIDTH / 2;
+export const GUIDE_REST_OPACITY = 0.25;
 
-// The S of the previous hero: it starts at mid height, dips to a valley, climbs to a hill and ends at mid height.
-export const ANCHORS: readonly Point[] = [
-  { x: 38, y: 100 },
-  { x: 113, y: 160 },
-  { x: 227, y: 40 },
-  { x: 302, y: 100 },
+// Aligned nodes sit on grid points: equal spacing, two rows, symmetric.
+export const ANCHORS: readonly Point[] = NODE_ROWS.map((row, index) => ({
+  x: FIRST_NODE_X + index * NODE_SPACING,
+  y: ROW_Y[row],
+}));
+
+// Horizontal handles of one length on every node: the curve leaves and enters each node flat.
+export const HANDLE_LENGTH = 32;
+const ALIGNED_VECTOR: Point = { x: HANDLE_LENGTH, y: 0 };
+
+// The first state: fixed offsets, off the grid, with handles of different length and slant.
+// The values are arbitrary on purpose and deterministic, so every cycle starts from the same mess.
+export const DISORDERED_ANCHORS: readonly Point[] = [
+  { x: 58, y: 54 },
+  { x: 92, y: 124 },
+  { x: 232, y: 70 },
+  { x: 276, y: 150 },
+];
+const DISORDERED_VECTORS: readonly Point[] = [
+  { x: 26, y: 12 },
+  { x: 13, y: 22 },
+  { x: 24, y: -20 },
+  { x: 20, y: 14 },
 ];
 
-// Each anchor is smooth: the incoming handle mirrors the outgoing one. These are the outgoing vectors.
-// The rough set is what a first drag leaves; the finished set is the symmetric S that the edit phase reaches.
-const ROUGH_VECTORS: readonly Point[] = [
-  { x: 28, y: 23 },
-  { x: 24, y: -10 },
-  { x: 24, y: -10 },
-  { x: 28, y: 23 },
-];
-const FINISHED_VECTORS: readonly Point[] = [
-  { x: 28, y: 23 },
-  { x: 32, y: 0 },
-  { x: 32, y: 0 },
-  { x: 28, y: 23 },
-];
-
-export const ROUGH_MIX: EditMix = { second: 0, third: 0 };
-export const FINISHED_MIX: EditMix = { second: 1, third: 1 };
-
-// The anchors whose handles the edit phase drags; the first and last keep the same handles throughout.
-export const EDITED_ANCHORS = [1, 2] as const;
-
-// Where the pen enters the scene before the first click.
+// Where the pen enters the scene before it reaches the first node.
 export const CURSOR_START: Point = { x: 14, y: 176 };
+
+// How far each node has moved from its disordered place to its grid point: 0 is disordered, 1 is aligned.
+export type NodeMix = readonly number[];
+export const DISORDERED_MIX: NodeMix = [0, 0, 0, 0];
+export const ALIGNED_MIX: NodeMix = [1, 1, 1, 1];
 
 export function lerp(from: number, to: number, amount: number): number {
   return from + (to - from) * amount;
@@ -60,19 +65,15 @@ export function lerpPoint(from: Point, to: Point, amount: number): Point {
   return { x: lerp(from.x, to.x, amount), y: lerp(from.y, to.y, amount) };
 }
 
-function mixFor(index: number, mix: EditMix): number {
-  if (index === EDITED_ANCHORS[0]) return mix.second;
-  if (index === EDITED_ANCHORS[1]) return mix.third;
-  return 1;
+export function anchorAt(index: number, amount: number): Point {
+  return lerpPoint(DISORDERED_ANCHORS[index], ANCHORS[index], amount);
 }
 
-export function handleVector(index: number, amount: number): Point {
-  return lerpPoint(ROUGH_VECTORS[index], FINISHED_VECTORS[index], amount);
-}
-
-export function controlPoints(mix: EditMix): ControlPoint[] {
-  return ANCHORS.map((anchor, index) => {
-    const vector = handleVector(index, mixFor(index, mix));
+// Each node is smooth: the incoming handle mirrors the outgoing one.
+export function controlPoints(mix: NodeMix): ControlPoint[] {
+  return ANCHORS.map((_, index) => {
+    const anchor = anchorAt(index, mix[index]);
+    const vector = lerpPoint(DISORDERED_VECTORS[index], ALIGNED_VECTOR, mix[index]);
     return {
       anchor,
       in: { x: anchor.x - vector.x, y: anchor.y - vector.y },
@@ -85,7 +86,7 @@ function format(point: Point): string {
   return `${point.x.toFixed(2)} ${point.y.toFixed(2)}`;
 }
 
-// One cubic segment per pair of neighbouring anchors: out handle of the first, in handle of the second.
+// One cubic segment per pair of neighbouring nodes: out handle of the first, in handle of the second.
 export function curvePath(points: readonly ControlPoint[]): string {
   const segments = points.slice(1).map((next, index) => {
     const previous = points[index];
@@ -94,12 +95,19 @@ export function curvePath(points: readonly ControlPoint[]): string {
   return `M${format(points[0].anchor)}${segments.join('')}`;
 }
 
-// A handle line runs from the incoming handle through the anchor to the outgoing handle.
-// `reach` pulls both handles toward the anchor, so 0 hides them and 1 shows them whole.
-export function handlePath(point: ControlPoint, reach: number): string {
-  const inner = lerpPoint(point.anchor, point.in, reach);
-  const outer = lerpPoint(point.anchor, point.out, reach);
-  return `M${format(inner)}L${format(point.anchor)}L${format(outer)}`;
+// A handle line runs from the incoming handle through the node to the outgoing handle.
+export function handlePath(point: ControlPoint): string {
+  return `M${format(point.in)}L${format(point.anchor)}L${format(point.out)}`;
+}
+
+// The dots of the grid as zero-length subpaths: with round caps each one draws a dot, in scene units, so a node
+// sitting on a grid point sits on a dot at any width.
+export function gridDotsPath(): string {
+  const dots: string[] = [];
+  for (let y = 0; y <= SCENE_HEIGHT; y += GRID_STEP) {
+    for (let x = 0; x <= SCENE_WIDTH; x += GRID_STEP) dots.push(`M${x} ${y}h0`);
+  }
+  return dots.join('');
 }
 
 export interface CurveTable {
@@ -107,7 +115,7 @@ export interface CurveTable {
   y: number[];
   // Share of the total length at each sample, from 0 to 1.
   length: number[];
-  // Share of the total length at each anchor, so the trace can stop exactly on one.
+  // Share of the total length at each node, so the pulse can be timed to reach one exactly.
   stops: number[];
 }
 
@@ -118,7 +126,7 @@ function cubic(p0: number, p1: number, p2: number, p3: number, t: number): numbe
 
 const SAMPLES_PER_SEGMENT = 48;
 
-// Samples the curve so the pen can ride the drawn tip without reading anything from the page.
+// Samples the curve so the pulse can ride it without reading anything from the page.
 export function sampleCurve(points: readonly ControlPoint[]): CurveTable {
   const x: number[] = [];
   const y: number[] = [];

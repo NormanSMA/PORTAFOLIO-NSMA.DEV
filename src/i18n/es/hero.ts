@@ -6,8 +6,7 @@ export const hero = {
     projects: 'Ver proyectos',
   },
   canvas: {
-    frame: 'Diseño de interfaces',
     label:
-      'Una curva Bézier dibujada con la herramienta pluma, con la paleta de colores y la tipografía del sitio',
+      'Una curva con cuatro puntos conectados que se acomodan en orden, con un pulso de luz que la recorre',
   },
 } as const;

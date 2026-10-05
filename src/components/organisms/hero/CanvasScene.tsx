@@ -1,6 +1,6 @@
 import {
+  ALIGNED_MIX,
   CURSOR_START,
-  FINISHED_MIX,
   SCENE_HEIGHT,
   SCENE_WIDTH,
   controlPoints,
@@ -10,10 +10,10 @@ import {
 } from './canvasGeometry';
 
 const VIEW_BOX = `0 0 ${SCENE_WIDTH} ${SCENE_HEIGHT}`;
-const FINISHED = controlPoints(FINISHED_MIX);
-const FINISHED_PATH = curvePath(FINISHED);
+const ALIGNED = controlPoints(ALIGNED_MIX);
+const ALIGNED_PATH = curvePath(ALIGNED);
 
-// The blur is static: it is drawn once from the finished curve and only its opacity changes, so no frame re-blurs it.
+// The blur is static: it is drawn once from the aligned curve and only its opacity changes, so no frame re-blurs it.
 const HALO_REGION = { x: -40, y: -40, width: SCENE_WIDTH + 80, height: SCENE_HEIGHT + 80 };
 
 const MARKER = 'absolute left-0 top-0';
@@ -35,42 +35,36 @@ function Halo() {
         ))}
       </defs>
       <g fill="none" strokeLinecap="round" strokeLinejoin="round">
-        <path d={FINISHED_PATH} className="stroke-primary-500" strokeWidth="22" strokeOpacity="0.1" filter="url(#hero-canvas-haze)" />
-        <path d={FINISHED_PATH} className="stroke-secondary-500" strokeWidth="9" strokeOpacity="0.26" filter="url(#hero-canvas-glow)" />
+        <path d={ALIGNED_PATH} className="stroke-primary-500" strokeWidth="22" strokeOpacity="0.1" filter="url(#hero-canvas-haze)" />
+        <path d={ALIGNED_PATH} className="stroke-secondary-500" strokeWidth="9" strokeOpacity="0.26" filter="url(#hero-canvas-glow)" />
       </g>
     </svg>
   );
 }
 
-// The curve and its handle lines. pathLength 1 lets the trace be a dash offset from 1 to 0 whatever the real length is.
+// The curve, the trail of the pulse, and the handle lines. pathLength 1 lets the trail be a dash offset from 1 to 0.
+// The trail takes butt caps: with round caps a hidden dash still leaves a dot at the end of the path.
+// The handles rest at 30 percent: the animation lifts them to full while the pen works and lowers them again.
 function Strokes() {
   return (
     <svg viewBox={VIEW_BOX} className="absolute inset-0 size-full overflow-visible" focusable="false" aria-hidden="true">
-      <g fill="none" strokeLinejoin="round">
+      <g fill="none" strokeLinejoin="round" strokeLinecap="round">
+        <path data-canvas-curve d={ALIGNED_PATH} className="hero-canvas-edge stroke-secondary-400" strokeOpacity="0.35" />
         <path
-          data-canvas-curve
-          d={FINISHED_PATH}
+          data-canvas-trail
+          d={ALIGNED_PATH}
           pathLength={1}
-          strokeDasharray="1"
-          className="hero-canvas-edge stroke-secondary-400"
-          strokeOpacity="0.35"
+          strokeDasharray="1 2"
+          strokeDashoffset="1"
+          strokeLinecap="butt"
+          className="hero-canvas-trail stroke-primary-400"
+          strokeOpacity="0.5"
         />
-        <path
-          data-canvas-curve
-          d={FINISHED_PATH}
-          pathLength={1}
-          strokeDasharray="1"
-          className="hero-canvas-core stroke-secondary-50"
-        />
+        <path data-canvas-curve d={ALIGNED_PATH} className="hero-canvas-core stroke-secondary-50" />
       </g>
-      <g data-canvas-controls fill="none">
-        {FINISHED.map((point) => (
-          <path
-            key={point.anchor.x}
-            data-canvas-handle-line
-            d={handlePath(point, 1)}
-            className="hero-canvas-handle stroke-fg-subtle"
-          />
+      <g data-canvas-handles fill="none" className="opacity-30">
+        {ALIGNED.map((point) => (
+          <path key={point.anchor.x} data-canvas-handle-line d={handlePath(point)} className="hero-canvas-handle stroke-fg-subtle" />
         ))}
       </g>
     </svg>
@@ -79,33 +73,48 @@ function Strokes() {
 
 function Handles() {
   return (
-    <>
-      {FINISHED.flatMap((point) => [point.in, point.out]).map((side, slot) => (
+    <div data-canvas-handles className="absolute inset-0 opacity-30">
+      {ALIGNED.flatMap((point) => [point.in, point.out]).map((side, slot) => (
         <span key={slot} data-canvas-handle-dot className={MARKER} style={{ transform: sceneTransform(side) }}>
           <span data-canvas-dot-tip className="absolute -left-[2.5px] -top-[2.5px] block size-[5px] rounded-pill bg-fg" />
+        </span>
+      ))}
+    </div>
+  );
+}
+
+// A node is a small rounded square with nothing inside. Lit, it takes a primary border and a soft ring; the pulse ring
+// is the burst that the animation plays when the node is placed or crossed.
+function Nodes() {
+  return (
+    <>
+      {ALIGNED.map((point) => (
+        <span
+          key={point.anchor.x}
+          data-canvas-node
+          data-active="false"
+          className={`group ${MARKER}`}
+          style={{ transform: sceneTransform(point.anchor) }}
+        >
+          <span data-canvas-node-burst className="hero-canvas-node-box absolute rounded-[3px] border border-primary-400 opacity-0" />
+          <span className="hero-canvas-node-ring absolute rounded-[5px] border border-primary-400/45 opacity-0 motion-safe:transition-opacity motion-safe:duration-fast group-data-[active=true]:opacity-100" />
+          <span
+            data-canvas-node-box
+            className="hero-canvas-node-box absolute rounded-[3px] border border-fg/70 bg-ink motion-safe:transition-colors motion-safe:duration-fast motion-safe:ease-out group-data-[active=true]:border-primary-400"
+          />
         </span>
       ))}
     </>
   );
 }
 
-function Anchors() {
+// The pulse: a small bright point with a static soft halo around it.
+function Pulse() {
   return (
-    <>
-      {FINISHED.map((point) => (
-        <span key={point.anchor.x} className={MARKER} style={{ transform: sceneTransform(point.anchor) }}>
-          <span
-            data-canvas-anchor-ring
-            className="absolute -left-[3.5px] -top-[3.5px] block size-[7px] border border-primary-400 opacity-0"
-          />
-          <span
-            data-canvas-anchor-box
-            data-active="false"
-            className="absolute -left-[3.5px] -top-[3.5px] block size-[7px] border border-fg bg-ink motion-safe:transition-colors motion-safe:duration-fast motion-safe:ease-out data-[active=true]:bg-primary-400"
-          />
-        </span>
-      ))}
-    </>
+    <span data-canvas-pulse className={`${MARKER} opacity-0`} style={{ transform: sceneTransform(ALIGNED[0].anchor) }}>
+      <span className="absolute -left-[9px] -top-[9px] block size-[18px] rounded-pill bg-[radial-gradient(circle,rgb(var(--color-secondary-100)/0.5),transparent_70%)]" />
+      <span className="absolute -left-[2.5px] -top-[2.5px] block size-[5px] rounded-pill bg-fg" />
+    </span>
   );
 }
 
@@ -127,16 +136,15 @@ function Cursor() {
   );
 }
 
-// Everything inside the scene box. The animation fades this wrapper as one piece.
+// Everything that moves or fades inside the scene box. The animation fades this wrapper as one piece.
 export function CanvasScene() {
   return (
     <div data-canvas-content className="absolute inset-0">
       <Halo />
       <Strokes />
-      <div data-canvas-controls className="absolute inset-0">
-        <Handles />
-        <Anchors />
-      </div>
+      <Handles />
+      <Nodes />
+      <Pulse />
       <Cursor />
     </div>
   );
