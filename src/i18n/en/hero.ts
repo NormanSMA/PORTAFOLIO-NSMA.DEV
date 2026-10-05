@@ -6,12 +6,12 @@ export const hero = {
     projects: 'View projects',
   },
   canvas: {
-    label: 'Four points joined by a curve: order, align, connect and flow. A pulse of light travels along it',
+    label: 'Four points joined by a curve: look, clarity, tweak and goal. A pulse of light travels along it',
     nodes: {
-      order: 'Order',
-      align: 'Align',
-      connect: 'Connect',
-      flow: 'Flow',
+      first: 'Look',
+      second: 'Clarity',
+      third: 'Tweak',
+      fourth: 'Goal',
     },
   },
 } as const;

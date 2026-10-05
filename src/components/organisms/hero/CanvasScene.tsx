@@ -21,7 +21,7 @@ const ALIGNED_PATH = curvePath(ALIGNED);
 const HALO_REGION = { x: -40, y: -40, width: SCENE_WIDTH + 80, height: SCENE_HEIGHT + 80 };
 
 const MARKER = 'absolute left-0 top-0';
-const LABEL_KEYS = ['order', 'align', 'connect', 'flow'] as const;
+const LABEL_KEYS = ['first', 'second', 'third', 'fourth'] as const;
 
 function Halo() {
   return (

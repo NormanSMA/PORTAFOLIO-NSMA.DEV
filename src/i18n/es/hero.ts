@@ -7,12 +7,12 @@ export const hero = {
   },
   canvas: {
     label:
-      'Cuatro puntos conectados por una curva: ordenar, alinear, conectar y fluir. Un pulso de luz recorre la curva',
+      'Cuatro puntos conectados por una curva: mirada, claridad, ajuste y meta. Un pulso de luz recorre la curva',
     nodes: {
-      order: 'Ordenar',
-      align: 'Alinear',
-      connect: 'Conectar',
-      flow: 'Fluir',
+      first: 'Mirada',
+      second: 'Claridad',
+      third: 'Ajuste',
+      fourth: 'Meta',
     },
   },
 } as const;

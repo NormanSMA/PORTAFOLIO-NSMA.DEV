@@ -73,9 +73,9 @@ describe('Hero', () => {
 
   it('junto al texto hay un lienzo descrito como una sola imagen con las cuatro etiquetas de los nodos', () => {
     renderHero();
-    const canvas = screen.getByRole('img', { name: /ordenar, alinear, conectar y fluir/ });
+    const canvas = screen.getByRole('img', { name: /mirada, claridad, ajuste y meta/ });
     expect(canvas.closest('#home')).toBeTruthy();
-    expect(canvas.textContent).toBe('OrdenarAlinearConectarFluir');
+    expect(canvas.textContent).toBe('MiradaClaridadAjusteMeta');
   });
 
   it('con movimiento, la disponibilidad y el botón entran por opacidad y siguen en el orden de tabulación', () => {

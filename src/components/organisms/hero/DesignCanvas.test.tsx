@@ -47,7 +47,7 @@ describe('DesignCanvas', () => {
     const image = screen.getByRole('img');
     expect(image.getAttribute('aria-label')).toBe(translations.es.hero.canvas.label);
     expect(image.getAttribute('aria-label')).toBe(
-      'Cuatro puntos conectados por una curva: ordenar, alinear, conectar y fluir. Un pulso de luz recorre la curva',
+      'Cuatro puntos conectados por una curva: mirada, claridad, ajuste y meta. Un pulso de luz recorre la curva',
     );
   });
 
@@ -56,27 +56,27 @@ describe('DesignCanvas', () => {
     fireEvent.click(screen.getByText('toggle'));
     expect(screen.getByRole('img').getAttribute('aria-label')).toBe(translations.en.hero.canvas.label);
     expect(translations.en.hero.canvas.label).toBe(
-      'Four points joined by a curve: order, align, connect and flow. A pulse of light travels along it',
+      'Four points joined by a curve: look, clarity, tweak and goal. A pulse of light travels along it',
     );
   });
 
-  it('rotula los nodos de izquierda a derecha con Ordenar, Alinear, Conectar y Fluir', () => {
+  it('rotula los nodos de izquierda a derecha con Mirada, Claridad, Ajuste y Meta', () => {
     renderCanvas();
     const labels = Array.from(screen.getByRole('img').querySelectorAll('[data-canvas-label]'));
-    expect(labels.map((label) => label.textContent)).toEqual(['Ordenar', 'Alinear', 'Conectar', 'Fluir']);
+    expect(labels.map((label) => label.textContent)).toEqual(['Mirada', 'Claridad', 'Ajuste', 'Meta']);
   });
 
   it('rotula los nodos en inglés cuando cambia el idioma', () => {
     renderCanvas();
     fireEvent.click(screen.getByText('toggle'));
     const labels = Array.from(screen.getByRole('img').querySelectorAll('[data-canvas-label]'));
-    expect(labels.map((label) => label.textContent)).toEqual(['Order', 'Align', 'Connect', 'Flow']);
+    expect(labels.map((label) => label.textContent)).toEqual(['Look', 'Clarity', 'Tweak', 'Goal']);
   });
 
   it('no muestra más texto que las cuatro etiquetas', () => {
     renderCanvas();
     const image = screen.getByRole('img');
-    expect(image.textContent).toBe('OrdenarAlinearConectarFluir');
+    expect(image.textContent).toBe('MiradaClaridadAjusteMeta');
     expect(screen.queryByText('Diseño de interfaces')).toBeNull();
     expect(screen.queryByText('#6366F1')).toBeNull();
   });
@@ -90,8 +90,8 @@ describe('DesignCanvas', () => {
   });
 
   it('declara las claves de las etiquetas en ambos idiomas', () => {
-    expect(Object.keys(translations.es.hero.canvas.nodes)).toEqual(['order', 'align', 'connect', 'flow']);
-    expect(Object.keys(translations.en.hero.canvas.nodes)).toEqual(['order', 'align', 'connect', 'flow']);
+    expect(Object.keys(translations.es.hero.canvas.nodes)).toEqual(['first', 'second', 'third', 'fourth']);
+    expect(Object.keys(translations.en.hero.canvas.nodes)).toEqual(['first', 'second', 'third', 'fourth']);
     expect(Object.keys(translations.es.hero.canvas)).toEqual(['label', 'nodes']);
   });
 
