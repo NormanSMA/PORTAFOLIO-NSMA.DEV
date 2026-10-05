@@ -68,7 +68,7 @@ export const projectDefinitions: readonly Project[] = [
     category: 'React',
     year: 2026,
     status: 'active',
-    technologies: ['React 19', 'TypeScript', 'Tailwind CSS', 'GSAP', 'OGL'],
+    technologies: ['React 19', 'TypeScript', 'Tailwind CSS', 'GSAP'],
     // The repo link stays out until Norman confirms it is public.
     links: { live: 'https://portafolio-nsma-dev.vercel.app/' },
   },
