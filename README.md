@@ -1,34 +1,41 @@
-# Portafolio Personal - Norman Martínez
+<div align="center">
 
-Este repositorio contiene el código fuente de mi portafolio personal, diseñado y construido para mostrar mi experiencia, habilidades y proyectos como Ingeniero en Sistemas de Información y Desarrollador Full Stack.
+# Norman Martínez
 
-## Sobre el Proyecto
+**Ingeniero en Sistemas · Desarrollo web, bases de datos y cloud**
 
-Una plataforma web moderna, rápida y totalmente responsiva, desarrollada con el objetivo de ofrecer una experiencia de usuario premium y fluida. El diseño se centra en la claridad, la estética minimalista y la accesibilidad.
+Mi portafolio personal. Rápido, accesible y en español e inglés.
 
- **Demo en vivo:** [portafolio-nsma-dev.vercel.app](https://portafolio-nsma-dev.vercel.app/)
+[![Demo](https://img.shields.io/badge/demo-portafolio--nsma--dev.vercel.app-6366F1?style=flat-square&logo=vercel&logoColor=white&labelColor=0A0A0F)](https://portafolio-nsma-dev.vercel.app/)
+![React](https://img.shields.io/badge/React_19-3B82F6?style=flat-square&logo=react&logoColor=white&labelColor=0A0A0F)
+![TypeScript](https://img.shields.io/badge/TypeScript-3B82F6?style=flat-square&logo=typescript&logoColor=white&labelColor=0A0A0F)
+![Vite](https://img.shields.io/badge/Vite_7-3B82F6?style=flat-square&logo=vite&logoColor=white&labelColor=0A0A0F)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3B82F6?style=flat-square&logo=tailwindcss&logoColor=white&labelColor=0A0A0F)
+![GSAP](https://img.shields.io/badge/GSAP-3B82F6?style=flat-square&logo=greensock&logoColor=white&labelColor=0A0A0F)
 
-## Tecnologías
+<br />
 
-Este proyecto ha sido construido utilizando un stack moderno:
+<img src="docs/preview.webp" alt="Vista del portafolio: nombre, rol y un lienzo animado con cuatro nodos conectados" width="860" />
 
-![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
-![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
-![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
-![Vite](https://img.shields.io/badge/Vite-B73BFE?style=for-the-badge&logo=vite&logoColor=FFD62E)
-![Framer Motion](https://img.shields.io/badge/Framer_Motion-0055FF?style=for-the-badge&logo=framer&logoColor=white)
+</div>
 
-## Sobre Mí
+## Inicio rápido
 
-**Norman Smith Martínez Acevedo**
-_Ingeniero en Sistemas de Información (5to Año)_
+```bash
+pnpm install
+pnpm dev
+```
 
-Desarrollador web full-stack apasionado por transformar ideas en productos digitales escalables y medibles. Con experiencia en el desarrollo de soluciones a medida, desde landing pages hasta plataformas complejas de gestión.
+Otros comandos: `pnpm build`, `pnpm test` y `pnpm lint`.
 
-- **Ubicación:** Nicaragua
-- **Contacto:** norman.martinez003@gmail.com
-- **LinkedIn:** [linkedin.com/in/norman-martinez](https://www.linkedin.com/in/norman-martinez)
+## Contacto
 
----
+- Correo: [norman.martinez003@gmail.com](mailto:norman.martinez003@gmail.com)
+- GitHub: [NormanSMA](https://github.com/NormanSMA)
+- LinkedIn: [norman-martinez](https://www.linkedin.com/in/norman-martinez)
 
-© 2026 Norman Martínez.
+<div align="center">
+
+Licencia MIT · © 2026 Norman Martínez
+
+</div>
