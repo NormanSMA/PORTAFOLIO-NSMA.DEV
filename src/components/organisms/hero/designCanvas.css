@@ -1,0 +1,24 @@
+/* --k is scene units per CSS pixel; useSceneScale rewrites it on resize. The fallback is the 17:10 box at about 280 px. */
+.hero-canvas-scene {
+  --k: 1.2;
+  container-type: size;
+}
+
+/* A dot every 24 px at 7 percent white: it reads as a canvas without competing with the curve. */
+.hero-canvas-dots {
+  background-image: radial-gradient(circle, rgb(var(--color-fg) / 0.07) 0.9px, transparent 1.3px);
+  background-size: 24px 24px;
+}
+
+/* Stroke widths are written in pixels, so they follow --k and stay the same on screen at any width. */
+.hero-canvas-core {
+  stroke-width: calc(2 * var(--k));
+}
+
+.hero-canvas-edge {
+  stroke-width: calc(5 * var(--k));
+}
+
+.hero-canvas-handle {
+  stroke-width: calc(1 * var(--k));
+}

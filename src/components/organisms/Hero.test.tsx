@@ -15,7 +15,6 @@ const media = vi.hoisted(() => {
 });
 
 vi.mock('../../lib/scroll', () => ({ scrollToSection: vi.fn() }));
-vi.mock('../webgl/HeroBackground', () => ({ HeroBackground: () => null }));
 
 import { render, screen, fireEvent, cleanup } from '@testing-library/react';
 import { LanguageProvider } from '../../contexts/LanguageContext';
@@ -70,6 +69,13 @@ describe('Hero', () => {
     const notPrevented = fireEvent.click(cta);
     expect(notPrevented).toBe(false);
     expect(scrollToSection).toHaveBeenCalledWith('projects');
+  });
+
+  it('junto al texto hay un lienzo de diseño descrito como una sola imagen', () => {
+    renderHero();
+    const canvas = screen.getByRole('img', { name: /curva Bézier dibujada con la herramienta pluma/ });
+    expect(canvas.closest('#home')).toBeTruthy();
+    expect(screen.getByText('Diseño de interfaces')).toBeTruthy();
   });
 
   it('con reduced motion pinta el nombre como texto plano', () => {
