@@ -25,7 +25,7 @@ export function captureGeometry(target) {
   return { viewport, scale, width: viewport.width * scale, height: viewport.height * scale };
 }
 
-// Software WebGL so the 3D globe and the portfolio shader render without a GPU in headless mode.
+// Software WebGL so the 3D globe renders without a GPU in headless mode.
 const CHROMIUM_ARGS = [
   '--use-gl=angle',
   '--use-angle=swiftshader',
@@ -112,9 +112,9 @@ export const TARGETS = {
   // Needs `pnpm build && pnpm preview` in this repo (port 4173, or pass --url for another port).
   portfolio: {
     url: 'http://localhost:4173',
-    settleMs: 6000,
-    // SwiftShader quantizes the dark glow gradient into visible blocks; the real GPU renders it smooth.
-    hardwareGl: true,
+    settleMs: 3000,
+    // Reduced motion shows the hero in its finished state: aligned nodes with their labels, no cursor or pulse.
+    reducedMotion: 'reduce',
     skipByDefault: true,
   },
 };
