@@ -37,7 +37,7 @@ describe('ProjectDetails', () => {
     const demo = screen.getByRole('link', { name: /Ver demo/ });
     const code = screen.getByRole('link', { name: /Ver código/ });
 
-    expect(demo.getAttribute('href')).toBe('https://ecopulse-eta-two.vercel.app/');
+    expect(demo.getAttribute('href')).toBe('https://ecopulse.nsma.dev/');
     expect(demo.getAttribute('target')).toBe('_blank');
     expect(demo.getAttribute('rel')).toBe('noopener noreferrer');
     expect(demo.textContent).toContain('(abre en una pestaña nueva)');

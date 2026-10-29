@@ -54,7 +54,7 @@ describe('Projects: anillo y ficha', () => {
     for (let step = 0; step < 3; step += 1) nextProject();
     expect(fichaTitle()).toBe('EcoPulse');
     const link = frontLink();
-    expect(link.getAttribute('href')).toBe('https://ecopulse-eta-two.vercel.app/');
+    expect(link.getAttribute('href')).toBe('https://ecopulse.nsma.dev/');
     expect(link.getAttribute('target')).toBe('_blank');
     expect(link.getAttribute('rel')).toBe('noopener noreferrer');
     expect(clickLink(link)).toBe(false);

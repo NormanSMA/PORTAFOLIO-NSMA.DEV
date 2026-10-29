@@ -56,7 +56,7 @@ export const projectDefinitions: readonly Project[] = [
     highlights: ['views', 'hazards', 'sources'],
     gallery: [{ slug: 'mapa' }, { slug: 'regional' }, { slug: 'atmosfera' }, { slug: 'globo' }],
     links: {
-      live: 'https://ecopulse-eta-two.vercel.app/',
+      live: 'https://ecopulse.nsma.dev/',
       repo: 'https://github.com/NormanSMA/EcoPulse',
     },
   },
