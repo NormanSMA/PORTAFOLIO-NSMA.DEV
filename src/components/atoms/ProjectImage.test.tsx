@@ -20,6 +20,16 @@ describe('ProjectImage', () => {
     expect(image.getAttribute('src')).toBe('/projects/ecopulse/desktop-960.webp');
   });
 
+  it('con name apunta a la vista de la galeria en lugar de desktop', () => {
+    const { container } = render(<ProjectImage projectId="tracore" name="costos" alt="Costos" sizes="100vw" />);
+    const image = screen.getByRole('img', { name: 'Costos' });
+
+    expect(container.querySelector('source')?.getAttribute('srcset')).toContain(
+      '/projects/tracore/costos-480.avif 480w',
+    );
+    expect(image.getAttribute('src')).toBe('/projects/tracore/costos-960.webp');
+  });
+
   it('reserva el tamano intrinseco 1920x1200 (16:10) para no mover la pagina', () => {
     render(<ProjectImage projectId="turno" alt="Turno" sizes="440px" />);
     const image = screen.getByRole('img', { name: 'Turno' });

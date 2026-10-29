@@ -50,8 +50,8 @@ describe('ProjectDetails', () => {
   it('todos los enlaces externos de todos los proyectos abren en otra ventana', () => {
     for (const project of projects) {
       const { unmount } = renderDetails(project);
-      const links = screen.getAllByRole('link');
-      expect(links.length, project.id).toBeGreaterThan(0);
+      const links = screen.queryAllByRole('link');
+      if (!project.privateCode) expect(links.length, project.id).toBeGreaterThan(0);
       for (const link of links) {
         expect(link.getAttribute('target'), project.id).toBe('_blank');
         expect(link.getAttribute('rel'), project.id).toBe('noopener noreferrer');
@@ -65,6 +65,13 @@ describe('ProjectDetails', () => {
 
     expect(screen.getByRole('link', { name: /Ver demo/ })).toBeTruthy();
     expect(screen.queryByRole('link', { name: /Ver código/ })).toBeNull();
+  });
+
+  it('con codigo privado muestra la etiqueta en lugar de los enlaces', () => {
+    renderDetails(byId('tracore'));
+
+    expect(screen.getByText('Código privado (Cliente / Tesis PCE)')).toBeTruthy();
+    expect(screen.queryAllByRole('link')).toHaveLength(0);
   });
 
   it('omite el enlace a la demo cuando no existe', () => {
@@ -109,19 +116,39 @@ describe('ProjectDetails', () => {
   });
 
   it('muestra la linea de meta en texto plano: destacado, categoria, anio y estado', () => {
-    renderDetails(byId('turno'));
+    renderDetails(byId('iuris'));
 
     const meta = screen.getByText('Destacado').parentElement as HTMLElement;
-    expect(meta.textContent).toBe('Destacado·Next.js·2026·En pausa');
+    expect(meta.textContent).toBe('Destacado·Astro & Cloud·2026·En producción');
   });
 
   it('usa h3 para el titulo y marca solo los destacados', () => {
-    const { unmount } = renderDetails(byId('turno'));
-    expect(screen.getByRole('heading', { level: 3, name: 'Turno' })).toBeTruthy();
+    const { unmount } = renderDetails(byId('iuris'));
+    expect(screen.getByRole('heading', { level: 3, name: 'Iuris Consultus' })).toBeTruthy();
     expect(screen.getByText('Destacado')).toBeTruthy();
     unmount();
 
     renderDetails(byId('systech'));
     expect(screen.queryByText('Destacado')).toBeNull();
+  });
+
+  it('muestra los puntos clave entre la descripcion y las tecnologias', () => {
+    const project = byId('autofinops');
+    renderDetails(project);
+    for (const highlight of project.highlights) expect(screen.getByText(highlight)).toBeTruthy();
+
+    const first = screen.getByText(project.highlights[0]);
+    const technologies = screen.getByRole('list', { name: 'Tecnologías' });
+    const description = screen.getByText(project.description);
+    expect(description.compareDocumentPosition(first) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(first.compareDocumentPosition(technologies) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
+  it('incluye la galeria con una miniatura por vista', () => {
+    const project = byId('tracore');
+    renderDetails(project);
+    expect(screen.getByRole('list', { name: 'Vistas del proyecto' }).querySelectorAll('button')).toHaveLength(
+      project.gallery.length,
+    );
   });
 });

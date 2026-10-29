@@ -3,9 +3,12 @@ import { typography } from '../../../config/typography';
 import { cn } from '../../../utils/helpers';
 import { ExternalLinkIcon } from '../../atoms/icons';
 import type { LocalizedProject } from '../../../types';
+import { ProjectGallery } from './ProjectGallery';
 
 interface ProjectDetailsProps {
   project: LocalizedProject;
+  // The invisible copies that reserve the ficha height do not load the gallery images.
+  measureOnly?: boolean;
 }
 
 interface ExternalLinkProps {
@@ -47,9 +50,9 @@ function ExternalLink({ href, label, newTabLabel, emphasis }: ExternalLinkProps)
   );
 }
 
-export function ProjectDetails({ project }: ProjectDetailsProps) {
+export function ProjectDetails({ project, measureOnly = false }: ProjectDetailsProps) {
   const { t } = useLanguage();
-  const { links, technologies } = project;
+  const { links, technologies, highlights } = project;
   const newTabLabel = t('projects.ui.newTab');
 
   return (
@@ -71,6 +74,23 @@ export function ProjectDetails({ project }: ProjectDetailsProps) {
       </p>
       <h3 className={cn(typography.h3, 'text-fg')}>{project.title}</h3>
       <p className={cn(typography.body, 'max-w-prose text-pretty text-fg-muted')}>{project.description}</p>
+      {highlights.length > 0 && (
+        // Equal columns that fill the row: three points in one row, four in two rows of two.
+        <ul className={cn('grid w-full gap-3', highlights.length === 3 ? 'sm:grid-cols-3' : 'sm:grid-cols-2')}>
+          {highlights.map((highlight) => (
+            <li
+              key={highlight}
+              className={cn(
+                typography.bodySmall,
+                'flex items-center justify-center rounded-control border border-line-strong px-4 py-3 text-center text-pretty text-fg',
+              )}
+            >
+              {highlight}
+            </li>
+          ))}
+        </ul>
+      )}
+      <ProjectGallery project={project} measureOnly={measureOnly} />
       <ul aria-label={t('projects.ui.technologies')} className="flex flex-wrap justify-center gap-2">
         {technologies.map((technology) => (
           <li
@@ -81,6 +101,9 @@ export function ProjectDetails({ project }: ProjectDetailsProps) {
           </li>
         ))}
       </ul>
+      {project.privateCode && (
+        <p className={cn(typography.bodySmall, 'pt-2 text-fg-muted')}>{t('projects.ui.privateCode')}</p>
+      )}
       {(links.live || links.repo) && (
         <div className="flex flex-wrap justify-center gap-3 pt-2">
           {links.live && (

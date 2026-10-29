@@ -20,7 +20,7 @@ const HeightReserve = memo(function HeightReserve({ projects }: { projects: Loca
       inert
       className="pointer-events-none invisible col-start-1 row-start-1 max-md:hidden"
     >
-      <ProjectDetails project={project} />
+      <ProjectDetails project={project} measureOnly />
     </div>
   ));
 });
@@ -35,7 +35,7 @@ export function ProjectFicha({ projects, activeIndex }: ProjectFichaProps) {
       role="region"
       aria-label={t('projects.ui.detailsTitle')}
       aria-live="polite"
-      className="mx-auto w-full max-w-2xl"
+      className="mx-auto w-full max-w-4xl"
     >
       <div className="grid">
         {/* The key restarts the entrance animation (projectFicha.css) on every project change. */}
