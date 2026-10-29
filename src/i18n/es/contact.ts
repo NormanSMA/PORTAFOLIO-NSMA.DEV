@@ -1,7 +1,7 @@
 export const contact = {
   title: 'Trabajemos juntos',
   description: 'Escríbeme por el medio que prefieras.',
-  availability: 'Busco pasantía o empleo · Managua o remoto',
+  availability: 'Disponible para empleo o pasantía · Managua o remoto',
   channels: {
     label: 'Canales de contacto',
     email: 'Correo',

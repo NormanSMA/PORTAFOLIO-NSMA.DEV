@@ -56,7 +56,7 @@ describe('Approach', () => {
       .getAllByRole('listitem')
       .map((item) => within(item).getByRole('heading', { level: 4 }).textContent);
 
-    expect(titles).toEqual([services.webDev.title, services.backend.title, services.deployment.title]);
+    expect(titles).toEqual([services.automation.title, services.systems.title, services.cloud.title]);
   });
 
   it('lista los cuatro pasos del proceso numerados y en orden', () => {

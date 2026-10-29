@@ -14,23 +14,27 @@ const lookup = (language: 'es' | 'en') => (key: string) => {
 describe('getProjects', () => {
   const projects = getProjects(identity);
 
-  it('devuelve los 7 proyectos en el orden del anillo', () => {
+  it('devuelve los proyectos en el orden del anillo', () => {
     expect(projects.map((p) => p.id)).toEqual([
-      'ecopulse',
-      'turno',
+      'autofinops',
+      'tracore',
       'iuris',
+      'ecopulse',
       'claudehub',
+      'turno',
       'systech',
       'pantano',
       'portfolio',
     ]);
   });
 
-  it('marca como destacados solo los tres primeros', () => {
+  it('marca como destacados los proyectos principales del anillo', () => {
     expect(projects.map((p) => p.tier)).toEqual([
       'featured',
       'featured',
       'featured',
+      'featured',
+      'secondary',
       'secondary',
       'secondary',
       'secondary',
@@ -43,8 +47,9 @@ describe('getProjects', () => {
       expect(project.title).toBeTruthy();
       expect(project.technologies.length).toBeGreaterThan(0);
       expect(project.year).toBeGreaterThanOrEqual(2025);
-      expect(['production', 'paused', 'delivered', 'active']).toContain(project.status);
-      expect(project.links.live || project.links.repo).toBeTruthy();
+      expect(['production', 'paused', 'delivered', 'active', 'completed', 'pilot']).toContain(project.status);
+      expect(project.category, `${project.id} category`).toBeTruthy();
+      expect(project.privateCode || project.links.live || project.links.repo, project.id).toBeTruthy();
     }
   });
 
@@ -69,6 +74,12 @@ describe('getProjects', () => {
     expect(JSON.stringify(pantano?.links)).not.toContain('.org');
   });
 
+  it('TRACORE no enlaza el codigo: es del cliente y de la tesis', () => {
+    const tracore = projects.find((p) => p.id === 'tracore');
+    expect(tracore?.privateCode).toBe(true);
+    expect(tracore?.links).toEqual({});
+  });
+
   it('el portafolio no enlaza un repositorio hasta confirmarlo', () => {
     expect(projects.find((p) => p.id === 'portfolio')?.links.repo).toBeUndefined();
   });
@@ -85,10 +96,28 @@ describe('getProjects', () => {
     expect(JSON.stringify(translations.en.projects)).not.toContain('altMobile');
   });
 
-  it('muestra entre 1 y 5 etiquetas de tecnologia por proyecto', () => {
+  it('muestra entre 1 y 8 etiquetas de tecnologia por proyecto', () => {
     for (const project of projects) {
       expect(project.technologies.length, project.id).toBeGreaterThanOrEqual(1);
-      expect(project.technologies.length, project.id).toBeLessThanOrEqual(5);
+      expect(project.technologies.length, project.id).toBeLessThanOrEqual(8);
+    }
+  });
+
+  it('cada ruta de imagen y video existe en public/projects', () => {
+    const files = (project: (typeof projects)[number]) => {
+      const names = ['desktop', ...project.gallery.map((view) => view.slug)];
+      const images = names.flatMap((name) =>
+        [480, 960, 1440, 1920].flatMap((width) => ['avif', 'webp'].map((format) => `${name}-${width}.${format}`)),
+      );
+      return [...images, ...project.gallery.filter((view) => view.video).map((view) => `${view.slug}.mp4`)];
+    };
+    // Only the file names are listed: nothing is imported, and the public folder is not bundled.
+    const published = new Set(Object.keys(import.meta.glob('/public/projects/**/*')));
+    expect(published.size).toBeGreaterThan(0);
+    for (const project of projects) {
+      for (const file of files(project)) {
+        expect(published.has(`/public/projects/${project.id}/${file}`), `${project.id}/${file}`).toBe(true);
+      }
     }
   });
 
@@ -104,7 +133,8 @@ describe('getProjects', () => {
   });
 });
 
-// Words a non-technical reader would trip on: the ficha keeps the stack in its tags, not in the prose.
+// Words a non-technical reader would trip on: the caption (one line under the card) stays free of them.
+// The description and the highlights are the technical read of the project and may name the stack.
 const JARGON =
   /PostGIS|\bRLS\b|\bSSR\b|\bCI\b|\bCSP\b|Supabase|MapLibre|Cesium|Astro|React|Next\.js|Electron|Hono|GSAP|OGL|WebGL|JSONL|Vercel|\bA\/B\b|shader|service_role|honeypot/i;
 
@@ -113,27 +143,33 @@ const sentenceCount = (text: string) => text.split(/[.!?]+\s/).filter(Boolean).l
 describe.each(['es', 'en'] as const)('copy de proyectos (%s)', (language) => {
   const projects = getProjects(lookup(language));
 
-  it('cada proyecto tiene caption de una linea y descripcion de una o dos frases', () => {
+  it('cada proyecto tiene caption de una linea y descripcion de hasta tres frases', () => {
     for (const project of projects) {
       expect(project.caption, `${project.id} caption`).toBeTruthy();
       expect(project.caption.length, `${project.id} caption`).toBeLessThanOrEqual(70);
       expect(project.description, `${project.id} description`).toBeTruthy();
-      expect(sentenceCount(project.description), `${project.id} description`).toBeLessThanOrEqual(2);
-      expect(project.description.length, `${project.id} description`).toBeLessThanOrEqual(180);
+      expect(sentenceCount(project.description), `${project.id} description`).toBeLessThanOrEqual(3);
+      expect(project.description.length, `${project.id} description`).toBeLessThanOrEqual(500);
     }
   });
 
-  it('el texto no usa nombres de librerias ni siglas tecnicas', () => {
+  it('el caption no usa nombres de librerias ni siglas tecnicas', () => {
     for (const project of projects) {
       expect(project.caption, `${project.id} caption`).not.toMatch(JARGON);
-      expect(project.description, `${project.id} description`).not.toMatch(JARGON);
     }
   });
 
-  it('el texto no lleva cifras (solo "3D")', () => {
+  it('el caption no lleva cifras (solo "3D")', () => {
     for (const project of projects) {
-      const text = `${project.caption} ${project.description}`.replace(/3D/g, '');
-      expect(text, project.id).not.toMatch(/\d/);
+      expect(project.caption.replace(/3D/g, ''), project.id).not.toMatch(/\d/);
+    }
+  });
+
+  it('los puntos clave y las vistas de la galeria tienen texto', () => {
+    for (const project of projects) {
+      expect(project.highlights.length, `${project.id} highlights`).toBeLessThanOrEqual(4);
+      for (const highlight of project.highlights) expect(highlight, `${project.id} highlight`).toBeTruthy();
+      for (const view of project.gallery) expect(view.label, `${project.id} ${view.slug}`).toBeTruthy();
     }
   });
 

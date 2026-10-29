@@ -16,7 +16,7 @@ import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { LanguageProvider } from '../../contexts/LanguageContext';
 import { Projects } from './Projects';
 
-// Plain DOM queries: role queries walk the whole accessibility tree, which is slow with seven ring cards.
+// Plain DOM queries: role queries walk the whole accessibility tree, which is slow with nine ring cards.
 const frontLink = () => document.querySelector('.mh-card[aria-current="true"] a') as HTMLAnchorElement;
 const filledLink = () => document.querySelector('.ficha-enter a.bg-primary-600') as HTMLAnchorElement;
 const fichaTitle = () => document.querySelector('.ficha-enter h3')?.textContent;
@@ -51,6 +51,8 @@ afterEach(() => {
 
 describe('Projects: anillo y ficha', () => {
   it('la tarjeta frontal es un enlace real a la demo que abre en una pestana nueva', () => {
+    for (let step = 0; step < 3; step += 1) nextProject();
+    expect(fichaTitle()).toBe('EcoPulse');
     const link = frontLink();
     expect(link.getAttribute('href')).toBe('https://ecopulse-eta-two.vercel.app/');
     expect(link.getAttribute('target')).toBe('_blank');
@@ -60,29 +62,36 @@ describe('Projects: anillo y ficha', () => {
   });
 
   it('el nombre accesible de la frontal incluye el aviso de pestana nueva', () => {
-    expect(frontLink().getAttribute('aria-label')).toBe('1 de 7: EcoPulse (abre en una pestaña nueva)');
+    expect(frontLink().getAttribute('aria-label')).toBe('1 de 9: AutoFinOps-NI (abre en una pestaña nueva)');
   });
 
   it('sin demo, la tarjeta frontal enlaza el repositorio', () => {
-    for (let step = 0; step < 3; step += 1) nextProject();
+    expect(frontLink().getAttribute('href')).toBe('https://github.com/NormanSMA/autofinops-rpa-engine');
+    for (let step = 0; step < 4; step += 1) nextProject();
     expect(fichaTitle()).toBe('ClaudeHub');
     expect(frontLink().getAttribute('href')).toBe('https://github.com/NormanSMA/ClaudeHub');
     expect(frontLink().getAttribute('target')).toBe('_blank');
   });
 
   it('la tarjeta frontal enlaza el mismo destino que el boton relleno de la ficha', () => {
-    for (let step = 0; step < 7; step += 1) {
+    for (let step = 0; step < 9; step += 1) {
       const filled = filledLink();
-      expect(filled).not.toBeNull();
-      expect(frontLink().getAttribute('href')).toBe(filled.getAttribute('href'));
+      if (fichaTitle() === 'TRACORE') {
+        // Private code: no demo and no repo, so the card is not a link.
+        expect(filled).toBeNull();
+        expect(frontLink()).toBeNull();
+      } else {
+        expect(filled).not.toBeNull();
+        expect(frontLink().getAttribute('href')).toBe(filled.getAttribute('href'));
+      }
       nextProject();
     }
   });
 
   it('todos los enlaces externos de la seccion abren otra pestana de forma segura', () => {
-    for (let step = 0; step < 7; step += 1) {
+    for (let step = 0; step < 9; step += 1) {
       const external = document.querySelectorAll<HTMLAnchorElement>('#projects a[href^="http"]');
-      expect(external.length).toBeGreaterThan(0);
+      if (fichaTitle() !== 'TRACORE') expect(external.length).toBeGreaterThan(0);
       external.forEach((anchor) => {
         expect(anchor.getAttribute('target'), anchor.href).toBe('_blank');
         expect(anchor.getAttribute('rel'), anchor.href).toBe('noopener noreferrer');
@@ -92,9 +101,9 @@ describe('Projects: anillo y ficha', () => {
   });
 
   it('la ficha sigue al proyecto activo y no tiene cifras', () => {
-    expect(fichaTitle()).toBe('EcoPulse');
+    expect(fichaTitle()).toBe('AutoFinOps-NI');
     nextProject();
-    expect(fichaTitle()).toBe('Turno');
+    expect(fichaTitle()).toBe('TRACORE');
     expect(screen.queryByText('Cifras medidas')).toBeNull();
   });
 });

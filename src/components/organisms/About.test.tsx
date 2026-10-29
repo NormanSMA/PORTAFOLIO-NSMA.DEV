@@ -66,15 +66,19 @@ describe('About', () => {
     expect(frame?.classList.contains('lg:mx-0')).toBe(true);
   });
 
-  it('centra el titulo y el enlace debajo de lg y los alinea a la izquierda desde lg', () => {
+  it('centra el titulo debajo de lg y lo alinea a la izquierda desde lg', () => {
     renderAbout('es');
     const heading = screen.getByRole('heading', { level: 2, name: 'Sobre mí' });
-    const linkBox = screen.getByRole('link', { name: 'Ver proyectos' }).parentElement;
 
     expect(heading.classList.contains('text-center')).toBe(true);
     expect(heading.classList.contains('lg:text-left')).toBe(true);
-    expect(linkBox?.classList.contains('text-center')).toBe(true);
-    expect(linkBox?.classList.contains('lg:text-left')).toBe(true);
+  });
+
+  it('no repite el enlace a Proyectos: la seccion siguiente ya son los proyectos', () => {
+    renderAbout('es');
+
+    expect(screen.queryByRole('link', { name: 'Ver proyectos' })).toBeNull();
+    expect(screen.queryByRole('link')).toBeNull();
   });
 
   it('no muestra estadisticas ni cifras de experiencia', () => {
@@ -96,6 +100,6 @@ describe('About', () => {
     renderAbout('en');
 
     expect(screen.getByRole('heading', { level: 2, name: 'About me' })).toBeTruthy();
-    expect(screen.getByRole('link', { name: 'See projects' }).getAttribute('href')).toBe('#projects');
+    expect(screen.queryByRole('link', { name: 'See projects' })).toBeNull();
   });
 });

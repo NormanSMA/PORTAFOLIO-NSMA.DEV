@@ -1,17 +1,17 @@
 export const hero = {
   role: 'Information Systems Engineer',
-  focus: 'Web development, databases and cloud',
-  availability: 'Looking for an internship or a job · Managua or remote',
+  focus: 'Cloud, databases, RPA automation and web systems',
+  availability: 'Available for full-time or internship · Managua or remote',
   cta: {
     projects: 'View projects',
   },
   canvas: {
-    label: 'Four points joined by a curve: see, clarity, tweak and goal. A pulse of light travels along it',
+    label: 'Four points joined by a curve: data, RPA, cloud and systems. A pulse of light travels along it',
     nodes: {
-      first: 'See',
-      second: 'Clarity',
-      third: 'Tweak',
-      fourth: 'Goal',
+      first: 'Data',
+      second: 'RPA',
+      third: 'Cloud',
+      fourth: 'Systems',
     },
   },
 } as const;

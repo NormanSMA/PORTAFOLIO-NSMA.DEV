@@ -3,11 +3,10 @@ export const about = {
   photoAlt: 'Portrait of Norman Martínez with arms crossed, wearing a dark jacket',
   bio: {
     study:
-      'I am a fifth-year Information Systems Engineering student at Universidad Americana (UAM). I expect to finish in December 2026. I build web applications with JavaScript, TypeScript, PHP (Laravel), Node.js, React and Vue.js. I design and manage databases in PostgreSQL, MySQL and SQL Server.',
+      'I am a fifth-year Information Systems Engineering student at Universidad Americana (UAM), graduating in December 2026. I build management systems, automate business processes with UiPath (RPA), and develop web platforms using TypeScript, React, Next.js, Astro, and PHP (Laravel).',
     work:
-      'I deploy with Docker, Vercel and AWS (Lightsail and S3). I have done freelance work for clients, handling domain, hosting and deployment myself. I also build my own projects.',
+      'I design and manage relational databases in PostgreSQL, SQL Server, and MySQL, paired with Excel reporting and Metabase dashboards. I deploy and administer infrastructure using Docker, Vercel, and AWS (Lightsail and S3), handling domains, SSL certificates, and ongoing production support for clients.',
     goals:
-      'I care about the cloud and good engineering practices. My next step is to grow toward cloud and DevOps. I am also interested in automation and in solutions that help the community.',
+      'I hold certifications in Scrum (SFPC), UiPath RPA, and B2 English (EF SET). My focus is on operational clarity, data integrity, and applying practical AI and automation so teams work with less manual rework and better visibility.',
   },
-  projectsLink: 'See projects',
 } as const;

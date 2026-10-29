@@ -1,17 +1,17 @@
 export const services = {
   heading: 'What I do and how I work',
   title: 'Services',
-  subtitle: 'I work project by project, from requirements to a published site.',
-  webDev: {
-    title: 'Web development and apps',
-    description: 'I build sites with Astro and React, and WordPress sites. When the project needs it, I add a bilingual version, performance work, and basic SEO.',
+  subtitle: 'I work project by project, from requirements to a published system.',
+  automation: {
+    title: 'RPA automation & data',
+    description: 'I automate repetitive tasks, PDF extraction, and business rule validations using UiPath (REFramework). I structure databases in PostgreSQL, SQL Server, and MySQL, and build clear reports in Excel or Metabase.',
   },
-  backend: {
-    title: 'Backend and APIs',
-    description: 'I build APIs with Node.js and PHP (Laravel) on PostgreSQL or MySQL. I integrate external services and validate the data each endpoint receives.',
+  systems: {
+    title: 'Management systems & web apps',
+    description: 'I build internal management platforms (quotes, work orders, inventory, and audit logs) and bilingual corporate sites using Astro, React, Next.js, and Laravel, focusing on performance and SEO.',
   },
-  deployment: {
-    title: 'Hosting and deployment',
-    description: 'I deploy to Vercel and set up the domain and SSL certificate. After launch I check the site and handle maintenance fixes.',
+  cloud: {
+    title: 'Cloud, containers & platform admin',
+    description: 'I set up containerized environments with Docker Compose and deploy on AWS (Lightsail, S3) and Vercel. I configure domains, DNS, and SSL certificates, and provide ongoing monitoring and support after launch.',
   },
 } as const;

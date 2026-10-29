@@ -1,5 +1,5 @@
 export const footer = {
-  tagline: 'Ingeniero en Sistemas · Desarrollo web, bases de datos y cloud',
+  tagline: 'Ingeniero en Sistemas de Información · Cloud, bases de datos, automatización (RPA) y sistemas web',
   quickLinks: 'Enlaces rápidos',
   contactTitle: 'Contacto',
   ariaNav: 'Navegación del pie de página',

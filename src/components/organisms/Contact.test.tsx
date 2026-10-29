@@ -55,7 +55,7 @@ describe('Contact', () => {
     renderContact();
 
     expect(screen.getByText(es.description)).toBeTruthy();
-    expect(screen.getByText('Busco pasantía o empleo · Managua o remoto')).toBeTruthy();
+    expect(screen.getByText('Disponible para empleo o pasantía · Managua o remoto')).toBeTruthy();
   });
 
   it('lista tres enlaces en este orden: correo, GitHub y LinkedIn', () => {

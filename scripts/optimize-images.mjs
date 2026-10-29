@@ -1,4 +1,4 @@
-import { mkdir, readdir, stat, writeFile } from 'node:fs/promises';
+import { copyFile, mkdir, readdir, stat, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import sharp from 'sharp';
 import { IMAGE_SPEC, RAW_DIR, TARGETS, captureGeometry } from './capture-projects.mjs';
@@ -23,10 +23,17 @@ function parseArgs(argv) {
   return options;
 }
 
+// rgb(10 10 15) is --color-ink: the bars around a letterboxed view blend into the site.
+const INK = { r: 10, g: 10, b: 15 };
+
 const heightFor = (width) => Math.round((width * IMAGE_SPEC.base.height) / IMAGE_SPEC.base.width);
-const outputPath = (id, width, format) => path.join(OUTPUT_DIR, id, `desktop-${width}.${format}`);
-const rawPath = (id) => path.join(RAW_DIR, id, 'desktop.png');
+const outputPath = (id, width, format, name = 'desktop') => path.join(OUTPUT_DIR, id, `${name}-${width}.${format}`);
+const videoOutputPath = (id, slug) => path.join(OUTPUT_DIR, id, `${slug}.mp4`);
+const rawPath = (id, name = 'desktop') => path.join(RAW_DIR, id, `${name}.png`);
 const exists = (file) => stat(file).then(() => true, () => false);
+
+// Names of every set a project ships: the card (desktop) plus its gallery views.
+const setNames = (target) => ['desktop', ...(target.views ?? []).map((view) => view.slug)];
 
 async function assertRawSize({ id, input }) {
   const expected = captureGeometry(TARGETS[id]);
@@ -60,19 +67,45 @@ async function encodeAvif({ input, width }) {
   return result;
 }
 
-async function optimizeSet({ id, input }) {
-  await assertRawSize({ id, input });
+// A source that is not 16:10 is scaled to fit the base frame and centered on the site background:
+// nothing is cropped, and the bars carry no content. page picks a frame of an animated file.
+function composeFrame({ input, page = 0, crop }) {
+  const { width, height } = IMAGE_SPEC.base;
+  const frame = sharp(input, { page });
+  // crop selects the region worth showing (a 16:10 one needs no bars at all) before the fit.
+  return (crop ? frame.extract(crop) : frame)
+    .resize(width, height, { kernel: 'lanczos3', fit: 'contain', background: INK })
+    .flatten({ background: INK })
+    .png()
+    .toBuffer();
+}
+
+async function optimizeSet({ id, input, name = 'desktop', composed = false }) {
+  if (!composed) await assertRawSize({ id, input });
   await mkdir(path.join(OUTPUT_DIR, id), { recursive: true });
   const rows = [];
   for (const width of IMAGE_SPEC.widths) {
     const avif = await encodeAvif({ input, width });
     const webp = { buffer: await encode({ input, width, format: 'webp', quality: WEBP_QUALITY }), quality: WEBP_QUALITY };
     for (const [format, result] of [['avif', avif], ['webp', webp]]) {
-      const file = outputPath(id, width, format);
+      const file = outputPath(id, width, format, name);
       await writeFile(file, result.buffer);
       rows.push({ file, width, format, bytes: result.buffer.length, quality: result.quality });
     }
   }
+  return rows;
+}
+
+// Targets with their own docs: one set per view, the cover also as desktop, and the video copied.
+async function optimizeExternal(id) {
+  const target = TARGETS[id];
+  const rows = [];
+  for (const view of target.views) {
+    const input = await composeFrame({ input: path.join(target.sourceDir, view.file), page: view.page, crop: view.crop });
+    rows.push(...(await optimizeSet({ id, input, name: view.slug, composed: true })));
+    if (view.slug === target.cover) rows.push(...(await optimizeSet({ id, input, composed: true })));
+  }
+  if (target.video) await copyFile(path.join(target.sourceDir, target.video.file), videoOutputPath(id, target.video.slug));
   return rows;
 }
 
@@ -94,22 +127,31 @@ function warnOverBudget(rows) {
   }
 }
 
-// ProjectImage requests 4 widths x 2 formats per project, all exactly 16:10; nothing else may remain.
+// ProjectImage requests 4 widths x 2 formats per set (the card and each gallery view), all exactly 16:10;
+// nothing else may remain except the project's video.
 async function checkOutputs(only) {
   const problems = [];
   for (const id of Object.keys(TARGETS)) {
     if (only && !only.includes(id)) continue;
     const expected = new Set();
-    for (const width of IMAGE_SPEC.widths) {
-      for (const format of FORMATS) {
-        const file = outputPath(id, width, format);
-        expected.add(path.basename(file));
-        const metadata = await sharp(file).metadata().catch(() => null);
-        if (!metadata) problems.push(`missing: ${file}`);
-        else if (metadata.width !== width || metadata.height !== heightFor(width)) {
-          problems.push(`wrong size: ${file} is ${metadata.width}x${metadata.height}`);
+    for (const name of setNames(TARGETS[id])) {
+      for (const width of IMAGE_SPEC.widths) {
+        for (const format of FORMATS) {
+          const file = outputPath(id, width, format, name);
+          expected.add(path.basename(file));
+          const metadata = await sharp(file).metadata().catch(() => null);
+          if (!metadata) problems.push(`missing: ${file}`);
+          else if (metadata.width !== width || metadata.height !== heightFor(width)) {
+            problems.push(`wrong size: ${file} is ${metadata.width}x${metadata.height}`);
+          }
         }
       }
+    }
+    const { video } = TARGETS[id];
+    if (video) {
+      const file = videoOutputPath(id, video.slug);
+      expected.add(path.basename(file));
+      if (!(await exists(file))) problems.push(`missing: ${file}`);
     }
     const present = await readdir(path.join(OUTPUT_DIR, id)).catch(() => []);
     for (const name of present) if (!expected.has(name)) problems.push(`unexpected: ${path.join(OUTPUT_DIR, id, name)}`);
@@ -123,12 +165,20 @@ async function main() {
   if (!options.check) {
     const ids = Object.keys(TARGETS).filter((id) => !options.only || options.only.includes(id));
     const sets = [];
-    for (const id of ids) if (await exists(rawPath(id))) sets.push({ id, input: rawPath(id) });
+    const external = [];
+    for (const id of ids) {
+      if (TARGETS[id].external) {
+        if (await exists(TARGETS[id].sourceDir)) external.push(id);
+      } else {
+        for (const name of setNames(TARGETS[id])) if (await exists(rawPath(id, name))) sets.push({ id, input: rawPath(id, name), name });
+      }
+    }
     // .captures is not versioned, so a fresh checkout has no raw frames: validate the committed files only.
-    if (sets.length === 0 && options.only) throw new Error(`No raw captures for ${options.only.join(', ')}. Run pnpm capture first.`);
-    if (sets.length === 0) console.log(`No raw captures in ${RAW_DIR}; skipping encode. Run pnpm capture to refresh them.`);
+    if (sets.length + external.length === 0 && options.only) throw new Error(`No raw captures or project docs for ${options.only.join(', ')}. Run pnpm capture first.`);
+    if (sets.length + external.length === 0) console.log(`No raw captures in ${RAW_DIR}; skipping encode. Run pnpm capture to refresh them.`);
     const rows = [];
     for (const set of sets) rows.push(...(await optimizeSet(set)));
+    for (const id of external) rows.push(...(await optimizeExternal(id)));
     if (rows.length > 0) printTable(rows);
     warnOverBudget(rows);
   }

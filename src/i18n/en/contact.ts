@@ -1,7 +1,7 @@
 export const contact = {
   title: "Let's work together",
   description: 'Write to me through whichever channel you prefer.',
-  availability: 'Looking for an internship or a job · Managua or remote',
+  availability: 'Available for full-time or internship · Managua or remote',
   channels: {
     label: 'Contact channels',
     email: 'Email',
