@@ -1,7 +1,7 @@
-import { Cloud, Code2, Server, type LucideIcon } from 'lucide-react';
+import { Bot, Cloud, LayoutDashboard, type LucideIcon } from 'lucide-react';
 
 export interface ServiceItem {
-  id: 'webDev' | 'backend' | 'deployment';
+  id: 'automation' | 'systems' | 'cloud';
   icon: LucideIcon;
   title: string;
   description: string;
@@ -9,21 +9,21 @@ export interface ServiceItem {
 
 export const getServices = (t: (key: string) => string): ServiceItem[] => [
   {
-    id: 'webDev',
-    icon: Code2,
-    title: t('services.webDev.title'),
-    description: t('services.webDev.description'),
+    id: 'automation',
+    icon: Bot,
+    title: t('services.automation.title'),
+    description: t('services.automation.description'),
   },
   {
-    id: 'backend',
-    icon: Server,
-    title: t('services.backend.title'),
-    description: t('services.backend.description'),
+    id: 'systems',
+    icon: LayoutDashboard,
+    title: t('services.systems.title'),
+    description: t('services.systems.description'),
   },
   {
-    id: 'deployment',
+    id: 'cloud',
     icon: Cloud,
-    title: t('services.deployment.title'),
-    description: t('services.deployment.description'),
+    title: t('services.cloud.title'),
+    description: t('services.cloud.description'),
   },
 ];

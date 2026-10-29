@@ -117,3 +117,24 @@ describe('computeLayout: la tarjeta frontal en el plano de la pantalla', () => {
     }
   });
 });
+
+describe('computeLayout: de 2 a 9 tarjetas (filtro por grupo)', () => {
+  it('devuelve medidas finitas y la tarjeta de siempre para cualquier cantidad', () => {
+    for (const width of widths) {
+      for (let count = 2; count <= 9; count += 1) {
+        const layout = computeLayout(width, count);
+        for (const [name, value] of Object.entries(layout)) {
+          expect(Number.isFinite(value), `${width}px x ${count}: ${name}`).toBe(true);
+        }
+        expect(layout.cardWidth, `${width}px x ${count}`).toBeGreaterThanOrEqual(200);
+        expect(layout.stageHeight, `${width}px x ${count}`).toBeGreaterThan(layout.cardHeight);
+      }
+    }
+  });
+
+  it('con 2 tarjetas usa la geometria de 3, para que la trasera no se acerque a la frontal', () => {
+    for (const width of widths) {
+      expect(computeLayout(width, 2)).toEqual(computeLayout(width, 3));
+    }
+  });
+});

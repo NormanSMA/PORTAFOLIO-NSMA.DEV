@@ -2,20 +2,20 @@ export const process = {
   title: 'Proceso de trabajo',
   steps: {
     discovery: {
-      title: 'Descubrimiento',
-      description: 'Defino el objetivo, el contenido y los plazos antes de escribir código.',
+      title: 'Descubrimiento y reglas',
+      description: 'Entiendo el proceso actual, identifico dónde se pierde tiempo o datos y defino las reglas y plazos antes de construir.',
     },
     strategy: {
-      title: 'Estrategia visual y técnica',
-      description: 'Elijo la tecnología y planeo la estructura y el diseño de las páginas.',
+      title: 'Diseño de datos y arquitectura',
+      description: 'Modelo la base de datos, elijo las herramientas (web, cloud o RPA) y estructuro cómo fluirá la información.',
     },
     build: {
-      title: 'Construcción y validación',
-      description: 'Desarrollo por etapas, pruebo y ajusto con revisiones cortas.',
+      title: 'Construcción y pruebas',
+      description: 'Desarrollo por etapas bajo Scrum, valido casos de error y pruebo con datos reales o de aceptación.',
     },
     optimize: {
-      title: 'Optimización y lanzamiento',
-      description: 'Mejoro rendimiento y accesibilidad, y publico con dominio y SSL.',
+      title: 'Despliegue y trazabilidad',
+      description: 'Publico en producción con dominio, SSL o contenedores Docker, dejando bitácoras, métricas y documentación clara.',
     },
   },
 } as const;

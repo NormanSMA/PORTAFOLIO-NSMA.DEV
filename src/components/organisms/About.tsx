@@ -3,7 +3,6 @@ import { useLanguage, useMotion } from '../../hooks';
 import { motion } from '../../config/motion';
 import { typography } from '../../config/typography';
 import { gsap, ScrollTrigger } from '../../lib/gsap';
-import { scrollToSection } from '../../lib/scroll';
 import { cn } from '../../utils/helpers';
 import { Container } from '../atoms';
 import { AboutPhoto } from './about/AboutPhoto';
@@ -55,18 +54,6 @@ export function About() {
             <p data-reveal className={cn(typography.bodyLarge, 'max-w-prose text-fg-muted')}>
               {t('about.bio.goals')}
             </p>
-            <div data-reveal className="text-center lg:text-left">
-              <a
-                href="#projects"
-                onClick={(event) => {
-                  event.preventDefault();
-                  scrollToSection('projects');
-                }}
-                className="inline-flex min-h-target items-center text-primary-400 underline underline-offset-4 pointer-fine:hover:text-primary-300"
-              >
-                {t('about.projectsLink')}
-              </a>
-            </div>
           </div>
         </div>
       </Container>

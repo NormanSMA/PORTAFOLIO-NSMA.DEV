@@ -34,12 +34,12 @@ describe('ProjectFicha', () => {
     renderFicha(0);
 
     expect(region().getAttribute('aria-live')).toBe('polite');
-    expect(region().className).toContain('max-w-2xl');
+    expect(region().className).toContain('max-w-4xl');
     expect(region().className).not.toMatch(/\b(border|bg-|p-card|shadow)/);
   });
 
   it('muestra solo la ficha del proyecto activo para la tecnologia de apoyo', () => {
-    renderFicha(1);
+    renderFicha(5);
 
     const titles = screen.getAllByRole('heading', { level: 3 });
     expect(titles.map((title) => title.textContent)).toEqual(['Turno']);
@@ -50,7 +50,7 @@ describe('ProjectFicha', () => {
     const first = enterBlock();
     expect(first.className).toContain('ficha-enter');
 
-    show(3);
+    show(4);
 
     expect(screen.getByRole('heading', { level: 3, name: 'ClaudeHub' })).toBeTruthy();
     expect(enterBlock()).not.toBe(first);
@@ -64,7 +64,8 @@ describe('ProjectFicha', () => {
     for (const copy of copies) {
       expect(copy.className).toContain('invisible');
       expect(copy.className).toContain('max-md:hidden');
-      expect(copy.querySelectorAll('a')).not.toHaveLength(0);
     }
+    // TRACORE shows a label instead of links: every other ficha keeps its buttons in the reserved copy.
+    expect(copies.filter((copy) => copy.querySelector('a'))).toHaveLength(projects.length - 1);
   });
 });

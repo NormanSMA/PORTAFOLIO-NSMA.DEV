@@ -47,7 +47,7 @@ describe('DesignCanvas', () => {
     const image = screen.getByRole('img');
     expect(image.getAttribute('aria-label')).toBe(translations.es.hero.canvas.label);
     expect(image.getAttribute('aria-label')).toBe(
-      'Cuatro puntos conectados por una curva: ver, claridad, ajuste y meta. Un pulso de luz recorre la curva',
+      'Cuatro puntos conectados por una curva: datos, RPA, cloud y sistemas. Un pulso de luz recorre la curva',
     );
   });
 
@@ -56,27 +56,27 @@ describe('DesignCanvas', () => {
     fireEvent.click(screen.getByText('toggle'));
     expect(screen.getByRole('img').getAttribute('aria-label')).toBe(translations.en.hero.canvas.label);
     expect(translations.en.hero.canvas.label).toBe(
-      'Four points joined by a curve: see, clarity, tweak and goal. A pulse of light travels along it',
+      'Four points joined by a curve: data, RPA, cloud and systems. A pulse of light travels along it',
     );
   });
 
-  it('rotula los nodos de izquierda a derecha con Ver, Claridad, Ajuste y Meta', () => {
+  it('rotula los nodos de izquierda a derecha con Datos, RPA, Cloud y Sistemas', () => {
     renderCanvas();
     const labels = Array.from(screen.getByRole('img').querySelectorAll('[data-canvas-label]'));
-    expect(labels.map((label) => label.textContent)).toEqual(['Ver', 'Claridad', 'Ajuste', 'Meta']);
+    expect(labels.map((label) => label.textContent)).toEqual(['Datos', 'RPA', 'Cloud', 'Sistemas']);
   });
 
   it('rotula los nodos en inglés cuando cambia el idioma', () => {
     renderCanvas();
     fireEvent.click(screen.getByText('toggle'));
     const labels = Array.from(screen.getByRole('img').querySelectorAll('[data-canvas-label]'));
-    expect(labels.map((label) => label.textContent)).toEqual(['See', 'Clarity', 'Tweak', 'Goal']);
+    expect(labels.map((label) => label.textContent)).toEqual(['Data', 'RPA', 'Cloud', 'Systems']);
   });
 
   it('no muestra más texto que las cuatro etiquetas', () => {
     renderCanvas();
     const image = screen.getByRole('img');
-    expect(image.textContent).toBe('VerClaridadAjusteMeta');
+    expect(image.textContent).toBe('DatosRPACloudSistemas');
     expect(screen.queryByText('Diseño de interfaces')).toBeNull();
     expect(screen.queryByText('#6366F1')).toBeNull();
   });

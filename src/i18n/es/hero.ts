@@ -1,18 +1,18 @@
 export const hero = {
-  role: 'Ingeniero en Sistemas',
-  focus: 'Desarrollo web, bases de datos y cloud',
-  availability: 'Busco pasantía o empleo · Managua o remoto',
+  role: 'Ingeniero en Sistemas de Información',
+  focus: 'Cloud, bases de datos, automatización (RPA) y sistemas web',
+  availability: 'Disponible para empleo o pasantía · Managua o remoto',
   cta: {
     projects: 'Ver proyectos',
   },
   canvas: {
     label:
-      'Cuatro puntos conectados por una curva: ver, claridad, ajuste y meta. Un pulso de luz recorre la curva',
+      'Cuatro puntos conectados por una curva: datos, RPA, cloud y sistemas. Un pulso de luz recorre la curva',
     nodes: {
-      first: 'Ver',
-      second: 'Claridad',
-      third: 'Ajuste',
-      fourth: 'Meta',
+      first: 'Datos',
+      second: 'RPA',
+      third: 'Cloud',
+      fourth: 'Sistemas',
     },
   },
 } as const;

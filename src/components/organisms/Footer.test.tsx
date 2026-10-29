@@ -26,7 +26,7 @@ describe('Footer', () => {
   it('es un contentinfo con la frase de marca', () => {
     renderFooter();
     expect(screen.getByRole('contentinfo')).toBeTruthy();
-    expect(screen.getByText('Ingeniero en Sistemas · Desarrollo web, bases de datos y cloud')).toBeTruthy();
+    expect(screen.getByText('Ingeniero en Sistemas de Información · Cloud, bases de datos, automatización (RPA) y sistemas web')).toBeTruthy();
   });
 
   it('lista los mismos enlaces de seccion que la barra y navega con scrollToSection', () => {
