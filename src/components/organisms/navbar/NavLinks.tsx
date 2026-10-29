@@ -3,6 +3,7 @@ import { navItems } from '../../../data/navigation';
 import { useLanguage } from '../../../hooks/useLanguage';
 import { cn } from '../../../utils/helpers';
 import { SectionLink } from '../../atoms/SectionLink';
+import { NavLine } from './NavLine';
 
 interface NavLinksProps {
   activeId: string;
@@ -21,15 +22,19 @@ const layouts = {
   },
 };
 
-// The underline marks the current section so the state does not rely on color alone.
-const activeStyles = 'text-fg underline decoration-primary-400 decoration-2 underline-offset-8';
+// The line marks the current section so the state does not rely on color alone. In the bar it is the single
+// line of NavLine, which slides between links; in the menu each link keeps its own underline.
+const activeStyles = {
+  bar: 'text-fg',
+  menu: 'text-fg underline decoration-primary-400 decoration-2 underline-offset-8',
+};
 const idleStyles = 'text-fg-muted pointer-fine:hover:text-fg';
 
 export function NavLinks({ activeId, variant, onNavigate }: NavLinksProps) {
   const { t } = useLanguage();
   const layout = layouts[variant];
 
-  return (
+  const list = (
     <ul className={layout.list}>
       {navItems.map(({ id, labelKey }) => {
         const isActive = id === activeId;
@@ -39,7 +44,7 @@ export function NavLinks({ activeId, variant, onNavigate }: NavLinksProps) {
               sectionId={id}
               onNavigate={onNavigate}
               aria-current={isActive ? 'true' : undefined}
-              className={cn(layout.link, isActive ? activeStyles : idleStyles)}
+              className={cn(layout.link, isActive ? activeStyles[variant] : idleStyles)}
             >
               {t(labelKey)}
             </SectionLink>
@@ -47,5 +52,13 @@ export function NavLinks({ activeId, variant, onNavigate }: NavLinksProps) {
         );
       })}
     </ul>
+  );
+
+  if (variant === 'menu') return list;
+  return (
+    <div className="relative">
+      {list}
+      <NavLine activeId={activeId} />
+    </div>
   );
 }

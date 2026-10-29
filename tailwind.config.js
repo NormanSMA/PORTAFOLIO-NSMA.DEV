@@ -70,6 +70,7 @@ export default {
         overlay: 'var(--z-overlay)',
         toast: 'var(--z-toast)',
         skip: 'var(--z-skip)',
+        intro: 'var(--z-intro)',
       },
       transitionDuration: {
         fast: 'var(--duration-fast)',

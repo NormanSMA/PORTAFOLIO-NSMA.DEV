@@ -146,6 +146,7 @@
   --z-overlay: 50;
   --z-toast: 70;
   --z-skip: 80;
+  --z-intro: 90;
 
   --duration-fast: 250ms;
   --duration-base: 600ms;

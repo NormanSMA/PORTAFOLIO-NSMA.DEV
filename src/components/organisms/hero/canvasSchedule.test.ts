@@ -156,3 +156,24 @@ describe('intro del lienzo', () => {
     expect(() => introStepOf(intro, 'nope' as IntroStepId)).toThrow();
   });
 });
+
+describe('intro del lienzo tras la intro de la pagina', () => {
+  const afterPage = buildIntroSchedule(true);
+
+  it('conserva el orden y no gasta tiempo en dibujar el marco', () => {
+    expect(afterPage.map((step) => step.id)).toEqual(intro.map((step) => step.id));
+    expect(introStepOf(afterPage, 'frame').duration).toBe(0);
+  });
+
+  it('adelanta el resto del intro sin cambiar la duracion de cada paso', () => {
+    for (const id of ['dots', 'guides', 'nodes', 'handles', 'curve', 'hold'] as const) {
+      const before = introStepOf(intro, id);
+      const after = introStepOf(afterPage, id);
+      expect(after.duration, id).toBe(before.duration);
+      expect(after.at, id).toBeLessThan(before.at + 0.0001);
+      expect(after.at, id).toBeGreaterThanOrEqual(0);
+    }
+    expect(introStepOf(afterPage, 'nodes').at).toBeCloseTo(1.7);
+    expect(introLength(afterPage)).toBeLessThan(introLength(intro));
+  });
+});

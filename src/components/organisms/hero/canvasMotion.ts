@@ -1,3 +1,4 @@
+import { isIntroPlaying, onIntroLanded } from '../../../lib/intro';
 import { ALIGNED_MIX, controlPoints, sampleCurve } from './canvasGeometry';
 import { buildCycle } from './canvasCycle';
 import { collectElements, resetIntro, resetScene, restoreStill } from './canvasElements';
@@ -37,15 +38,24 @@ export function startCanvasMotion(root: HTMLElement): () => void {
   resetScene(elements, state, renderer);
   const cycle = buildCycle(elements, state, renderer);
   resetIntro(elements);
-  const intro = buildIntro(elements);
+  // With the page intro the canvas waits for its frame to land and then starts with the frame already drawn.
+  const afterPageIntro = isIntroPlaying();
+  const intro = buildIntro(elements, { frameDrawn: afterPageIntro });
 
   let visible = false;
   let introDone = false;
-  const apply = () => {
-    intro.paused(introDone || !visible);
+  let introReady = !afterPageIntro;
+  const stopWaiting = afterPageIntro
+    ? onIntroLanded(() => {
+        introReady = true;
+        apply();
+      })
+    : () => {};
+  function apply() {
+    intro.paused(introDone || !visible || !introReady);
     cycle.paused(!introDone || !visible);
     root.dataset.running = String(visible);
-  };
+  }
 
   // The loop joins right after its own fade-in, which the intro has already done by hand.
   intro.eventCallback('onComplete', () => {
@@ -61,6 +71,7 @@ export function startCanvasMotion(root: HTMLElement): () => void {
 
   return () => {
     stopObserving();
+    stopWaiting();
     intro.kill();
     cycle.kill();
     restoreStill(elements, renderer);

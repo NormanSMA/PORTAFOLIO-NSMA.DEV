@@ -14,14 +14,14 @@ const HANDLES_FADE_SECONDS = 1.2;
 
 // The run that plays once on load. The cycle takes over when it ends, with the content already on screen.
 // Every motion is slow and soft; nothing here is a cut.
-export function buildIntro(elements: CanvasElements) {
-  const schedule = buildIntroSchedule();
+export function buildIntro(elements: CanvasElements, { frameDrawn = false }: { frameDrawn?: boolean } = {}) {
+  const schedule = buildIntroSchedule(frameDrawn);
   const step = (id: IntroStepId) => introStepOf(schedule, id);
   const soft = 'sine.inOut';
   const out = motion.ease.out.gsap;
 
   // The frame and the curve are drawn by tweening these numbers; onUpdate turns them into dash offsets.
-  const drawn = { frame: HIDDEN_DASH, curve: HIDDEN_DASH };
+  const drawn = { frame: frameDrawn ? 0 : HIDDEN_DASH, curve: HIDDEN_DASH };
   let cleared = false;
   const tl = gsap.timeline({
     paused: true,
@@ -33,16 +33,21 @@ export function buildIntro(elements: CanvasElements) {
     },
   });
 
-  // The frame draws with a steady hand and each corner appears as the line reaches it.
+  // The frame draws with a steady hand and each corner appears as the line reaches it. After the page intro the frame
+  // is already there, so it shows at once, in the place where the page intro's frame has just landed.
   const frame = step('frame');
-  tl.to(drawn, { frame: 0, duration: frame.duration, ease: 'none' }, frame.at);
-  frameCornerFractions().forEach((fraction, index) => {
-    tl.to(
-      elements.corners[index],
-      { opacity: 1, scale: 1, duration: CORNER_SECONDS, ease: out },
-      frame.at + fraction * frame.duration,
-    );
-  });
+  if (frameDrawn) {
+    tl.set(elements.corners, { opacity: 1, scale: 1 }, 0);
+  } else {
+    tl.to(drawn, { frame: 0, duration: frame.duration, ease: 'none' }, frame.at);
+    frameCornerFractions().forEach((fraction, index) => {
+      tl.to(
+        elements.corners[index],
+        { opacity: 1, scale: 1, duration: CORNER_SECONDS, ease: out },
+        frame.at + fraction * frame.duration,
+      );
+    });
+  }
 
   // A slow wave from the center: the rings are ordered nearest first, so a stagger over them runs outward.
   const dots = step('dots');

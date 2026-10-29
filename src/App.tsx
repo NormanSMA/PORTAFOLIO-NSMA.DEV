@@ -1,6 +1,7 @@
 import { Suspense, lazy, useEffect } from 'react';
 import { LanguageProvider } from './contexts/LanguageContext';
 import { Navbar, Hero } from './components/organisms';
+import { PageIntro } from './components/organisms/PageIntro';
 import { ScrollToTop } from './components/molecules';
 import { useLanguage, useLenis } from './hooks';
 import { ScrollTrigger } from './lib/gsap';
@@ -82,6 +83,7 @@ function App() {
   return (
     <LanguageProvider>
       <div className="min-h-screen">
+        <PageIntro />
         <SkipLink />
         <Navbar />
         <main id="main" tabIndex={-1} className="outline-none">

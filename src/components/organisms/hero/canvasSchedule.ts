@@ -99,8 +99,12 @@ export interface IntroStep {
 
 // The frame draws itself and its four corners appear as the line reaches them. The dots light in a wave from the center
 // and the guides slide in while that happens. Then the nodes fade in out of order and the irregular curve is drawn through them.
-export function buildIntroSchedule(): IntroStep[] {
-  return [
+// When the page intro has already drawn the frame (frameDrawn), the frame step is empty and the rest starts sooner, by
+// the time the frame would have needed to reach its first corners.
+const FRAME_HEAD = 0.7;
+
+export function buildIntroSchedule(frameDrawn = false): IntroStep[] {
+  const steps: IntroStep[] = [
     { id: 'frame', at: 0, duration: 2.4 },
     { id: 'dots', at: 0.5, duration: 1.9 },
     { id: 'guides', at: 1, duration: 1.4 },
@@ -109,6 +113,10 @@ export function buildIntroSchedule(): IntroStep[] {
     { id: 'curve', at: 2.8, duration: 1.6 },
     { id: 'hold', at: 4.4, duration: 0.6 },
   ];
+  if (!frameDrawn) return steps;
+  return steps.map((step) =>
+    step.id === 'frame' ? { ...step, duration: 0 } : { ...step, at: Math.max(0, step.at - FRAME_HEAD) },
+  );
 }
 
 export function introStepOf(steps: readonly IntroStep[], id: IntroStepId): IntroStep {
