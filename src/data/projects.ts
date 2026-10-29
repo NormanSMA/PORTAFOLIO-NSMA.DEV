@@ -111,7 +111,7 @@ export const projectDefinitions: readonly Project[] = [
     highlights: ['bilingual', 'scene', 'motion'],
     gallery: [{ slug: 'inicio' }, { slug: 'sobre-mi' }, { slug: 'proyectos' }, { slug: 'servicios' }],
     // The repo link stays out until Norman confirms it is public.
-    links: { live: 'https://portafolio-nsma-dev.vercel.app/' },
+    links: { live: 'https://nsma.dev/' },
   },
 ];
 

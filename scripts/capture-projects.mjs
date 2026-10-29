@@ -91,7 +91,7 @@ export const TARGETS = {
     ],
   },
   ecopulse: {
-    url: 'https://ecopulse-eta-two.vercel.app/',
+    url: 'https://ecopulse.nsma.dev/',
     settleMs: 12000,
     cover: 'globo',
     // Every view reloads the page so the state of the previous one (open panels, 3D mode) never leaks in.
