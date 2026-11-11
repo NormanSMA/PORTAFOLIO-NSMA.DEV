@@ -3,17 +3,18 @@ import { motion } from '../../config/motion';
 import { gsap } from '../../lib/gsap';
 import { isIntroPlaying, markIntroLanded } from '../../lib/intro';
 
-// The page opens behind an ink veil. A frame draws itself around the whole screen, with a square at each corner as the
-// line reaches it, then shrinks onto the frame of the hero canvas while the veil lifts and the page comes into focus.
-// When the frame lands, the canvas takes over (lib/intro): it starts its own intro with the frame already drawn.
-const DRAW_AT = 0.3;
-const DRAW_SECONDS = 1.4;
-const MORPH_AT = 1.9;
-const MORPH_SECONDS = 1.4;
-const VEIL_AT = 2.1;
-const VEIL_SECONDS = 1.6;
-const HANDOFF_SECONDS = 0.25;
-const BLUR_PX = 14;
+// The page opens with the content already visible under a light ink veil (alpha 0.5 at most, never opaque). A frame
+// draws itself around the whole screen, with a square at each corner as the line reaches it, then shrinks onto the
+// frame of the hero canvas while the veil lifts. The whole intro lasts about a second. When the frame lands, the canvas
+// takes over (lib/intro): it starts its own intro with the frame already drawn.
+const DRAW_AT = 0;
+const DRAW_SECONDS = 0.5;
+const MORPH_AT = 0.4;
+const MORPH_SECONDS = 0.5;
+const VEIL_AT = 0.3;
+const VEIL_SECONDS = 0.6;
+const VEIL_ALPHA = 0.5;
+const HANDOFF_SECONDS = 0.15;
 const FRAME_INSET = 20;
 const CORNER_SIZE = 7;
 // The corner pops over this share of the outline once the line has reached it.
@@ -28,8 +29,7 @@ interface FrameBox {
   h: number;
   // How much of the outline is drawn, from 0 to 1.
   draw: number;
-  blur: number;
-  // The opacity of the veil's ink. The veil itself stays opaque as a layer: fading the layer would fade its blur with it.
+  // The opacity of the veil's ink.
   veil: number;
 }
 
@@ -40,6 +40,11 @@ function cornerFractions(width: number, height: number): number[] {
   const perimeter = 2 * (width + height);
   return [0, width, width + height, 2 * width + height].map((length) => length / perimeter);
 }
+
+// The markup is the same on the server and on the first client render. CSS shows it only once lib/intro has started
+// the intro; "landed" keeps it visible so the layer can fade out before it unmounts.
+const LAYER_CLASS =
+  'pointer-events-none fixed inset-0 z-intro hidden js-motion:block [html:not([data-intro])_&]:hidden';
 
 function IntroLayer({ onDone }: { onDone: () => void }) {
   const veilRef = useRef<HTMLDivElement>(null);
@@ -52,6 +57,7 @@ function IntroLayer({ onDone }: { onDone: () => void }) {
     const layer = layerRef.current;
     const frame = frameRef.current;
     const corners = cornerRefs.current.filter((corner): corner is HTMLSpanElement => corner !== null);
+    if (!isIntroPlaying()) return;
     if (!veil || !layer || !frame || corners.length !== 4) return;
 
     const box: FrameBox = {
@@ -60,8 +66,7 @@ function IntroLayer({ onDone }: { onDone: () => void }) {
       w: window.innerWidth - 2 * FRAME_INSET,
       h: window.innerHeight - 2 * FRAME_INSET,
       draw: 0,
-      blur: BLUR_PX,
-      veil: 1,
+      veil: VEIL_ALPHA,
     };
     const fractions = cornerFractions(box.w, box.h);
 
@@ -82,16 +87,15 @@ function IntroLayer({ onDone }: { onDone: () => void }) {
         corner.style.transform = `translate3d(${x - CORNER_SIZE / 2}px, ${y - CORNER_SIZE / 2}px, 0)`;
         corner.style.opacity = String(clamp((box.draw - fractions[index]) / CORNER_POP));
       });
-      const blur = `blur(${box.blur.toFixed(2)}px)`;
-      veil.style.backdropFilter = blur;
-      veil.style.setProperty('-webkit-backdrop-filter', blur);
       veil.style.backgroundColor = `rgb(var(--color-ink) / ${box.veil.toFixed(3)})`;
     };
 
-    // Read when the move starts, so the frame lands where the canvas is at that moment.
-    const target = () => {
+    // Read once, when the move starts, so the frame lands where the canvas is at that moment.
+    const destination = { x: box.x, y: box.y, w: box.w, h: box.h };
+    const readDestination = () => {
       const rect = document.querySelector(CANVAS_SELECTOR)?.getBoundingClientRect();
-      return rect && rect.width > 0 ? { x: rect.left, y: rect.top, w: rect.width, h: rect.height } : box;
+      if (rect && rect.width > 0) Object.assign(destination, { x: rect.left, y: rect.top, w: rect.width, h: rect.height });
+      else Object.assign(destination, { x: box.x, y: box.y, w: box.w, h: box.h });
     };
 
     let landed = false;
@@ -110,22 +114,22 @@ function IntroLayer({ onDone }: { onDone: () => void }) {
       },
     });
     timeline.to(box, { draw: 1, duration: DRAW_SECONDS }, DRAW_AT);
+    timeline.call(readDestination, undefined, MORPH_AT);
     timeline.to(
       box,
       {
-        x: () => target().x,
-        y: () => target().y,
-        w: () => target().w,
-        h: () => target().h,
+        x: () => destination.x,
+        y: () => destination.y,
+        w: () => destination.w,
+        h: () => destination.h,
         duration: MORPH_SECONDS,
         ease: motion.ease.inOut.gsap,
       },
       MORPH_AT,
     );
-    timeline.to(box, { blur: 0, duration: VEIL_SECONDS }, VEIL_AT);
     timeline.to(box, { veil: 0, duration: VEIL_SECONDS, ease: 'power2.out' }, VEIL_AT);
     timeline.call(land, undefined, MORPH_AT + MORPH_SECONDS);
-    timeline.to(layer, { opacity: 0, duration: HANDOFF_SECONDS, ease: 'none' }, MORPH_AT + MORPH_SECONDS + 0.05);
+    timeline.to(layer, { opacity: 0, duration: HANDOFF_SECONDS, ease: 'none' }, MORPH_AT + MORPH_SECONDS);
     render();
 
     // Anything the visitor does means they want the page: the intro jumps to its end.
@@ -139,8 +143,8 @@ function IntroLayer({ onDone }: { onDone: () => void }) {
   }, [onDone]);
 
   return (
-    <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-intro">
-      <div ref={veilRef} className="absolute inset-0 bg-ink" />
+    <div aria-hidden="true" className={LAYER_CLASS}>
+      <div ref={veilRef} className="absolute inset-0 bg-ink/50" />
       <div ref={layerRef} className="absolute inset-0">
         <svg className="absolute inset-0 size-full" focusable="false">
           <rect
@@ -168,12 +172,15 @@ function IntroLayer({ onDone }: { onDone: () => void }) {
 }
 
 export function PageIntro() {
-  // Read once, on the first render: whether the intro plays is decided before React starts.
-  const [playing] = useState(isIntroPlaying);
   const [done, setDone] = useState(false);
   // A stable callback: a new one on every render would restart the timeline.
   const finish = useCallback(() => setDone(true), []);
 
-  if (!playing || done) return null;
+  // Whether the intro plays is only known on the client, after hydration: until then CSS decides what is visible.
+  useEffect(() => {
+    if (!isIntroPlaying()) setDone(true);
+  }, []);
+
+  if (done) return null;
   return <IntroLayer onDone={finish} />;
 }

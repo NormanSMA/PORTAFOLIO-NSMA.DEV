@@ -9,6 +9,7 @@ import { experience as esExperience } from './es/experience';
 import { contact as esContact } from './es/contact';
 import { footer as esFooter } from './es/footer';
 import { common as esCommon } from './es/common';
+import { seo as esSeo } from './es/seo';
 import { nav as enNav } from './en/nav';
 import { hero as enHero } from './en/hero';
 import { services as enServices } from './en/services';
@@ -20,6 +21,7 @@ import { experience as enExperience } from './en/experience';
 import { contact as enContact } from './en/contact';
 import { footer as enFooter } from './en/footer';
 import { common as enCommon } from './en/common';
+import { seo as enSeo } from './en/seo';
 
 export const translations = {
   es: {
@@ -34,6 +36,7 @@ export const translations = {
     contact: esContact,
     footer: esFooter,
     common: esCommon,
+    seo: esSeo,
   },
   en: {
     nav: enNav,
@@ -47,5 +50,6 @@ export const translations = {
     contact: enContact,
     footer: enFooter,
     common: enCommon,
+    seo: enSeo,
   },
 } as const;

@@ -115,16 +115,30 @@ describe('Navbar enlaces', () => {
 });
 
 describe('Navbar idioma', () => {
-  it('muestra el idioma destino y lo cambia al pulsar', () => {
+  it('muestra el idioma destino como enlace y lo cambia al pulsar sin recargar', () => {
     renderNavbar();
-    const toEnglish = screen.getByRole('button', { name: 'Cambiar idioma a inglés (EN)' });
+    const toEnglish = screen.getByRole('link', { name: 'EN, cambiar idioma a inglés' });
     expect(toEnglish.textContent).toBe('EN');
+    expect(toEnglish.getAttribute('href')).toBe('/en');
 
     fireEvent.click(toEnglish);
 
-    const toSpanish = screen.getByRole('button', { name: 'Switch language to Spanish (ES)' });
+    const toSpanish = screen.getByRole('link', { name: 'ES, switch language to Spanish' });
     expect(toSpanish.textContent).toBe('ES');
+    expect(toSpanish.getAttribute('href')).toBe('/');
+    expect(window.location.pathname).toBe('/en');
+    expect(document.title).toContain('Information Systems Engineer');
     expect(screen.getByRole('link', { name: 'What I do' })).toBeTruthy();
+  });
+
+  it('vuelve al idioma de la URL con atras', () => {
+    renderNavbar();
+    fireEvent.click(screen.getByRole('link', { name: 'EN, cambiar idioma a inglés' }));
+    act(() => {
+      window.history.replaceState(null, '', '/');
+      window.dispatchEvent(new PopStateEvent('popstate'));
+    });
+    expect(screen.getByRole('link', { name: 'EN, cambiar idioma a inglés' })).toBeTruthy();
   });
 });
 

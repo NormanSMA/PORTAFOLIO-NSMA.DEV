@@ -2,32 +2,12 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#0A0A0F" />
     <meta name="color-scheme" content="dark" />
-
-    <!-- SEO Meta Tags -->
-    <title>Norman Martínez | Ingeniero en Sistemas de Información · Cloud, datos, RPA y sistemas web</title>
-    <meta name="description" content="Portafolio de Norman Martínez, ingeniero en Sistemas de Información. Automatización RPA con UiPath, bases de datos, sistemas de gestión, aplicaciones web y despliegue en la nube." />
-    <link rel="canonical" href="https://nsma.dev/" />
-
-    <!-- Open Graph / Social Media -->
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://nsma.dev/" />
-    <meta property="og:site_name" content="nsma.dev" />
-    <meta property="og:locale" content="es_ES" />
-    <meta property="og:locale:alternate" content="en_US" />
-    <meta property="og:title" content="Norman Martínez | Ingeniero en Sistemas de Información · Cloud, datos, RPA y sistemas web" />
-    <meta property="og:description" content="Automatización RPA con UiPath, bases de datos, sistemas de gestión, aplicaciones web y despliegue en la nube." />
-    <meta property="og:image" content="https://nsma.dev/og-image.webp" />
-    <meta property="og:image:alt" content="Portafolio de Norman Martínez — nsma.dev" />
-
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Norman Martínez | Ingeniero en Sistemas de Información · Cloud, datos, RPA y sistemas web" />
-    <meta name="twitter:description" content="Automatización RPA con UiPath, bases de datos, sistemas de gestión, aplicaciones web y despliegue en la nube." />
-    <meta name="twitter:image" content="https://nsma.dev/og-image.webp" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
 
     <!-- Sora pinta el titulo del hero y DM Sans el texto de apoyo. Vite reescribe estas rutas al archivo con hash del CSS. -->
     <link
@@ -45,10 +25,11 @@
       crossorigin
     />
 
-    <meta name="referrer" content="no-referrer" />
+    <!-- El build escribe aqui title, metas, canonical, hreflang y JSON-LD de cada idioma (src/seo/head.ts). -->
+    <!--app-head-->
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root"><!--app-html--></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

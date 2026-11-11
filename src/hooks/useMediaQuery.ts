@@ -1,32 +1,23 @@
-import { useState, useEffect } from 'react';
+import { useCallback, useMemo, useSyncExternalStore } from 'react';
 
-export function useMediaQuery(query: string): boolean {
-  const [matches, setMatches] = useState(() => {
-    if (typeof window !== 'undefined' && typeof window.matchMedia === 'function') {
-      return window.matchMedia(query).matches;
-    }
-    return false;
-  });
-
-  useEffect(() => {
-    if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return;
-
-    const mediaQuery = window.matchMedia(query);
-    // Handler can ignore the event and just read the current mediaQuery.matches
-    const handleChange = () => {
-      setMatches(mediaQuery.matches);
-    };
-
-    // Use modern addEventListener when available
-    if (typeof mediaQuery.addEventListener === 'function') {
-      mediaQuery.addEventListener('change', handleChange as EventListener);
-      return () => mediaQuery.removeEventListener('change', handleChange as EventListener);
-    }
-
-    // Fallback for older browsers
-    mediaQuery.addListener(handleChange as (ev: MediaQueryListEvent) => void);
-    return () => mediaQuery.removeListener(handleChange as (ev: MediaQueryListEvent) => void);
+// The server and the first client render (hydration) both read serverDefault, so the prerendered HTML matches;
+// React then re-renders with the real value.
+export function useMediaQuery(query: string, serverDefault = false): boolean {
+  const mediaQuery = useMemo(() => {
+    if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return null;
+    return window.matchMedia(query);
   }, [query]);
 
-  return matches;
+  const subscribe = useCallback((onChange: () => void) => {
+    if (!mediaQuery) return () => {};
+    if (typeof mediaQuery.addEventListener === 'function') {
+      mediaQuery.addEventListener('change', onChange);
+      return () => mediaQuery.removeEventListener('change', onChange);
+    }
+
+    mediaQuery.addListener(onChange);
+    return () => mediaQuery.removeListener(onChange);
+  }, [mediaQuery]);
+
+  return useSyncExternalStore(subscribe, () => mediaQuery?.matches ?? serverDefault, () => serverDefault);
 }

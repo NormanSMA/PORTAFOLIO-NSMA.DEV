@@ -1,37 +1,44 @@
-import { useState, useEffect, type ReactNode } from 'react';
+import { useState, useEffect, useRef, type ReactNode } from 'react';
 import type { Language } from '../types';
-import { LANGUAGE_CONFIG } from '../config/constants';
 import { translations } from '../i18n/translations';
+import { languageFromPath, pathForLanguage } from '../i18n/route';
+import { applyHead } from '../seo/head';
 import { LanguageContext } from './languageCore';
 
 interface LanguageProviderProps {
   children: ReactNode;
+  // The prerender passes the language of the page it writes. Without it the URL decides.
+  initialLanguage?: Language;
 }
 
-export function LanguageProvider({ children }: LanguageProviderProps) {
-  const [language, setLanguage] = useState<Language>(() => {
-    try {
-      if (typeof window === 'undefined') return LANGUAGE_CONFIG.default;
-      const savedLanguage = localStorage.getItem(LANGUAGE_CONFIG.storageKey) as Language | null;
-      return savedLanguage || LANGUAGE_CONFIG.default;
-    } catch {
-      return LANGUAGE_CONFIG.default;
-    }
-  });
+const languageFromLocation = (): Language =>
+  typeof window === 'undefined' ? 'es' : languageFromPath(window.location.pathname);
 
+export function LanguageProvider({ children, initialLanguage }: LanguageProviderProps) {
+  const [language, setLanguage] = useState<Language>(() => initialLanguage ?? languageFromLocation());
+  const isFirstRender = useRef(true);
+
+  // The prerendered head already matches the first language; later switches rewrite it.
   useEffect(() => {
-    try {
-      if (typeof window !== 'undefined') {
-        localStorage.setItem(LANGUAGE_CONFIG.storageKey, language);
-        document.documentElement.lang = language;
-      }
-    } catch {
-      // ignore storage/document errors
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      document.documentElement.lang = language;
+      return;
     }
+    applyHead(language);
   }, [language]);
 
+  useEffect(() => {
+    const syncWithUrl = () => setLanguage(languageFromLocation());
+    window.addEventListener('popstate', syncWithUrl);
+    return () => window.removeEventListener('popstate', syncWithUrl);
+  }, []);
+
   const toggleLanguage = () => {
-    setLanguage((prevLang) => (prevLang === 'es' ? 'en' : 'es'));
+    const next: Language = language === 'es' ? 'en' : 'es';
+    const { search, hash } = window.location;
+    window.history.pushState(null, '', `${pathForLanguage(next)}${search}${hash}`);
+    setLanguage(next);
   };
 
   const t = (key: string): string => {

@@ -63,3 +63,11 @@
     transition: color 800ms var(--ease-in-out);
   }
 }
+
+/* Prerendered HTML holds the finished drawing. When the intro will run, hide the scene's content until startCanvasMotion
+   sets data-running on the root; visibility keeps the box in place for the page intro's frame to land on. */
+@media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
+  [role='img']:not([data-running]) > [aria-hidden='true'] > .hero-canvas-scene > * {
+    visibility: hidden;
+  }
+}

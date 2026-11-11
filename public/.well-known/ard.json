@@ -1,0 +1,17 @@
+{
+  "entries": [
+    {
+      "identifier": "urn:air:nsma.dev:llms",
+      "displayName": "Norman Martínez portfolio summary",
+      "type": "text/markdown",
+      "url": "https://nsma.dev/llms.txt",
+      "description": "Bilingual summary of the portfolio of Norman Martínez, Information Systems Engineer: profile, projects and contact links.",
+      "tags": ["portfolio", "rpa", "uipath", "web development", "cloud"],
+      "representativeQueries": [
+        "Who is Norman Martínez and what does he build?",
+        "Which RPA and web projects has Norman Martínez delivered?",
+        "How can I contact Norman Martínez?"
+      ]
+    }
+  ]
+}

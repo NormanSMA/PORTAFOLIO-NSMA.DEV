@@ -1,5 +1,5 @@
 import { motion } from '../../../config/motion';
-import { gsap } from '../../../lib/gsap';
+import { gsap, ScrollTrigger } from '../../../lib/gsap';
 import { stack, stackRanges, type StackMetrics } from './stack';
 
 const toPx = (value: string) => Number.parseFloat(value) || 0;
@@ -17,9 +17,14 @@ function measure(list: HTMLElement, items: HTMLElement[]): StackMetrics {
 // it shrinks and darkens while the next one slides over it. Transform and opacity only.
 export function stackServices(list: HTMLElement) {
   const items = gsap.utils.toArray<HTMLElement>('[data-stack-item]', list);
+  let ranges = stackRanges(measure(list, items));
+  const refresh = () => {
+    ranges = stackRanges(measure(list, items));
+  };
+  ScrollTrigger.addEventListener('refreshInit', refresh);
 
   items.slice(0, -1).forEach((item, index) => {
-    const range = (edge: 'start' | 'end') => () => stackRanges(measure(list, items))[index][edge];
+    const range = (edge: 'start' | 'end') => () => ranges[index][edge];
     const dim = item.querySelector('[data-stack-dim]');
 
     gsap
@@ -36,4 +41,6 @@ export function stackServices(list: HTMLElement) {
       .fromTo(item, { scale: 1 }, { scale: stack.scale, transformOrigin: 'top center' }, 0)
       .fromTo(dim, { opacity: 0 }, { opacity: stack.dim }, 0);
   });
+
+  return () => ScrollTrigger.removeEventListener('refreshInit', refresh);
 }

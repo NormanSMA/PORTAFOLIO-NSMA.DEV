@@ -56,7 +56,9 @@ export function RingCard({ item, index, count, active, ariaLabel, onSelect, onCl
   const linked = Boolean(item.href);
   // Only the front card opens its link; the others bring themselves to the front.
   const opensLink = active && linked;
-  const label = opensLink ? `${ariaLabel} ${item.openLabel ?? DEFAULT_OPEN_LABEL}` : ariaLabel;
+  // The name repeats the visible status, so voice control users can say what they see.
+  const named = item.label ? `${ariaLabel}, ${item.label}` : ariaLabel;
+  const label = opensLink ? `${named} ${item.openLabel ?? DEFAULT_OPEN_LABEL}` : named;
   const content = <CardContent item={item} showOpenIcon={opensLink} />;
 
   const handleFocus = (event: FocusEvent<HTMLLIElement>) => {

@@ -4,7 +4,7 @@ interface LogoProps {
 
 // The site is dark only, so the light wordmark is the one that reads on the background.
 const SRC = '/logo-nsma_light.webp';
-const SRC_480W = '/logo-nsma_light-480w.webp';
+const SRCSET = [120, 200, 480].map((width) => `/logo-nsma_light-${width}w.webp ${width}w`).concat(`${SRC} 781w`).join(', ');
 
 // Height classes and the rendered width they produce at the 781x312 aspect ratio.
 const sizes = {
@@ -17,7 +17,7 @@ export function Logo({ size = 'md' }: LogoProps) {
   return (
     <img
       src={SRC}
-      srcSet={`${SRC_480W} 480w, ${SRC} 781w`}
+      srcSet={SRCSET}
       sizes={sizes[size].sizes}
       alt="nsma.dev"
       width={781}

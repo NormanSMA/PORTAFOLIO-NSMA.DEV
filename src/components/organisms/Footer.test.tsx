@@ -67,7 +67,9 @@ describe('Footer', () => {
   it('muestra el copyright con el ano actual', () => {
     renderFooter();
     const year = new Date().getFullYear();
-    expect(screen.getByText(`© ${year} Norman Martínez. Todos los derechos reservados.`)).toBeTruthy();
+    const copyright = `© ${year} Norman Martínez. Todos los derechos reservados.`;
+    // The year sits in its own span, so the match is on the paragraph's whole text.
+    expect(screen.getByText((_, element) => element?.tagName === 'P' && element.textContent === copyright)).toBeTruthy();
   });
 
   it('el logo vuelve al inicio', () => {

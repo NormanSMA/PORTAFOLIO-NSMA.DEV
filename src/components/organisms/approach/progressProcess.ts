@@ -24,13 +24,17 @@ export function progressProcess(process: HTMLElement): () => void {
   );
 
   steps.forEach((step) => {
-    gsap.from(step, {
-      opacity: 0,
-      x: -stepShift,
-      duration: motion.duration.base,
-      ease: motion.ease.out.gsap,
-      scrollTrigger: { trigger: step, start: motion.scrollStart.reveal, once: true },
-    });
+    gsap.fromTo(
+      step,
+      { opacity: 0, x: -stepShift },
+      {
+        opacity: 1,
+        x: 0,
+        duration: motion.duration.base,
+        ease: motion.ease.out.gsap,
+        scrollTrigger: { trigger: step, start: motion.scrollStart.reveal, once: true },
+      },
+    );
 
     ScrollTrigger.create({
       trigger: step,

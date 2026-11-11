@@ -13,14 +13,18 @@ import { stackServices } from './approach/stackServices';
 const blockLabel = cn(typography.eyebrow, 'mb-4 text-fg-muted');
 
 function revealGroup(group: HTMLElement) {
-  gsap.from(group.querySelectorAll('[data-reveal]'), {
-    y: motion.offset.reveal,
-    opacity: 0,
-    duration: motion.duration.base,
-    ease: motion.ease.out.gsap,
-    stagger: motion.stagger.base,
-    scrollTrigger: { trigger: group, start: motion.scrollStart.reveal, once: true },
-  });
+  gsap.fromTo(
+    group.querySelectorAll('[data-reveal]'),
+    { y: motion.offset.reveal, opacity: 0 },
+    {
+      y: 0,
+      opacity: 1,
+      duration: motion.duration.base,
+      ease: motion.ease.out.gsap,
+      stagger: motion.stagger.base,
+      scrollTrigger: { trigger: group, start: motion.scrollStart.reveal, once: true },
+    },
+  );
 }
 
 export function Approach() {
@@ -43,8 +47,12 @@ export function Approach() {
 
       const list = section.querySelector<HTMLElement>('[data-stack]');
       const process = section.querySelector<HTMLElement>('[data-process]');
-      if (list) stackServices(list);
-      return process ? progressProcess(process) : undefined;
+      const cleanupStack = list ? stackServices(list) : undefined;
+      const cleanupProcess = process ? progressProcess(process) : undefined;
+      return () => {
+        cleanupStack?.();
+        cleanupProcess?.();
+      };
     },
     [language],
   );

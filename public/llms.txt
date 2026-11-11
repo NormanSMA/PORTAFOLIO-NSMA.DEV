@@ -1,0 +1,26 @@
+# Norman Martínez | nsma.dev
+
+> Portafolio de Norman Martínez, ingeniero en Sistemas de Información (Universidad Americana, UAM, Nicaragua). Automatización RPA con UiPath, bases de datos, sistemas de gestión, aplicaciones web y despliegue en la nube. Portfolio of Norman Martínez, Information Systems Engineer: RPA automation with UiPath, databases, management systems, web applications and cloud deployment.
+
+El sitio tiene una página por idioma con el mismo contenido. The site has one page per language with the same content.
+
+## Páginas
+
+- [Portafolio en español](https://nsma.dev/): perfil, proyectos, formación, servicios y contacto.
+- [Portfolio in English](https://nsma.dev/en): profile, projects, education, services and contact.
+
+## Proyectos
+
+- [AutoFinOps-NI](https://github.com/NormanSMA/autofinops-rpa-engine): bot RPA que concilia facturas PDF y las audita en PostgreSQL.
+- TRACORE: plataforma de gestión y trazabilidad para Soluciones Creativas (código privado de cliente).
+- [EcoPulse](https://ecopulse.nsma.dev/): mapa en vivo de sismos, incendios, clima y calidad del aire. Código: [GitHub](https://github.com/NormanSMA/EcoPulse).
+- [Turno](https://github.com/NormanSMA/turno): pedidos de comida con anticipación en el campus para evitar la fila.
+- [Iuris Consultus](https://iurisnicaragua.com/): sitio web bilingüe de una firma legal en Nicaragua.
+- [ClaudeHub](https://github.com/NormanSMA/ClaudeHub): app de escritorio que mide el uso de Claude Code.
+- [SYSTECH UAM](https://systech.uam.edu.ni/): sitio oficial del congreso de ingeniería de la UAM.
+- [Hotel El Pantano](https://hotel-el-pantano.vercel.app/): sitio de un hotel y restaurante en Nueva Segovia.
+
+## Perfiles
+
+- [GitHub](https://github.com/NormanSMA)
+- [LinkedIn](https://www.linkedin.com/in/norman-martinez)
