@@ -1,11 +1,26 @@
-import { describe, it, expect, afterEach } from 'vitest';
+import { describe, it, expect, afterEach, vi } from 'vitest';
 import { render, screen, cleanup } from '@testing-library/react';
 import { LanguageProvider } from '../../../contexts/LanguageContext';
 import { getProjects } from '../../../data/projects';
 import { translations } from '../../../i18n/translations';
 import { ProjectFicha } from './ProjectFicha';
 
-afterEach(cleanup);
+afterEach(() => {
+  cleanup();
+  vi.unstubAllGlobals();
+});
+
+// The reserve mounts only from md up, so each test states the width it simulates.
+function stubWidth(isMdUp: boolean) {
+  vi.stubGlobal('matchMedia', (query: string) => ({
+    matches: query.includes('min-width: 768px') ? isMdUp : false,
+    media: query,
+    addEventListener: () => {},
+    removeEventListener: () => {},
+    addListener: () => {},
+    removeListener: () => {},
+  }));
+}
 
 const translateEs = (key: string) => {
   const value = key
@@ -56,7 +71,14 @@ describe('ProjectFicha', () => {
     expect(enterBlock()).not.toBe(first);
   });
 
+  it('sin ancho de md no monta las copias de reserva', () => {
+    stubWidth(false);
+    renderFicha(0);
+    expect(region().querySelectorAll('[aria-hidden="true"][inert]')).toHaveLength(0);
+  });
+
   it('reserva la altura de la mas alta solo desde md, con copias ocultas e inertes', () => {
+    stubWidth(true);
     renderFicha(0);
 
     const copies = Array.from(region().querySelectorAll('[aria-hidden="true"][inert]'));

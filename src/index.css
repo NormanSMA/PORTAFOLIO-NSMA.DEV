@@ -75,9 +75,11 @@ code {
   }
 }
 
-/* Native smooth scrolling only for users who allow motion; Lenis bypasses it with instant jumps. */
+/* Native smooth scrolling only for users who allow motion; Lenis bypasses it with instant jumps.
+   main.tsx sets data-smooth-scroll after load, so a link to /#contact lands on the section at once
+   instead of animating across the whole prerendered page. */
 @media (prefers-reduced-motion: no-preference) {
-  html {
+  html[data-smooth-scroll] {
     scroll-behavior: smooth;
   }
 }

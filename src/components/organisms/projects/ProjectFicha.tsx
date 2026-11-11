@@ -14,7 +14,8 @@ interface ProjectFichaProps {
 // tallest ficha and the page does not jump when the active project changes. On phones the tallest
 // ficha is about twice the average, so the reserve is dropped and the height is free.
 const HeightReserve = memo(function HeightReserve({ projects }: { projects: LocalizedProject[] }) {
-  const isDesktop = useMediaQuery('(min-width: 768px)', true);
+  // false on the server: the nine copies stay out of the prerendered HTML and mount after hydration, below the fold.
+  const isDesktop = useMediaQuery('(min-width: 768px)', false);
   if (!isDesktop) return null;
 
   return projects.map((project) => (

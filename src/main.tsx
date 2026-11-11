@@ -8,6 +8,12 @@ import { installTrustedTypesPolicy } from './lib/trustedTypes'
 // Tells CSS that scripts did run: without this mark, index.css reveals the animated content after a few seconds.
 document.documentElement.dataset.js = ''
 installTrustedTypesPolicy()
+// Smooth scrolling starts after the browser has jumped to the URL's hash, if any (index.css).
+window.addEventListener(
+  'load',
+  () => requestAnimationFrame(() => (document.documentElement.dataset.smoothScroll = '')),
+  { once: true },
+)
 // Decides before React renders whether the page opens with the frame intro.
 startIntroIfAllowed()
 

@@ -2,7 +2,7 @@
 // dist/index.html in Spanish and dist/en/index.html in English, plus the bilingual sitemap.
 // Fails the build when a page is missing something search engines need.
 import { execSync } from 'node:child_process';
-import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, readdir, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 
@@ -18,7 +18,23 @@ const PAGES = [
 const SECTION_IDS = ['home', 'about', 'projects', 'experience', 'approach', 'contact'];
 
 const { render, renderHeadTags } = await import(pathToFileURL(serverEntry).href);
-const template = await readFile(path.join(dist, 'index.html'), 'utf8');
+
+// The main stylesheet is the only request that blocks the first paint. Inlined, the page paints with the HTML alone.
+// Lazy sections (Projects) bring their own CSS with their chunk, after the prerendered HTML is already on screen,
+// so every stylesheet of the build goes inline. The CSP allows inline styles and the font URLs inside are absolute.
+async function inlineStylesheets(html) {
+  const link = html.match(/<link rel="stylesheet" crossorigin href="(\/assets\/index-[\w-]+\.css)">/);
+  if (!link) throw new Error('index.html no enlaza el CSS principal');
+  const assets = path.join(dist, 'assets');
+  const files = (await readdir(assets)).filter((file) => file.endsWith('.css'));
+  const main = path.basename(link[1]);
+  const ordered = [main, ...files.filter((file) => file !== main)];
+  const css = (await Promise.all(ordered.map((file) => readFile(path.join(assets, file), 'utf8')))).join('\n');
+  if (css.includes('</style')) throw new Error('el CSS contiene </style');
+  return html.replace(link[0], () => `<style>${css}</style>`);
+}
+
+const template = await inlineStylesheets(await readFile(path.join(dist, 'index.html'), 'utf8'));
 
 for (const marker of ['<!--app-head-->', '<!--app-html-->', '<html lang="es">']) {
   if (!template.includes(marker)) throw new Error(`index.html no contiene ${marker}`);

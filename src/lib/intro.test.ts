@@ -41,6 +41,14 @@ describe('estado de la intro de la pagina', () => {
     window.history.replaceState(null, '', '/#projects');
     startIntroIfAllowed();
     expect(isIntroPlaying()).toBe(false);
+    section.remove();
+  });
+
+  it('un hash que no nombra ningun elemento no evita la intro', () => {
+    stubMotion(false);
+    window.history.replaceState(null, '', '/#no-existe');
+    startIntroIfAllowed();
+    expect(isIntroPlaying()).toBe(true);
   });
 
   it('markIntroLanded pasa a landed y avisa a quien espera', () => {
