@@ -1,5 +1,6 @@
 import { memo } from 'react';
 import { useLanguage } from '../../../hooks/useLanguage';
+import { useMediaQuery } from '../../../hooks/useMediaQuery';
 import type { LocalizedProject } from '../../../types';
 import { ProjectDetails } from './ProjectDetails';
 import './projectFicha.css';
@@ -13,6 +14,9 @@ interface ProjectFichaProps {
 // tallest ficha and the page does not jump when the active project changes. On phones the tallest
 // ficha is about twice the average, so the reserve is dropped and the height is free.
 const HeightReserve = memo(function HeightReserve({ projects }: { projects: LocalizedProject[] }) {
+  const isDesktop = useMediaQuery('(min-width: 768px)', true);
+  if (!isDesktop) return null;
+
   return projects.map((project) => (
     <div
       key={project.id}

@@ -15,18 +15,11 @@ vi.hoisted(() => {
 
 import { render, screen, cleanup } from '@testing-library/react';
 import { LanguageProvider } from '../../contexts/LanguageContext';
-import { LANGUAGE_CONFIG } from '../../config/constants';
 import { About } from './About';
 
-// jsdom here exposes no usable localStorage, so the language is injected through a Map-backed stub.
 function renderAbout(language: 'es' | 'en') {
-  const store = new Map<string, string>([[LANGUAGE_CONFIG.storageKey, language]]);
-  vi.stubGlobal('localStorage', {
-    getItem: (key: string) => store.get(key) ?? null,
-    setItem: (key: string, value: string) => store.set(key, value),
-  });
   return render(
-    <LanguageProvider>
+    <LanguageProvider initialLanguage={language}>
       <About />
     </LanguageProvider>,
   );

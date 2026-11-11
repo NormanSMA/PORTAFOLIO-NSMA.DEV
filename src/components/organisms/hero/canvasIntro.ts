@@ -4,16 +4,16 @@ import { GUIDE_REST_OPACITY, frameCornerFractions } from './canvasGeometry';
 import { HIDDEN_DASH, clearDash, setDash, type CanvasElements } from './canvasElements';
 import { buildIntroSchedule, introLength, introStepOf, type IntroStepId } from './canvasSchedule';
 
-const CORNER_SECONDS = 0.9;
-const DOT_FADE_SECONDS = 0.9;
-const GUIDE_SECONDS = 1.4;
-const GUIDE_STAGGER = 0.2;
-const NODE_FADE_SECONDS = 1;
-const NODE_STAGGER = 0.3;
-const HANDLES_FADE_SECONDS = 1.2;
+const CORNER_SECONDS = 0.4;
+const DOT_FADE_SECONDS = 0.5;
+const GUIDE_SECONDS = 0.5;
+const GUIDE_STAGGER = 0.1;
+const NODE_FADE_SECONDS = 0.35;
+const NODE_STAGGER = 0.05;
+const HANDLES_FADE_SECONDS = 0.4;
 
 // The run that plays once on load. The cycle takes over when it ends, with the content already on screen.
-// Every motion is slow and soft; nothing here is a cut.
+// Every motion is soft; nothing here is a cut. The run is at most 1.5 s.
 export function buildIntro(elements: CanvasElements, { frameDrawn = false }: { frameDrawn?: boolean } = {}) {
   const schedule = buildIntroSchedule(frameDrawn);
   const step = (id: IntroStepId) => introStepOf(schedule, id);

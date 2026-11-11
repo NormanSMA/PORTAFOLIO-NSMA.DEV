@@ -1,4 +1,4 @@
-import { useState, type FocusEvent } from 'react';
+import { useState, type FocusEvent, type MouseEvent } from 'react';
 import { motion } from '../../config/motion';
 import { sectionIds } from '../../data/navigation';
 import { useLanguage } from '../../hooks/useLanguage';
@@ -7,8 +7,9 @@ import { useActiveSection } from '../../hooks/useActiveSection';
 import { useHideOnScroll } from '../../hooks/useHideOnScroll';
 import { useScrollPast } from '../../hooks/useScrollPast';
 import { scrollToSection } from '../../lib/scroll';
+import { pathForLanguage } from '../../i18n/route';
 import { cn } from '../../utils/helpers';
-import { Button } from '../atoms/Button';
+import { buttonClasses } from '../atoms/buttonStyles';
 import { Container } from '../atoms/Container';
 import { Logo } from '../atoms/Logo';
 import { MobileMenu } from './navbar/MobileMenu';
@@ -22,13 +23,27 @@ function hasKeyboardFocus(target: EventTarget): boolean {
   return target instanceof Element && target.matches(':focus-visible');
 }
 
+// A real link so crawlers and visitors without JS reach the other language; with JS it switches in place.
 function LanguageSwitch() {
   const { language, toggleLanguage, t } = useLanguage();
+  const other = language === 'es' ? 'en' : 'es';
+
+  const handleClick = (event: MouseEvent<HTMLAnchorElement>) => {
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
+    event.preventDefault();
+    toggleLanguage();
+  };
 
   return (
-    <Button variant="outline" size="sm" onClick={toggleLanguage} aria-label={t('nav.langAria')}>
-      {language === 'es' ? 'EN' : 'ES'}
-    </Button>
+    <a
+      href={pathForLanguage(other)}
+      hrefLang={other}
+      onClick={handleClick}
+      aria-label={t('nav.langAria')}
+      className={cn(buttonClasses('outline', 'sm'), 'pointer-fine:hover:bg-fg/5')}
+    >
+      {other.toUpperCase()}
+    </a>
   );
 }
 

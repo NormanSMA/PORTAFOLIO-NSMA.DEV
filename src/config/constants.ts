@@ -8,6 +8,5 @@ export const APP_CONFIG = {
 
 export const LANGUAGE_CONFIG = {
   default: 'es',
-  storageKey: 'nsma-language',
   supported: ['es', 'en'],
 } as const;

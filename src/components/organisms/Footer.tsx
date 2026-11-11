@@ -85,7 +85,8 @@ export function Footer() {
 
         {/* The right padding keeps the text clear of the fixed back-to-top button. */}
         <p className={cn(typography.caption, 'mt-12 border-t border-line pr-16 pt-8 text-fg-muted')}>
-          © {currentYear} Norman Martínez. {t('footer.rights')}.
+          {/* The prerendered year is the build year; the visitor's clock may already be in the next one. */}
+          © <span suppressHydrationWarning>{currentYear}</span> Norman Martínez. {t('footer.rights')}.
         </p>
       </Container>
     </footer>

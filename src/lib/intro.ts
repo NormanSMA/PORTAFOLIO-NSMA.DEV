@@ -12,11 +12,11 @@ export function isIntroPlaying(): boolean {
   return typeof document !== 'undefined' && document.documentElement.dataset[ATTRIBUTE] === 'playing';
 }
 
-// Called once, before React renders. A link with a hash goes straight to a section, and reduced motion
+// Called once, before React renders. A link whose hash points to an element (:target, the same test CSS uses) goes straight to it, and reduced motion
 // gets the page with no intro at all.
 export function startIntroIfAllowed(): void {
   if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return;
-  if (!window.matchMedia(motion.media.noReducedMotion).matches || window.location.hash) return;
+  if (!window.matchMedia(motion.media.noReducedMotion).matches || document.querySelector(':target')) return;
   document.documentElement.dataset[ATTRIBUTE] = 'playing';
   window.setTimeout(markIntroLanded, LANDING_DEADLINE_MS);
 }

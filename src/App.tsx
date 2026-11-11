@@ -1,12 +1,11 @@
-import { Suspense, lazy, useEffect } from 'react';
+import { Suspense, lazy, useEffect, useState } from 'react';
 import { LanguageProvider } from './contexts/LanguageContext';
 import { Navbar, Hero } from './components/organisms';
 import { PageIntro } from './components/organisms/PageIntro';
 import { ScrollToTop } from './components/molecules';
 import { useLanguage, useLenis } from './hooks';
 import { ScrollTrigger } from './lib/gsap';
-import { Analytics } from '@vercel/analytics/react';
-import { SpeedInsights } from '@vercel/speed-insights/react';
+import type { Language } from './types';
 
 const loadAbout = () => import('./components/organisms/About').then((m) => ({ default: m.About }));
 const loadProjects = () => import('./components/organisms/Projects').then((m) => ({ default: m.Projects }));
@@ -22,20 +21,47 @@ const Approach = lazy(loadApproach);
 const Contact = lazy(loadContact);
 const Footer = lazy(loadFooter);
 
-const IDLE_PRELOAD_DELAY_MS = 2500;
+// Analytics measure the visit; they wait until the page has loaded and the main thread is idle.
+const VercelInsights = lazy(() =>
+  Promise.all([import('@vercel/analytics/react'), import('@vercel/speed-insights/react')]).then(
+    ([{ Analytics }, { SpeedInsights }]) => ({
+      default: () => (
+        <>
+          <Analytics />
+          <SpeedInsights />
+        </>
+      ),
+    }),
+  ),
+);
 
-// Preloading after the first paint keeps anchor links and scroll triggers stable without weighing on the initial load.
-function usePreloadSections() {
+const IDLE_TIMEOUT_MS = 4000;
+
+function useIdleAfterLoad(): boolean {
+  const [idle, setIdle] = useState(false);
+
   useEffect(() => {
-    const timer = window.setTimeout(() => {
-      const loaders = [loadAbout, loadProjects, loadExperience, loadApproach, loadContact, loadFooter];
-      Promise.all(loaders.map((load) => load())).then(() => {
-        requestAnimationFrame(() => ScrollTrigger.refresh());
-      });
-    }, IDLE_PRELOAD_DELAY_MS);
+    let idleId: number | undefined;
+    const markIdle = () => setIdle(true);
+    const wait = () => {
+      idleId =
+        typeof window.requestIdleCallback === 'function'
+          ? window.requestIdleCallback(markIdle, { timeout: IDLE_TIMEOUT_MS })
+          : window.setTimeout(markIdle, IDLE_TIMEOUT_MS);
+    };
 
-    return () => window.clearTimeout(timer);
+    if (document.readyState === 'complete') wait();
+    else window.addEventListener('load', wait, { once: true });
+
+    return () => {
+      window.removeEventListener('load', wait);
+      if (idleId === undefined) return;
+      if (typeof window.cancelIdleCallback === 'function') window.cancelIdleCallback(idleId);
+      else window.clearTimeout(idleId);
+    };
   }, []);
+
+  return idle;
 }
 
 const REFRESH_DEBOUNCE_MS = 250;
@@ -75,24 +101,37 @@ function SkipLink() {
   );
 }
 
-function App() {
+interface AppProps {
+  initialLanguage?: Language;
+}
+
+function App({ initialLanguage }: AppProps) {
   useLenis();
-  usePreloadSections();
   useRefreshOnHeightChange();
+  const isIdle = useIdleAfterLoad();
 
   return (
-    <LanguageProvider>
+    <LanguageProvider initialLanguage={initialLanguage}>
       <div className="min-h-screen">
         <PageIntro />
         <SkipLink />
         <Navbar />
         <main id="main" tabIndex={-1} className="outline-none">
           <Hero />
+          {/* One boundary per section: each hydrates as soon as its own chunk arrives, over the prerendered HTML. */}
           <Suspense fallback={<div className="min-h-svh" aria-hidden="true" />}>
             <About />
+          </Suspense>
+          <Suspense fallback={null}>
             <Projects />
+          </Suspense>
+          <Suspense fallback={null}>
             <Experience />
+          </Suspense>
+          <Suspense fallback={null}>
             <Approach />
+          </Suspense>
+          <Suspense fallback={null}>
             <Contact />
           </Suspense>
         </main>
@@ -102,8 +141,11 @@ function App() {
         </Suspense>
 
         <ScrollToTop />
-        <Analytics />
-        <SpeedInsights />
+        {isIdle && (
+          <Suspense fallback={null}>
+            <VercelInsights />
+          </Suspense>
+        )}
       </div>
     </LanguageProvider>
   );

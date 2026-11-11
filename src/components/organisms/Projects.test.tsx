@@ -62,7 +62,7 @@ describe('Projects: anillo y ficha', () => {
   });
 
   it('el nombre accesible de la frontal incluye el aviso de pestana nueva', () => {
-    expect(frontLink().getAttribute('aria-label')).toBe('1 de 9: AutoFinOps-NI (abre en una pestaña nueva)');
+    expect(frontLink().getAttribute('aria-label')).toBe('1 de 9: AutoFinOps-NI, Completado (abre en una pestaña nueva)');
   });
 
   it('sin demo, la tarjeta frontal enlaza el repositorio', () => {

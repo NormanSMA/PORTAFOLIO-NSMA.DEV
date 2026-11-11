@@ -6,7 +6,7 @@
   "packageManager": "pnpm@11.1.1",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "tsc -b && vite build && vite build --ssr src/entry-server.tsx --outDir dist-ssr && node scripts/prerender.mjs",
     "capture": "node scripts/capture-projects.mjs",
     "images": "node scripts/optimize-images.mjs",
     "images:check": "node scripts/optimize-images.mjs --check",

@@ -1,4 +1,4 @@
-import { useEffect, useRef, type ElementType } from 'react';
+import { useEffect, useRef, type CSSProperties, type ElementType } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -45,49 +45,8 @@ export default function SplitText({
     const el = ref.current;
     if (!el || !text) return;
 
-    // clear previous markup
-    el.innerHTML = '';
-
-    const container = document.createElement('span');
-    container.style.display = 'inline-block';
-    container.style.whiteSpace = 'pre-wrap';
-    container.style.textAlign = textAlign;
-
-    const targets: HTMLElement[] = [];
-
-    if (splitType === 'words') {
-      text.split(' ').forEach((word) => {
-        const wordWrap = document.createElement('span');
-        wordWrap.className = 'split-word';
-        wordWrap.style.display = 'inline-block';
-        wordWrap.style.whiteSpace = 'nowrap';
-        wordWrap.style.marginRight = '0.35em';
-        Array.from(word).forEach((ch) => {
-          const chSpan = document.createElement('span');
-          chSpan.className = 'split-char';
-          chSpan.textContent = ch;
-          chSpan.style.display = 'inline-block';
-          chSpan.style.willChange = 'transform, opacity';
-          wordWrap.appendChild(chSpan);
-          targets.push(chSpan);
-        });
-        container.appendChild(wordWrap);
-      });
-    } else {
-      // chars
-      Array.from(text).forEach((ch) => {
-        const chSpan = document.createElement('span');
-        chSpan.className = 'split-char';
-        chSpan.textContent = ch;
-        chSpan.style.display = 'inline-block';
-        chSpan.style.whiteSpace = 'pre';
-        chSpan.style.willChange = 'transform, opacity';
-        container.appendChild(chSpan);
-        targets.push(chSpan);
-      });
-    }
-
-    el.appendChild(container);
+    const targets = Array.from(el.querySelectorAll<HTMLElement>('.split-char'));
+    if (targets.length === 0) return;
 
     const animationConfig = {
       ...to,
@@ -130,6 +89,32 @@ export default function SplitText({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [text, delay, duration, ease, splitType, fromKey, toKey, threshold, rootMargin, textAlign, animateOn, onLetterAnimationComplete]);
 
+  // The spans come only from `text`, so the server and the first client render give the same markup.
+  const charStyle: CSSProperties = { display: 'inline-block', willChange: 'transform, opacity', ...(splitType === 'words' ? {} : { whiteSpace: 'pre' }) };
   const Tag = tag as ElementType;
-  return <Tag ref={ref} className={`split-parent ${className}`} style={{ overflow: 'hidden', display: 'block', willChange: 'transform, opacity' }}>{text}</Tag>;
+  return (
+    <Tag ref={ref} className={`split-parent ${className}`} style={{ overflow: 'hidden', display: 'block', willChange: 'transform, opacity' }}>
+      <span style={{ display: 'inline-block', whiteSpace: 'pre-wrap', textAlign }}>
+        {splitType === 'words'
+          ? text.split(' ').map((word, wordIndex) => (
+              <span
+                key={wordIndex}
+                className="split-word"
+                style={{ display: 'inline-block', whiteSpace: 'nowrap', marginRight: '0.35em' }}
+              >
+                {Array.from(word).map((ch, index) => (
+                  <span key={index} className="split-char" style={charStyle}>
+                    {ch}
+                  </span>
+                ))}
+              </span>
+            ))
+          : Array.from(text).map((ch, index) => (
+              <span key={index} className="split-char" style={charStyle}>
+                {ch}
+              </span>
+            ))}
+      </span>
+    </Tag>
+  );
 }

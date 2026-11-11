@@ -122,10 +122,10 @@ describe('intro del lienzo', () => {
     ]);
   });
 
-  it('el marco se dibuja en 2.4 s y los nodos entran después de que termina', () => {
+  it('el marco se dibuja en 0.9 s y los nodos entran después de que termina', () => {
     const frame = introStepOf(intro, 'frame');
     expect(frame.at).toBe(0);
-    expect(frame.duration).toBeGreaterThanOrEqual(2.4);
+    expect(frame.duration).toBeGreaterThanOrEqual(0.9);
     expect(introStepOf(intro, 'nodes').at).toBeGreaterThanOrEqual(frame.at + frame.duration);
   });
 
@@ -138,18 +138,17 @@ describe('intro del lienzo', () => {
     }
   });
 
-  it('los nodos aparecen y la curva se dibuja entre 2.4 s y 4.4 s, despacio', () => {
+  it('los nodos aparecen y la curva se dibuja entre 0.9 s y 1.4 s', () => {
     const nodes = introStepOf(intro, 'nodes');
     const curve = introStepOf(intro, 'curve');
-    expect(nodes.at).toBeCloseTo(2.4);
+    expect(nodes.at).toBeCloseTo(0.9);
     expect(curve.at).toBeGreaterThanOrEqual(nodes.at);
-    expect(curve.at + curve.duration).toBeCloseTo(4.4);
-    expect(curve.duration).toBeGreaterThanOrEqual(1.5);
+    expect(curve.at + curve.duration).toBeCloseTo(1.4);
   });
 
-  it('el intro dura entre 4.4 s y 6 s', () => {
-    expect(introLength(intro)).toBeGreaterThanOrEqual(4.4);
-    expect(introLength(intro)).toBeLessThanOrEqual(6);
+  it('el intro dura entre 1.4 s y 1.5 s', () => {
+    expect(introLength(intro)).toBeGreaterThanOrEqual(1.4);
+    expect(introLength(intro)).toBeLessThanOrEqual(1.5);
   });
 
   it('pide un paso que no existe y falla', () => {
@@ -173,7 +172,7 @@ describe('intro del lienzo tras la intro de la pagina', () => {
       expect(after.at, id).toBeLessThan(before.at + 0.0001);
       expect(after.at, id).toBeGreaterThanOrEqual(0);
     }
-    expect(introStepOf(afterPage, 'nodes').at).toBeCloseTo(1.7);
+    expect(introStepOf(afterPage, 'nodes').at).toBeCloseTo(0.7);
     expect(introLength(afterPage)).toBeLessThan(introLength(intro));
   });
 });

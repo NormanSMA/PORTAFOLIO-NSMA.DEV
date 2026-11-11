@@ -23,6 +23,33 @@ body {
   @apply bg-ink font-body text-fg antialiased;
 }
 
+/* js-motion hides what GSAP will reveal. If the app script never runs (blocked or failed), that content
+   must not stay hidden: without the data-js mark from main.tsx it appears after a few seconds. */
+@media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
+  html:not([data-js]) .js-motion\:opacity-0,
+  html:not([data-js]) .js-motion\:invisible {
+    animation: reveal-without-js 0s 5s forwards;
+  }
+
+  /* The canvas parts keep their own opacity: only their visibility comes back. */
+  html:not([data-js]) .hero-canvas-scene > * {
+    animation: show-without-js 0s 5s forwards;
+  }
+}
+
+@keyframes reveal-without-js {
+  to {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+@keyframes show-without-js {
+  to {
+    visibility: visible;
+  }
+}
+
 code {
   font-family: var(--font-mono);
 }

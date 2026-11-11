@@ -61,17 +61,17 @@ describe('MirrorHall: estructura y accesibilidad', () => {
     expect(group.tabIndex).toBe(0);
   });
 
-  it('renderiza una lista con una tarjeta por item y su etiqueta "n de total: titulo"', () => {
+  it('renderiza una lista con una tarjeta por item y su etiqueta "n de total: titulo, estado"', () => {
     renderRing();
     expect(cards()).toHaveLength(7);
-    expect(cards()[0].getAttribute('aria-label')).toBe('1 de 7: Proyecto 0');
-    expect(cards()[6].getAttribute('aria-label')).toBe('7 de 7: Proyecto 6');
+    expect(cards()[0].getAttribute('aria-label')).toBe('1 de 7: Proyecto 0, Etiqueta 0');
+    expect(cards()[6].getAttribute('aria-label')).toBe('7 de 7: Proyecto 6, Etiqueta 6');
     expect(cards()[0].parentElement?.tagName).toBe('UL');
   });
 
   it('acepta un formateador de etiqueta para otros idiomas', () => {
     renderRing(vi.fn(), { getCardLabel: (position, total, title) => `${position} of ${total}: ${title}` });
-    expect(cards()[2].getAttribute('aria-label')).toBe('3 of 7: Proyecto 2');
+    expect(cards()[2].getAttribute('aria-label')).toBe('3 of 7: Proyecto 2, Etiqueta 2');
   });
 
   it('solo la tarjeta frontal es tabulable y ninguna esta oculta', () => {
@@ -408,13 +408,13 @@ describe('MirrorHall: la cara de la tarjeta es un enlace real', () => {
 
   it('el nombre accesible del enlace frontal avisa de la pestana nueva; el de las demas no', () => {
     renderRing(vi.fn(), { items: linkedItems });
-    expect(screen.getByRole('link', { name: `1 de 7: Proyecto 0 ${OPEN_LABEL}` })).toBe(link(0));
-    expect(link(1).getAttribute('aria-label')).toBe('2 de 7: Proyecto 1');
+    expect(screen.getByRole('link', { name: `1 de 7: Proyecto 0, Etiqueta 0 ${OPEN_LABEL}` })).toBe(link(0));
+    expect(link(1).getAttribute('aria-label')).toBe('2 de 7: Proyecto 1, Etiqueta 1');
     expect(cards()[0].className).toContain('mh-card--link');
     expect(cards()[1].className).not.toContain('mh-card--link');
     fireEvent.click(link(1));
-    expect(link(1).getAttribute('aria-label')).toBe(`2 de 7: Proyecto 1 ${OPEN_LABEL}`);
-    expect(link(0).getAttribute('aria-label')).toBe('1 de 7: Proyecto 0');
+    expect(link(1).getAttribute('aria-label')).toBe(`2 de 7: Proyecto 1, Etiqueta 1 ${OPEN_LABEL}`);
+    expect(link(0).getAttribute('aria-label')).toBe('1 de 7: Proyecto 0, Etiqueta 0');
   });
 
   it('con href pero sin openLabel usa un texto por defecto', () => {

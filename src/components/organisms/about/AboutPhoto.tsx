@@ -6,6 +6,7 @@ interface AboutPhotoProps {
 }
 
 // The cutout has alpha: the surface shows through, so the frame is the only chrome.
+// Below 768 px the 300px hint makes a DPR 2.6 phone take 800w instead of 1200w.
 // The top third of the file is empty; the 1.25 scale from the bottom edge crops it without changing the 4:5 box.
 export function AboutPhoto({ alt, className }: AboutPhotoProps) {
   return (
@@ -13,7 +14,7 @@ export function AboutPhoto({ alt, className }: AboutPhotoProps) {
       <img
         src="/norman_sf-800w.webp"
         srcSet="/norman_sf-480w.webp 480w, /norman_sf-800w.webp 800w, /norman_sf-1200w.webp 1200w"
-        sizes="(min-width: 1024px) 545px, (min-width: 768px) 480px, 360px"
+        sizes="(min-width: 1024px) 545px, (min-width: 768px) 480px, 300px"
         alt={alt}
         width={1600}
         height={2000}

@@ -15,6 +15,7 @@ function stubMotion(reduced: boolean) {
 afterEach(() => {
   delete document.documentElement.dataset.intro;
   window.history.replaceState(null, '', '/');
+  document.getElementById('projects')?.remove();
   vi.useRealTimers();
 });
 
@@ -34,6 +35,9 @@ describe('estado de la intro de la pagina', () => {
 
   it('un enlace con hash va directo a la seccion, sin intro', () => {
     stubMotion(false);
+    const section = document.createElement('section');
+    section.id = 'projects';
+    document.body.appendChild(section);
     window.history.replaceState(null, '', '/#projects');
     startIntroIfAllowed();
     expect(isIntroPlaying()).toBe(false);

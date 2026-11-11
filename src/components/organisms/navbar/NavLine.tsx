@@ -61,6 +61,7 @@ export function NavLine({ activeId }: NavLineProps) {
   const barRef = useRef<HTMLDivElement>(null);
   const nodeRef = useRef<HTMLDivElement>(null);
   const allowsMotion = useMediaQuery(motion.media.noReducedMotion);
+  const isDesktop = useMediaQuery(motion.media.desktop);
   const state = useRef<LineState>({
     left: 0,
     right: 0,
@@ -74,7 +75,7 @@ export function NavLine({ activeId }: NavLineProps) {
     const scope = rootRef.current?.parentElement;
     const bar = barRef.current;
     const node = nodeRef.current;
-    if (!scope || !bar || !node) return;
+    if (!isDesktop || !scope || !bar || !node) return;
     const line = state.current;
     const target = measure(scope);
     if (!target) return;
@@ -107,15 +108,16 @@ export function NavLine({ activeId }: NavLineProps) {
     };
     frame = requestAnimationFrame(step);
     return () => cancelAnimationFrame(frame);
-  }, [activeId, allowsMotion]);
+  }, [activeId, allowsMotion, isDesktop]);
 
   // A language change or a resize moves the links: the line goes straight to the new place instead of travelling.
   useEffect(() => {
     const scope = rootRef.current?.parentElement;
     const bar = barRef.current;
     const node = nodeRef.current;
-    if (!scope || !bar || !node || typeof ResizeObserver === 'undefined') return;
-    const observer = new ResizeObserver(() => {
+    if (!isDesktop || !scope || !bar || !node || typeof ResizeObserver === 'undefined') return;
+    const observer = new ResizeObserver(([entry]) => {
+      if (!entry || entry.contentRect.width === 0) return;
       const target = measure(scope);
       if (!target) return;
       snap(state.current, target);
@@ -124,7 +126,7 @@ export function NavLine({ activeId }: NavLineProps) {
     });
     observer.observe(scope);
     return () => observer.disconnect();
-  }, []);
+  }, [isDesktop]);
 
   return (
     <div ref={rootRef} aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 h-2">

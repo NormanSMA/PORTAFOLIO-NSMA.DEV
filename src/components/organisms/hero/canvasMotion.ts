@@ -38,6 +38,8 @@ export function startCanvasMotion(root: HTMLElement): () => void {
   resetScene(elements, state, renderer);
   const cycle = buildCycle(elements, state, renderer);
   resetIntro(elements);
+  // CSS hides the scene until this attribute exists, so the reset above is never seen undone.
+  root.dataset.running = 'false';
   // With the page intro the canvas waits for its frame to land and then starts with the frame already drawn.
   const afterPageIntro = isIntroPlaying();
   const intro = buildIntro(elements, { frameDrawn: afterPageIntro });

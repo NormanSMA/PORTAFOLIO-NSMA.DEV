@@ -7,7 +7,7 @@ export const nav = {
   contact: 'Contact',
   ariaLabel: 'Main navigation',
   logoAria: 'Go to homepage',
-  langAria: 'Switch language to Spanish (ES)',
+  langAria: 'ES, switch language to Spanish',
   menuAria: 'Open menu',
   closeMenuAria: 'Close menu',
   menuTitle: 'Menu',

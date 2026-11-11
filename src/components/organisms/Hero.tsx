@@ -22,8 +22,8 @@ const REVEAL = {
   cta: { at: 1.8, seconds: 1.8 },
 } as const;
 
-// The letters start hidden inside SplitText's own effect; the heading stays invisible until that effect has run,
-// so the plain text never flashes before the reveal. Child effects run before this one.
+// The letters start hidden inside SplitText's own effect; with motion on, the heading stays invisible until that effect
+// has run, so the final text never flashes before the reveal. Child effects run before this one.
 function HeroTitle() {
   const reducedMotion = useMediaQuery(REDUCED_MOTION_QUERY);
   const [ready, setReady] = useState(false);
@@ -42,7 +42,7 @@ function HeroTitle() {
 
   // SplitText turns every letter into its own span, so the label keeps screen readers on the whole name.
   return (
-    <h1 id="home-heading" aria-label={NAME} className={cn(typography.display, 'text-fg', !ready && 'invisible')}>
+    <h1 id="home-heading" aria-label={NAME} className={cn(typography.display, 'text-fg', !ready && 'js-motion:invisible')}>
       <span aria-hidden="true" className="block">
         <SplitText
           tag="span"
@@ -70,13 +70,17 @@ export function Hero() {
   useMotion(contentRef, ({ noReducedMotion }) => {
     if (!noReducedMotion) return;
     (Object.keys(REVEAL) as (keyof typeof REVEAL)[]).forEach((key) => {
-      gsap.from(`[data-hero-reveal="${key}"]`, {
-        y: REVEAL_RISE,
-        opacity: 0,
-        delay: REVEAL[key].at,
-        duration: REVEAL[key].seconds,
-        ease: REVEAL_EASE,
-      });
+      gsap.fromTo(
+        `[data-hero-reveal="${key}"]`,
+        { y: REVEAL_RISE, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          delay: REVEAL[key].at,
+          duration: REVEAL[key].seconds,
+          ease: REVEAL_EASE,
+        },
+      );
     });
   });
 
@@ -100,14 +104,17 @@ export function Hero() {
               <span className={cn(typography.h4, 'block text-fg')}>{t('hero.role')}</span>
               <span className={cn(typography.bodyLarge, 'mt-1 block text-fg-muted')}>{t('hero.focus')}</span>
             </p>
-            <p data-hero-reveal="availability" className={cn(typography.body, 'mt-6 font-medium text-fg')}>
+            <p
+              data-hero-reveal="availability"
+              className={cn(typography.body, 'mt-6 font-medium text-fg js-motion:opacity-0')}
+            >
               {t('hero.availability')}
             </p>
             <a
               data-hero-reveal="cta"
               href="#projects"
               onClick={handleProjectsClick}
-              className="mt-10 inline-flex min-h-target items-center justify-center rounded-control bg-fg px-8 font-body font-semibold text-ink motion-safe:transition-colors motion-safe:duration-fast motion-safe:ease-out pointer-fine:hover:bg-fg/85"
+              className="mt-10 inline-flex js-motion:opacity-0 min-h-target items-center justify-center rounded-control bg-fg px-8 font-body font-semibold text-ink motion-safe:transition-colors motion-safe:duration-fast motion-safe:ease-out pointer-fine:hover:bg-fg/85"
             >
               {t('hero.cta.projects')}
             </a>

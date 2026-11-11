@@ -15,10 +15,11 @@ const AVIF_QUALITIES = [72, 68, 64, 60, 57, 55];
 const BUDGETS = { 960: 120 * 1024, 1920: 350 * 1024 };
 
 function parseArgs(argv) {
-  const options = { only: null, check: false };
+  const options = { only: null, check: false, site: false };
   for (let i = 0; i < argv.length; i += 1) {
     if (argv[i] === '--only') options.only = argv[++i].split(',');
     else if (argv[i] === '--check') options.check = true;
+    else if (argv[i] === '--site') options.site = true;
   }
   return options;
 }
@@ -109,6 +110,64 @@ async function optimizeExternal(id) {
   return rows;
 }
 
+// Site-level assets built from committed sources: logo widths, manifest icons and the PNG share image.
+const LOGO_SOURCE = path.join('public', 'logo-nsma_light.webp');
+const LOGO_WIDTHS = [120, 200];
+const OG_SOURCE = path.join('public', 'og-image.webp');
+const BACKGROUND = { ...INK, alpha: 1 };
+// logoRatio is the wordmark width over the canvas width; the maskable icon keeps it inside the 60% safe zone.
+const ICONS = [
+  { file: 'apple-touch-icon.png', size: 180, logoRatio: 0.7 },
+  { file: 'icon-192.png', size: 192, logoRatio: 0.7 },
+  { file: 'icon-512.png', size: 512, logoRatio: 0.7 },
+  { file: 'icon-512-maskable.png', size: 512, logoRatio: 0.6 },
+];
+const logoVariantPath = (width) => path.join('public', `logo-nsma_light-${width}w.webp`);
+const publicPath = (file) => path.join('public', file);
+
+async function iconBuffer({ size, logoRatio }) {
+  const logoWidth = Math.round(size * logoRatio);
+  const logo = await sharp(LOGO_SOURCE).trim().resize({ width: logoWidth, kernel: 'lanczos3' }).png().toBuffer();
+  return sharp({ create: { width: size, height: size, channels: 4, background: BACKGROUND } })
+    .composite([{ input: logo, gravity: 'centre' }])
+    .flatten({ background: INK })
+    .png({ compressionLevel: 9, palette: true })
+    .toBuffer();
+}
+
+async function optimizeSiteAssets() {
+  const rows = [];
+  const write = async (file, buffer, quality = '-') => {
+    await writeFile(file, buffer);
+    rows.push({ file, bytes: buffer.length, quality });
+  };
+  for (const width of LOGO_WIDTHS) {
+    const buffer = await sharp(LOGO_SOURCE).resize({ width, kernel: 'lanczos3' }).webp({ quality: WEBP_QUALITY, effort: EFFORT }).toBuffer();
+    await write(logoVariantPath(width), buffer, WEBP_QUALITY);
+  }
+  for (const icon of ICONS) await write(publicPath(icon.file), await iconBuffer(icon));
+  const og = await sharp(OG_SOURCE).png({ compressionLevel: 9, palette: true, quality: 90, effort: 10 }).toBuffer();
+  await write(publicPath('og-image.png'), og);
+  return rows;
+}
+
+async function checkSiteAssets() {
+  const expected = [
+    ...LOGO_WIDTHS.map((width) => ({ file: logoVariantPath(width), width })),
+    ...ICONS.map(({ file, size }) => ({ file: publicPath(file), width: size, height: size })),
+    { file: publicPath('og-image.png'), width: 1200, height: 630 },
+  ];
+  const problems = [];
+  for (const { file, width, height } of expected) {
+    const metadata = await sharp(file).metadata().catch(() => null);
+    if (!metadata) problems.push(`missing: ${file}`);
+    else if (metadata.width !== width || (height && metadata.height !== height)) {
+      problems.push(`wrong size: ${file} is ${metadata.width}x${metadata.height}`);
+    }
+  }
+  return problems;
+}
+
 function printTable(rows) {
   const pad = (value, size) => String(value).padEnd(size);
   const nameWidth = Math.max(...rows.map((row) => row.file.length));
@@ -163,7 +222,8 @@ async function main() {
   const options = parseArgs(process.argv.slice(2));
 
   if (!options.check) {
-    const ids = Object.keys(TARGETS).filter((id) => !options.only || options.only.includes(id));
+    // --site rebuilds only the logo widths, icons and share image, leaving the project sets untouched.
+    const ids = options.site ? [] : Object.keys(TARGETS).filter((id) => !options.only || options.only.includes(id));
     const sets = [];
     const external = [];
     for (const id of ids) {
@@ -174,16 +234,17 @@ async function main() {
       }
     }
     // .captures is not versioned, so a fresh checkout has no raw frames: validate the committed files only.
-    if (sets.length + external.length === 0 && options.only) throw new Error(`No raw captures or project docs for ${options.only.join(', ')}. Run pnpm capture first.`);
-    if (sets.length + external.length === 0) console.log(`No raw captures in ${RAW_DIR}; skipping encode. Run pnpm capture to refresh them.`);
+    if (sets.length + external.length === 0 && options.only && !options.site) throw new Error(`No raw captures or project docs for ${options.only.join(', ')}. Run pnpm capture first.`);
+    if (sets.length + external.length === 0 && !options.site) console.log(`No raw captures in ${RAW_DIR}; skipping encode. Run pnpm capture to refresh them.`);
     const rows = [];
     for (const set of sets) rows.push(...(await optimizeSet(set)));
     for (const id of external) rows.push(...(await optimizeExternal(id)));
+    if (!options.only || options.site) rows.push(...(await optimizeSiteAssets()));
     if (rows.length > 0) printTable(rows);
     warnOverBudget(rows);
   }
 
-  const problems = await checkOutputs(options.only);
+  const problems = [...(await checkOutputs(options.only)), ...(options.only && !options.site ? [] : await checkSiteAssets())];
   if (problems.length > 0) {
     console.error(`${problems.length} problems:\n${problems.join('\n')}`);
     process.exitCode = 1;
