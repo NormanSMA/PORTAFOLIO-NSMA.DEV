@@ -1,7 +1,4 @@
 # https://www.robotstxt.org/robotstxt.html
-# Prelanzamiento: vercel.json envia X-Robots-Tag noindex, nofollow.
-# No bloquees rutas aqui: Google debe poder leer esa cabecera.
-# Al lanzar, quita la cabecera de vercel.json y envia el sitemap en Search Console.
 User-agent: *
 Allow: /
 
