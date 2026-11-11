@@ -96,6 +96,9 @@ export default {
     // Hover effects only for real pointers; touch screens keep a sticky :hover otherwise.
     function ({ addVariant }) {
       addVariant('pointer-fine', '@media (hover: hover) and (pointer: fine)');
+      // Prerendered HTML is visible before scripts run. Only what GSAP will animate starts hidden,
+      // so without JS or with reduced motion the page shows its final state.
+      addVariant('js-motion', '@media (scripting: enabled) and (prefers-reduced-motion: no-preference)');
     },
   ],
 }
